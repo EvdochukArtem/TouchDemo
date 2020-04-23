@@ -21,12 +21,24 @@
     <ClCompile Include="Kadr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GestureEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KadrHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DrawingObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Kadr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GestureEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KadrHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,8 +8,8 @@ public:
 	CDrawingObject() {};
 	~CDrawingObject() {};
 
-	virtual void Paint(HDC hdc);
-	virtual void Move(LONG ldx, LONG ldy);
-	virtual void Zoom(const double dZoomFactor, const LONG iZx, const LONG iZy);
-	virtual void Rotate(const double dAngle, const LONG iOx, const LONG iOy);
+	virtual void Paint(HDC hdc) = 0;
+	virtual void Move(LONG ldx, LONG ldy) = 0;
+	virtual void Zoom(const double dZoomFactor, const LONG iZx, const LONG iZy) = 0;
+	virtual void Rotate(const double dAngle, const LONG iOx, const LONG iOy) = 0;
 };
