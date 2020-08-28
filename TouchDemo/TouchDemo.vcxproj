@@ -42,7 +42,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -89,7 +89,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -126,16 +126,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DrawEngine.cpp" />
+    <ClCompile Include="DrawingObject.cpp" />
+    <ClCompile Include="DrawKit.cpp" />
     <ClCompile Include="GestureEngine.cpp" />
     <ClCompile Include="Kadr.cpp" />
     <ClCompile Include="KadrHandler.cpp" />
+    <ClCompile Include="MechanicMenu.cpp" />
     <ClCompile Include="TouchDemo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DrawEngine.h" />
     <ClInclude Include="DrawingObject.h" />
+    <ClInclude Include="DrawKit.h" />
     <ClInclude Include="GestureEngine.h" />
     <ClInclude Include="Kadr.h" />
     <ClInclude Include="KadrHandler.h" />
+    <ClInclude Include="MechanicMenu.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="TouchDemo.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

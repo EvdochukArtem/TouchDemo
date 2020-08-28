@@ -1,5 +1,6 @@
 #pragma once
 
+#include "StdAfx.h"
 #include "DrawingObject.h"
 
 #define INTERACTIVE_OBJ_LENGTH 4
@@ -18,33 +19,36 @@ enum MERGE_DIRECTION
 	RIGHT,
 };
 
-class CKadr// : CDrawingObject
+class CKadr : CDrawingObject
 {
-public:
-	CKadr(UINT id, KADR_SIZE kadrSize, UINT cx, UINT cy, UINT width, UINT height);
-	~CKadr() {};
+public: 
+	CKadr(UINT id, KADR_SIZE kadrSize);
+	~CKadr();
 	   
-	void Paint(HDC hdc);
+	void Draw(HDC hdc);
+	void DrawBackground();
+
 	void ResetInteractiveObject();
 	void Move(const POINT firstTouchCoord, const LONG ldx, const LONG ldy);
 	void Zoom(const double dZoomFactor, const LONG iZx, const LONG iZy);
 	void Rotate(const double dAngle, const LONG iOx, const LONG iOy);
 	void Swipe(const POINT firstTouchCoord, const POINT secondTouchCoord);
-	bool PointIsMine(POINT touchCoord);
-
-	//POINT GetKadrCoords() { POINT p; p.x = _cx; p.y = _cy; return p; }; //TODO: а попроще можно?!
+	bool PointIsMine(const POINT touchCoord);
 
 private:
-
 	UINT _id;										//(0-7)
 	KADR_SIZE _kadrSize;
-	UINT _cx;										//x координата верхнего левого угла
-	UINT _cy;										//y координата верхнего левого угла
+	UINT _x;										//x координата верхнего левого угла
+	UINT _y;										//y координата верхнего левого угла
 	UINT _width;
 	UINT _height;
 	double  _scalingFactor;
 	double  _rotationAngle;
+	POINT ptRect[5];
+	HGDIOBJ hOld;
+
 	POINT interactiveObj[INTERACTIVE_OBJ_LENGTH];
+	void CreateKadr();
 	void DrawBorders(HDC hdc);
 	void InitInteractiveObj();
 	void DrawInteractiveObj(HDC hdc);

@@ -1,17 +1,4 @@
-#include "windows.h"
-#include "GestureEngine.h"
-#include "KadrHandler.h"
-
-HINSTANCE hInst;
-HWND hMainWnd;
-TCHAR szClassName[] = L"TouchDemo Class";
-TCHAR szTitle[] = L"Touch App Demo";
-CGestureEngine gestureEngine;
-CKadrHandler kadrHandler;
-
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-ATOM MyRegisterClass(HINSTANCE hInstance);
-BOOL InitInstance(HINSTANCE, int);
+#include "TouchDemo.h"
 
 int APIENTRY wWinMain(HINSTANCE hInstance,
 	HINSTANCE /* hPrevInstance */,
@@ -23,9 +10,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 	MyRegisterClass(hInstance);
 
 	if (!InitInstance(hInstance, nCmdShow))
-	{
 		return FALSE;
-	}
 
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
@@ -45,7 +30,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 	mainClassEx.cbSize = sizeof(WNDCLASSEX);
 
-	mainClassEx.style = CS_HREDRAW | CS_VREDRAW;
+	mainClassEx.style = 0;//CS_HREDRAW | CS_VREDRAW;
 	mainClassEx.lpfnWndProc = WndProc;
 	mainClassEx.cbClsExtra = 0;
 	mainClassEx.cbWndExtra = 0;
@@ -68,9 +53,20 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, hInstance, NULL);
 
 	if (!hMainWnd)
-	{
 		return FALSE;
-	}
+
+	if (!gestureEngine.Create(hMainWnd))
+		return FALSE;
+
+	if (!drawEngine.Create())
+		return FALSE;
+
+	if (!kadrHandler.Create())
+		return FALSE;
+
+	drawKit.Init();
+
+	SendMessage(hMainWnd, WM_UPDATE, 0, 0);
 
 	ShowWindow(hMainWnd, SW_MAXIMIZE);
 	UpdateWindow(hMainWnd);
@@ -80,30 +76,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	PAINTSTRUCT ps;
-	HDC hdc;
-
 	switch (message)
 	{
-	case WM_LBUTTONDOWN:
-		/*if (hWnd == hMainWnd)
-		{
-			MessageBox(NULL, L"Child click", L"Left mouse button", MB_OK);
-		}
-		else
-		{
-			MessageBox(NULL, L"Parent click", L"Left mouse button", MB_OK);
-		}*/
-		break;
-
 	case WM_GESTURENOTIFY:
 	{
-		// This is the right place to define the list of gestures that this
-		// application will support. By populating GESTURECONFIG structure 
-		// and calling SetGestureConfig function. We can choose gestures 
-		// that we want to handle in our application. In this app we
-		// decide to handle all gestures.
-
 		DWORD dwPanWant = GC_PAN | GC_PAN_WITH_SINGLE_FINGER_VERTICALLY | GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
 		DWORD dwPanBlock = GC_PAN_WITH_GUTTER | GC_PAN_WITH_INERTIA;
 
@@ -135,17 +111,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		return gestureEngine.WndProc(hWnd, wParam, lParam);
 		break;
 
-	case WM_HSCROLL:
-		return gestureEngine.WndProc(hWnd, wParam, lParam);
-		break;
+	case WM_UPDATE:
+	{
+		drawEngine.UpdateBackground();
+		InvalidateRect(hWnd, NULL, FALSE);
+	}
+	break;
 
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 
-		for (int i = 0; i < DISPLAY_ROWS; i++)
-			for (int j = 0; j < DISPLAY_COLS; j++)
-				if (kadrHandler.getDisplayCell(i, j) != NULL)
-					kadrHandler.getDisplayCell(i, j)->Paint(hdc);
+		drawEngine.Draw(hdc);
+		/*kadrHandler.DrawBackground(hdc);
+
+		hdcMem = CreateCompatibleDC(hdc);
+		hbmMem = CreateCompatibleBitmap(hdc, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+		hOld = SelectObject(hdcMem, hbmMem);
+
+		kadrHandler.Draw(hdc);
+		
+		HPEN hPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
+		HGDIOBJ hPenOld = SelectObject(hdc, hPen);
+		Rectangle(hdc, 0, 0, 100, 25);
+		Rectangle(hdc, 0, HEIGHTPX, 100, HEIGHTPX - 25);
+		SelectObject(hdc, hPenOld);
+		DeleteObject(hPen);
+
+		BitBlt(hdc, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), hdcMem, 0, 0, SRCCOPY);
+
+		SelectObject(hdcMem, hOld);
+		DeleteObject(hbmMem);
+		DeleteDC(hdcMem);*/
 
 		EndPaint(hWnd, &ps);
 		break;

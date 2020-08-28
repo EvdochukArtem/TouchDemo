@@ -1,31 +1,74 @@
 #include "Kadr.h"
-#include "math.h"
 #include "KadrHandler.h"
+#include "DrawEngine.h"
 
-#define CAPTION_CORRECTION 24
-#define DEAD_ZONE 50
+#define KADR_BORDER_Y 25
+#define KADR_BORDER_X 0
+#define KADR_WORK_AREA_WIDTH (int)(WIDTHPX - 2 * KADR_BORDER_X)
+#define KADR_WORK_AREA_HEIGHT (int)(HEIGHTPX - 2 * KADR_BORDER_Y)
+#define CAPTION_CORRECTION GetSystemMetrics(SM_CYCAPTION)
+#define DEAD_ZONE 100
 
 // This macro is used to round double and cast it to LONG
 #define ROUND_DOUBLE_TO_LONG(x) ((LONG)floor(0.5 + (x)))
 
-CKadr::CKadr(UINT id, KADR_SIZE kadrSize, UINT cx, UINT cy, UINT width, UINT height)
+CKadr::CKadr(UINT id, KADR_SIZE kadrSize)
 {
+	hOld = NULL;
 	_id = id;
 	_kadrSize = kadrSize;
-	_cx = cx;
-	_cy = cy;
-	_width = width;
-	_height = height;
+
+	CreateKadr();
+	RegisterDrawingObject();
+
 	_rotationAngle = 0;
 	_scalingFactor = 1;
 
 	InitInteractiveObj();
 }
 
+CKadr::~CKadr()
+{
+	DeleteDrawingObject();
+}
+
+void CKadr::CreateKadr()
+{
+	switch (_kadrSize)
+	{
+	case FULL:
+		_width = KADR_WORK_AREA_WIDTH;
+		_height = KADR_WORK_AREA_HEIGHT + KADR_BORDER_Y;
+		_x = KADR_BORDER_X;
+		_y = KADR_BORDER_Y;
+		break;
+	case HALF:
+		_width =  KADR_WORK_AREA_WIDTH/2;
+		_height = KADR_WORK_AREA_HEIGHT + KADR_BORDER_Y;
+		_x = KADR_BORDER_X + _id * _width / 2;
+		_y = KADR_BORDER_Y;
+		break;
+	case QUATER:
+		_width = KADR_WORK_AREA_WIDTH / 4;
+		_height = KADR_WORK_AREA_HEIGHT + KADR_BORDER_Y;
+		_x = KADR_BORDER_X + (_id % 4) * (KADR_WORK_AREA_WIDTH / 4);
+		_y = KADR_BORDER_Y;
+		break;
+	case EIGHTH:
+		_width = KADR_WORK_AREA_WIDTH / 4;
+		_height = (KADR_WORK_AREA_HEIGHT + KADR_BORDER_Y) / 2;
+		_x = KADR_BORDER_X + (_id % 4) * (KADR_WORK_AREA_WIDTH / 4);
+		_y = KADR_BORDER_Y + (_id / 4) * _height;
+		break;
+	default:
+		break;
+	}
+}
+
 void CKadr::InitInteractiveObj()
 {
-	interactiveObj[0].x = _cx + _width / 2;
-	interactiveObj[0].y = _cy + _height / 2;
+	interactiveObj[0].x = _x + _width / 2;
+	interactiveObj[0].y = _y + _height / 2;
 	interactiveObj[1].x = interactiveObj[0].x - 30;
 	interactiveObj[1].y = interactiveObj[0].y + 30;
 	interactiveObj[2].x = interactiveObj[0].x + 30;
@@ -35,16 +78,15 @@ void CKadr::InitInteractiveObj()
 
 void CKadr::DrawBorders(HDC hdc)
 {
-	POINT ptRect[5];
 	// upper left cofner
-	ptRect[0].x = _cx;
-	ptRect[0].y = _cy;
+	ptRect[0].x = _x;
+	ptRect[0].y = _y;
 	// upper right corner
-	ptRect[1].x = _cx + _width;
+	ptRect[1].x = _x + _width;
 	ptRect[1].y = ptRect[0].y;
 	// lower right corner
 	ptRect[2].x = ptRect[1].x;
-	ptRect[2].y = _cy + _height - CAPTION_CORRECTION;
+	ptRect[2].y = _y + _height - CAPTION_CORRECTION;
 	// lower left corner
 	ptRect[3].x = ptRect[0].x;
 	ptRect[3].y = ptRect[2].y;
@@ -54,18 +96,25 @@ void CKadr::DrawBorders(HDC hdc)
 	Polyline(hdc, ptRect, 5);
 }
 
-void CKadr::Paint(HDC hdc)
+void CKadr::DrawBackground()
 {
-	HPEN hPen = CreatePen(PS_SOLID, 2, RGB(0, 0, 0));
+	extern CDrawEngine drawEngine;
+	hOld = (HBRUSH)SelectObject(drawEngine.getBackgroundHDC(), CDrawKit::WhiteBrush);
+	Rectangle(drawEngine.getBackgroundHDC(), _x, _y, _x + _width, _y + _height - CAPTION_CORRECTION);
+	SelectObject(drawEngine.getBackgroundHDC(), hOld);
+	
+	hOld = SelectObject(drawEngine.getBackgroundHDC(), CDrawKit::BlackPen2);
+	DrawBorders(drawEngine.getBackgroundHDC());
+	SelectObject(drawEngine.getBackgroundHDC(), hOld);
+}
 
-	HGDIOBJ hPenOld = SelectObject(hdc, hPen);
-
-	DrawBorders(hdc);
+void CKadr::Draw(HDC hdc)
+{
+	hOld = SelectObject(hdc, CDrawKit::BlackPen2);
 
 	DrawInteractiveObj(hdc);
 
-	SelectObject(hdc, hPenOld);
-	DeleteObject(hPen);
+	SelectObject(hdc, hOld);
 }
 
 void CKadr::DrawInteractiveObj(HDC hdc)
@@ -106,10 +155,10 @@ void CKadr::Move(const POINT firstTouchCoord, const LONG ldx, const LONG ldy)
 {
 	for (int i = 0; i < INTERACTIVE_OBJ_LENGTH; i++)
 	{
-		if ((interactiveObj[i].x + ldx) > (LONG)(_cx + _width) ||
-			(interactiveObj[i].x + ldx) < (LONG)_cx ||
-			(interactiveObj[i].y + ldy) > (LONG)(_cy + _height - CAPTION_CORRECTION)||
-			(interactiveObj[i].y + ldy) < (LONG)_cy)
+		if ((interactiveObj[i].x + ldx) > (LONG)(_x + _width) ||
+			(interactiveObj[i].x + ldx) < (LONG)_x ||
+			(interactiveObj[i].y + ldy) > (LONG)(_y + _height - CAPTION_CORRECTION)||
+			(interactiveObj[i].y + ldy) < (LONG)_y)
 			return;
 	}
 	for (int i = 0; i < INTERACTIVE_OBJ_LENGTH; i++)
@@ -160,14 +209,14 @@ void CKadr::Rotate(const double dAngle, const LONG iOx, const LONG iOy)
 	_rotationAngle += dAngle;
 }
 
-bool CKadr::PointIsMine(POINT touchCoord)
+bool CKadr::PointIsMine(const POINT touchCoord)
 {
 	bool PointIsMine = false;
 	
-	if (touchCoord.x >= (LONG)_cx &&
-		touchCoord.x <= ((LONG)_cx + (LONG)_width) &&
-		touchCoord.y >= (LONG)_cy &&
-		touchCoord.y <= ((LONG)_cy + (LONG)_height))
+	if (touchCoord.x >= (LONG)_x &&
+		touchCoord.x <= ((LONG)_x + (LONG)_width) &&
+		touchCoord.y >= (LONG)_y &&
+		touchCoord.y <= ((LONG)_y + (LONG)_height))
 		PointIsMine = true;
 
 	return PointIsMine;

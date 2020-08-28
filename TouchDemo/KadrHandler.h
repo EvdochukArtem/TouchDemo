@@ -1,7 +1,8 @@
 #pragma once
 
+#include "StdAfx.h"
 #include "Kadr.h"
-#include "GestureEngine.h"
+#include "MechanicMenu.h"
 
 #define DISPLAY_ROWS 2
 #define DISPLAY_COLS 4
@@ -9,12 +10,15 @@
 class CKadrHandler
 {
 public:
-	CKadrHandler();
+	CKadrHandler() {};
 	~CKadrHandler() {};
 
+	BOOL Create();
 	CKadr* getDisplayCell(int row, int col) { return displayCells[row][col]; };
 	void DivideKadr(UINT kadrID, KADR_SIZE kadrSize);
 	void MergeKadr(UINT kadrID, KADR_SIZE kadrSize, MERGE_DIRECTION mergeDir);
+	//void StartLine(const POINT firstTouchCoord, const bool singleTouch);
+	//void FinishLine(const POINT lastTouchCoord);
 
 private:
 	// Ётот массив содержит кадры. ћаксимум их может быть 8 (два р€да в каждом 4 восьмирушки)
@@ -24,4 +28,12 @@ private:
 	// на €чейку которую он будет занимать в массиве. Ќапример 2 кадра каждый размером в полэкрана
 	// будут иметь ID 0 и 2 соотственно, а индексы будут [0][0] и [0][2].
 	CKadr* displayCells[DISPLAY_ROWS][DISPLAY_COLS];
+
+	CMechanicMenu* mechanicMenu[DISPLAY_COLS];
+	/*POINT startLine;
+	POINT endLine;
+	bool multiLine;
+
+	void ClearLines();
+	void DrawLine(HDC hdc);*/
 };
