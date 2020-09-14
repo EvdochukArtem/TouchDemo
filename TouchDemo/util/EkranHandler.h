@@ -1,26 +1,28 @@
 #pragma once
-
-#include "StdAfx.h"
-#include "Kadr.h"
-#include "MechanicMenu.h"
+#include "object/Kadr.h"
+#include "object/MechanicMenu.h"
 
 #define DISPLAY_ROWS 2
 #define DISPLAY_COLS 4
 
-class CKadrHandler
+class CEkranHandler
 {
 public:
-	CKadrHandler() {};
-	~CKadrHandler() {};
-
-	BOOL Create();
-	CKadr* getDisplayCell(int row, int col) { return displayCells[row][col]; };
+	CKadr* getDisplayCell(UINT row, UINT col) { return displayCells[row][col]; };
+	CMechanicMenu* getMechanicMenu(UINT col) { return mechanicMenu[col]; };
 	void DivideKadr(UINT kadrID, KADR_SIZE kadrSize);
 	void MergeKadr(UINT kadrID, KADR_SIZE kadrSize, MERGE_DIRECTION mergeDir);
-	//void StartLine(const POINT firstTouchCoord, const bool singleTouch);
-	//void FinishLine(const POINT lastTouchCoord);
+	void SetSOI(UINT newSOI);
 
 private:
+	CEkranHandler() {};
+	~CEkranHandler() {};
+	BOOL Create();
+	friend class CUtil;
+
+	//TODO: —ќ» должны быть сделаны по аналогии с существующими и разещены в commontypes. “к существующие неподход€т пока будет такой имитатор.
+	UINT curSOI;
+
 	// Ётот массив содержит кадры. ћаксимум их может быть 8 (два р€да в каждом 4 восьмирушки)
 	// ” каждого кадра есть ID по которому можно пон€ть его индекс в массиве.
 	// Ћогика присвоени€ индекса и ID така€:
@@ -30,10 +32,4 @@ private:
 	CKadr* displayCells[DISPLAY_ROWS][DISPLAY_COLS];
 
 	CMechanicMenu* mechanicMenu[DISPLAY_COLS];
-	/*POINT startLine;
-	POINT endLine;
-	bool multiLine;
-
-	void ClearLines();
-	void DrawLine(HDC hdc);*/
 };

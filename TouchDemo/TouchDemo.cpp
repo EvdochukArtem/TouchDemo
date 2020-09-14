@@ -1,4 +1,6 @@
+#include "StdAfx.h"
 #include "TouchDemo.h"
+#include "util/Util.h"
 
 int APIENTRY wWinMain(HINSTANCE hInstance,
 	HINSTANCE /* hPrevInstance */,
@@ -49,35 +51,51 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance;
 
-	hMainWnd = CreateWindow(szClassName, szTitle, WS_SYSMENU,
+	MFIWindow = CreateWindow(szClassName, szTitle, WS_SYSMENU,
 		0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, hInstance, NULL);
 
-	if (!hMainWnd)
+	if (!MFIWindow)
 		return FALSE;
 
-	if (!gestureEngine.Create(hMainWnd))
-		return FALSE;
+	SendMessage(MFIWindow, WM_UPDATE, 0, 0);
 
-	if (!drawEngine.Create())
-		return FALSE;
-
-	if (!kadrHandler.Create())
-		return FALSE;
-
-	drawKit.Init();
-
-	SendMessage(hMainWnd, WM_UPDATE, 0, 0);
-
-	ShowWindow(hMainWnd, SW_MAXIMIZE);
-	UpdateWindow(hMainWnd);
+	ShowWindow(MFIWindow, SW_MAXIMIZE);
+	UpdateWindow(MFIWindow);
 
 	return TRUE;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
+	PAINTSTRUCT ps;		// Нужна для рисования в клиентской области окна
+	switch (message)			// Переход по сообщению
 	{
+	case WM_CREATE:
+		hdc = GetDC(hWnd);
+		break;
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+	case WM_MOUSEMOVE:
+	case WM_MOUSEWHEEL:
+	case WM_KEYDOWN:
+		return GESTURE_EMULATOR.WndProc(hWnd, message, wParam, lParam);
+		InvalidateRect(hWnd, NULL, FALSE);
+		UpdateWindow(MFIWindow);
+		break;
+	case WM_UPDATE:
+		DRAW_ENGINE.UpdateBackground();
+		InvalidateRect(hWnd, NULL, FALSE);
+		break;
+	case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+		DRAW_ENGINE.Draw(hdc);
+		EndPaint(hWnd, &ps);
+		break;
+	case WM_CLOSE:
+		break;
 	case WM_GESTURENOTIFY:
 	{
 		DWORD dwPanWant = GC_PAN | GC_PAN_WITH_SINGLE_FINGER_VERTICALLY | GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
@@ -108,50 +126,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	break;
 
 	case WM_GESTURE:
-		return gestureEngine.WndProc(hWnd, wParam, lParam);
+		return GESTURE_ENGINE.WndProc(hWnd, wParam, lParam);
 		break;
-
-	case WM_UPDATE:
-	{
-		drawEngine.UpdateBackground();
-		InvalidateRect(hWnd, NULL, FALSE);
 	}
-	break;
 
-	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
 
-		drawEngine.Draw(hdc);
-		/*kadrHandler.DrawBackground(hdc);
-
-		hdcMem = CreateCompatibleDC(hdc);
-		hbmMem = CreateCompatibleBitmap(hdc, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
-		hOld = SelectObject(hdcMem, hbmMem);
-
-		kadrHandler.Draw(hdc);
-		
-		HPEN hPen = CreatePen(PS_SOLID, 2, RGB(255, 0, 0));
-		HGDIOBJ hPenOld = SelectObject(hdc, hPen);
-		Rectangle(hdc, 0, 0, 100, 25);
-		Rectangle(hdc, 0, HEIGHTPX, 100, HEIGHTPX - 25);
-		SelectObject(hdc, hPenOld);
-		DeleteObject(hPen);
-
-		BitBlt(hdc, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), hdcMem, 0, 0, SRCCOPY);
-
-		SelectObject(hdcMem, hOld);
-		DeleteObject(hbmMem);
-		DeleteDC(hdcMem);*/
-
-		EndPaint(hWnd, &ps);
-		break;
-	case WM_DESTROY:
-
-		PostQuitMessage(0);
-
-		break;
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-	return 0;
+	return (DefWindowProc(hWnd, message, wParam, lParam));
 }

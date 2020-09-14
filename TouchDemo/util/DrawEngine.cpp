@@ -1,3 +1,4 @@
+#include "StdAfx.h"
 #include "DrawEngine.h"
 
 CDrawEngine::CDrawEngine()
@@ -62,7 +63,6 @@ void CDrawEngine::DeleteDrawingObject(CDrawingObject* obj)
 	if (obj == NULL)
 		return;
 	std::vector<CDrawingObject*>::iterator it = std::find(drawingObjects.begin(), drawingObjects.end(), obj);
-	//std::vector<CDrawingObject*>::difference_type index = std::distance(drawingObjects.begin(), it);
 	drawingObjects.erase(it);
 }
 
@@ -81,12 +81,20 @@ void CDrawEngine::Draw(HDC hdc)
 
 	for (CDrawingObject* obj : drawingObjects)
 		obj->Draw(tmpHDC);
-	
+
 	BitBlt(hdc, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), tmpHDC, 0, 0, SRCCOPY);
-	
+
 	SelectObject(tmpHDC, hOld);
 
 	DeleteDC(tmpHDC);
 	DeleteObject(tmpBITMAP);
 	DeleteObject(hOld);
+}
+
+CDrawingObject* CDrawEngine::getDrawingObject(POINT pt)
+{
+	for (CDrawingObject* obj : drawingObjects)
+		if (obj->PointIsMine(pt))
+			return obj;
+	return NULL;
 }

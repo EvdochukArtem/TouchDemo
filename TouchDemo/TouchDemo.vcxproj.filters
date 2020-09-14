@@ -25,31 +25,55 @@
     <Filter Include="Source Files\object">
       <UniqueIdentifier>{652f20d0-357b-4982-915a-5e00c637491d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\object\buttons">
+      <UniqueIdentifier>{a2149c37-c5e0-4a26-9144-27bc909fd03e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object\buttons">
+      <UniqueIdentifier>{5cf93ac5-e7be-4892-bba8-ba0ee913cee4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TouchDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DrawEngine.cpp">
+    <ClCompile Include="util\DrawEngine.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="DrawKit.cpp">
+    <ClCompile Include="util\DrawKit.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="GestureEngine.cpp">
+    <ClCompile Include="util\GestureEngine.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="KadrHandler.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="DrawingObject.cpp">
+    <ClCompile Include="object\DrawingObject.cpp">
       <Filter>Source Files\object</Filter>
     </ClCompile>
-    <ClCompile Include="Kadr.cpp">
+    <ClCompile Include="object\Kadr.cpp">
       <Filter>Source Files\object</Filter>
     </ClCompile>
-    <ClCompile Include="MechanicMenu.cpp">
+    <ClCompile Include="object\MechanicMenu.cpp">
       <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="util\EkranHandler.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="util\GestureEngineEmulator.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\AbstractButton.cpp">
+      <Filter>Source Files\object\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\MenuButton.cpp">
+      <Filter>Source Files\object\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\SimpleButton.cpp">
+      <Filter>Source Files\object\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="util\Util.cpp">
+      <Filter>Source Files\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -59,26 +83,41 @@
     <ClInclude Include="TouchDemo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DrawEngine.h">
+    <ClInclude Include="util\DrawEngine.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="DrawKit.h">
+    <ClInclude Include="util\DrawKit.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="GestureEngine.h">
+    <ClInclude Include="util\GestureEngine.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="KadrHandler.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawingObject.h">
+    <ClInclude Include="object\DrawingObject.h">
       <Filter>Header Files\object</Filter>
     </ClInclude>
-    <ClInclude Include="Kadr.h">
+    <ClInclude Include="object\Kadr.h">
       <Filter>Header Files\object</Filter>
     </ClInclude>
-    <ClInclude Include="MechanicMenu.h">
+    <ClInclude Include="object\MechanicMenu.h">
       <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="util\EkranHandler.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\GestureEngineEmulator.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\AbstractButton.h">
+      <Filter>Header Files\object\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\MenuButton.h">
+      <Filter>Header Files\object\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\SimpleButton.h">
+      <Filter>Header Files\object\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="util\Util.h">
+      <Filter>Header Files\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
