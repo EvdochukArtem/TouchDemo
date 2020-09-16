@@ -127,6 +127,7 @@ void  CMechanicMenu::CHiMenu::LeftClickHandle(POINT clickCoord)
 				buttons[curSOI]->SwitchSOI();
 			buttons[i]->LeftClickHandle();
 			curSOI = i;
+			return;
 		}
 }
 
@@ -134,8 +135,10 @@ void CMechanicMenu::CLoMenu::LeftClickHandle(POINT clickCoord)
 {
 	for (int i = 0; i < BUTTONS_MAX_NUM; i++)
 		if (buttons[i] != NULL && buttons[i]->PointIsMine(clickCoord))
+		{
 			buttons[i]->LeftClickHandle();
-
+			return;
+		}
 }
 
 void CMechanicMenu::CLoMenu::CreateButtons()

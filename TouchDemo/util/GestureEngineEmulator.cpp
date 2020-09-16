@@ -3,12 +3,12 @@
 #include "util/Util.h"
 
 #define _USE_MATH_DEFINES
-#define TOUCH_EKRAN_WIDTH WIDTHPX
-#define TOUCH_EKRAN_HEIGHT HEIGHTPX - MECHANIC_MENU_HEIGHTPX
-#define DEAD_ZONE		10
-#define CLICK_TIME		200
-#define SHIFT_X			300;
-#define SHIFT_Y			50;
+#define TOUCH_EKRAN_WIDTH	WIDTHPX
+#define TOUCH_EKRAN_HEIGHT	HEIGHTPX - MECHANIC_MENU_HEIGHTPX
+#define DEAD_ZONE			10
+#define CLICK_TIME			200
+#define SHIFT_X				300
+#define SHIFT_Y				50
 
 LRESULT CGestureEngineEmulator::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -17,17 +17,17 @@ LRESULT CGestureEngineEmulator::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 	case WM_LBUTTONDOWN:
 		_ptFirst.x = LOWORD(lParam);
 		_ptFirst.y = HIWORD(lParam);
-		ScreenToClient(hWnd, &_ptFirst);
+		//ScreenToClient(hWnd, &_ptFirst);
 		_ptBegin = _ptFirst;
 		_timer = GetTickCount();
 		break;
 
 	case WM_LBUTTONUP:
 	{
+		_timer = GetTickCount() - _timer;
 		_ptSecond.x = LOWORD(lParam);
 		_ptSecond.y = HIWORD(lParam);
-		ScreenToClient(hWnd, &_ptSecond);
-		_timer = GetTickCount() - _timer;
+		//ScreenToClient(hWnd, &_ptSecond);
 		LONG diffX = _ptSecond.x - _ptBegin.x;
 		LONG diffY = _ptSecond.y - _ptBegin.y;
 		if (_timer < CLICK_TIME && diffX < DEAD_ZONE && diffY < DEAD_ZONE)
@@ -45,14 +45,14 @@ LRESULT CGestureEngineEmulator::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 	case WM_RBUTTONUP:
 		_ptSecond.x = LOWORD(lParam);
 		_ptSecond.y = HIWORD(lParam);
-		ScreenToClient(hWnd, &_ptSecond);
+		//ScreenToClient(hWnd, &_ptSecond);
 		GESTURE_EMULATOR.OnRMouseUp(_ptSecond);
 		break;
 
 	case WM_MBUTTONDOWN:
 		_ptFirst.x = LOWORD(lParam);
 		_ptFirst.y = HIWORD(lParam);
-		ScreenToClient(hWnd, &_ptFirst);
+		//ScreenToClient(hWnd, &_ptFirst);
 		_ptBegin = _ptFirst;
 		break;
 
@@ -67,7 +67,7 @@ LRESULT CGestureEngineEmulator::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 		{
 			_ptSecond.x = LOWORD(lParam);
 			_ptSecond.y = HIWORD(lParam);
-			ScreenToClient(hWnd, &_ptSecond);
+			//ScreenToClient(hWnd, &_ptSecond);
 			if (EmulateTouchIsValid(_ptSecond) == false)
 				break;
 			POINT Coords = { _ptSecond.x - _ptFirst.x, _ptSecond.y - _ptFirst.y };
@@ -79,7 +79,7 @@ LRESULT CGestureEngineEmulator::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 		{
 			_ptSecond.x = LOWORD(lParam);
 			_ptSecond.y = HIWORD(lParam);
-			ScreenToClient(hWnd, &_ptSecond);
+			//ScreenToClient(hWnd, &_ptSecond);
 			OnMouseRotate(_ptBegin, (_ptFirst.x - _ptSecond.x) * 0.01, _ptBegin);
 			_ptFirst = _ptSecond;
 		}
@@ -92,7 +92,7 @@ LRESULT CGestureEngineEmulator::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 	{
 		_ptBegin.x = LOWORD(lParam);
 		_ptBegin.y = HIWORD(lParam);
-		ScreenToClient(hWnd, &_ptBegin);
+		//ScreenToClient(hWnd, &_ptBegin);
 		if (0 < GET_WHEEL_DELTA_WPARAM(wParam))
 			GESTURE_EMULATOR.OnMouseWheelUp(_ptBegin);
 		else
@@ -101,12 +101,16 @@ LRESULT CGestureEngineEmulator::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 	break;
 
 	case WM_KEYDOWN:
+	{
 		GESTURE_EMULATOR.ProcessKeyboard(wParam);
-		break;
+		SendMessage(hWnd, WM_UPDATE, 0, 0);
+	}
+	break;
 
 	default:
 		break;
 	}
+	InvalidateRect(hWnd, NULL, FALSE);
 	return TRUE;
 }
 
@@ -147,7 +151,6 @@ void CGestureEngineEmulator::ProcessMove(POINT firstCoord, POINT finishCoord)
 
 void CGestureEngineEmulator::ProcessKeyboard(UINT key)
 {
-	extern HWND MFIWindow;
 	POINT firstCursorPos;
 	POINT secondCursorPos;
 	switch (key)
@@ -163,11 +166,10 @@ void CGestureEngineEmulator::ProcessKeyboard(UINT key)
 				if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
 				{
 					EKRAN_HANDLER.getDisplayCell(i, j)->Swipe(firstCursorPos, secondCursorPos);
-					break;
+					return;
 				}
 			}
 		}
-		SendMessage(MFIWindow, WM_UPDATE, 0, 0);
 		break;
 	case VK_RIGHT:
 		GetCursorPos(&firstCursorPos);
@@ -180,11 +182,10 @@ void CGestureEngineEmulator::ProcessKeyboard(UINT key)
 				if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
 				{
 					EKRAN_HANDLER.getDisplayCell(i, j)->Swipe(firstCursorPos, secondCursorPos);
-					break;
+					return;
 				}
 			}
 		}
-		SendMessage(MFIWindow, WM_UPDATE, 0, 0);
 		break;
 	case VK_UP:
 		GetCursorPos(&firstCursorPos);
@@ -197,7 +198,6 @@ void CGestureEngineEmulator::ProcessKeyboard(UINT key)
 				if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
 				{
 					EKRAN_HANDLER.getDisplayCell(i, j)->Swipe(firstCursorPos, secondCursorPos);
-					SendMessage(MFIWindow, WM_UPDATE, 0, 0);
 					return;
 				}
 			}
@@ -214,16 +214,14 @@ void CGestureEngineEmulator::ProcessKeyboard(UINT key)
 				if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
 				{
 					EKRAN_HANDLER.getDisplayCell(i, j)->Swipe(firstCursorPos, secondCursorPos);
-					break;
+					return;
 				}
 			}
 		}
-		SendMessage(MFIWindow, WM_UPDATE, 0, 0);
 		break;
 	default:
 		break;
 	}
-
 }
 
 void CGestureEngineEmulator::OnLMouseUp(POINT clickCoord)

@@ -82,8 +82,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEWHEEL:
 	case WM_KEYDOWN:
 		return GESTURE_EMULATOR.WndProc(hWnd, message, wParam, lParam);
-		InvalidateRect(hWnd, NULL, FALSE);
-		UpdateWindow(MFIWindow);
 		break;
 	case WM_UPDATE:
 		DRAW_ENGINE.UpdateBackground();
