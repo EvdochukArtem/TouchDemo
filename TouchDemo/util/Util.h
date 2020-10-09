@@ -10,7 +10,7 @@ class CUtil
 public:
 	static CUtil& Instance();
 	BOOL Create();
-
+	
 	CGestureEngine& getGestureEngine() { return gestureEngine; };
 	CGestureEngineEmulator& getGestureEngineEmulator() { return gestureEngineEmulator; };
 	CEkranHandler& getEkranHandler() { return EkranHandler; };

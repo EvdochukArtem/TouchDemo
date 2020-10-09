@@ -23,24 +23,24 @@ LRESULT CGestureEngineEmulator::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 		break;
 
 	case WM_LBUTTONUP:
-	{
-		_timer = GetTickCount() - _timer;
-		_ptSecond.x = LOWORD(lParam);
-		_ptSecond.y = HIWORD(lParam);
-		//ScreenToClient(hWnd, &_ptSecond);
-		LONG diffX = _ptSecond.x - _ptBegin.x;
-		LONG diffY = _ptSecond.y - _ptBegin.y;
-		if (_timer < CLICK_TIME && diffX < DEAD_ZONE && diffY < DEAD_ZONE)
-			OnLMouseUp(_ptSecond);
-		else
 		{
-			if (EmulateTouchIsValid(_ptSecond) == false)
-				break;
-			POINT Cords = { _ptSecond.x - _ptFirst.x, _ptSecond.y - _ptFirst.y };
-			ProcessMove(_ptFirst, Cords);
+			_timer = GetTickCount() - _timer;
+			_ptSecond.x = LOWORD(lParam);
+			_ptSecond.y = HIWORD(lParam);
+			//ScreenToClient(hWnd, &_ptSecond);
+			LONG diffX = _ptSecond.x - _ptBegin.x;
+			LONG diffY = _ptSecond.y - _ptBegin.y;
+			if (_timer < CLICK_TIME && diffX < DEAD_ZONE && diffY < DEAD_ZONE)
+				OnLMouseUp(_ptSecond);
+			else
+			{
+				if (EmulateTouchIsValid(_ptSecond) == false)
+					break;
+				POINT Cords = {_ptSecond.x - _ptFirst.x, _ptSecond.y - _ptFirst.y};
+				ProcessMove(_ptFirst, Cords);
+			}
 		}
-	}
-	break;
+		break;
 
 	case WM_RBUTTONUP:
 		_ptSecond.x = LOWORD(lParam);
@@ -60,45 +60,45 @@ LRESULT CGestureEngineEmulator::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 		break;
 
 	case WM_MOUSEMOVE:
-	{
-		switch (wParam)
 		{
-		case MK_LBUTTON:
-		{
-			_ptSecond.x = LOWORD(lParam);
-			_ptSecond.y = HIWORD(lParam);
-			//ScreenToClient(hWnd, &_ptSecond);
-			if (EmulateTouchIsValid(_ptSecond) == false)
+			switch(wParam)
+			{
+			case MK_LBUTTON:
+				{
+					_ptSecond.x = LOWORD(lParam);
+					_ptSecond.y = HIWORD(lParam);
+					//ScreenToClient(hWnd, &_ptSecond);
+					if (EmulateTouchIsValid(_ptSecond) == false)
+						break;
+					POINT Coords = {_ptSecond.x - _ptFirst.x, _ptSecond.y - _ptFirst.y};
+					ProcessMove(_ptFirst, Coords);
+					_ptFirst = _ptSecond;
+				}
 				break;
-			POINT Coords = { _ptSecond.x - _ptFirst.x, _ptSecond.y - _ptFirst.y };
-			ProcessMove(_ptFirst, Coords);
-			_ptFirst = _ptSecond;
+			case MK_MBUTTON:
+				{
+					_ptSecond.x = LOWORD(lParam);
+					_ptSecond.y = HIWORD(lParam);
+					//ScreenToClient(hWnd, &_ptSecond);
+					OnMouseRotate(_ptBegin, (_ptFirst.x - _ptSecond.x) * 0.01, _ptBegin);
+					_ptFirst = _ptSecond;
+				}
+				break;
+			}
 		}
 		break;
-		case MK_MBUTTON:
-		{
-			_ptSecond.x = LOWORD(lParam);
-			_ptSecond.y = HIWORD(lParam);
-			//ScreenToClient(hWnd, &_ptSecond);
-			OnMouseRotate(_ptBegin, (_ptFirst.x - _ptSecond.x) * 0.01, _ptBegin);
-			_ptFirst = _ptSecond;
-		}
-		break;
-		}
-	}
-	break;
 
 	case WM_MOUSEWHEEL:
-	{
-		_ptBegin.x = LOWORD(lParam);
-		_ptBegin.y = HIWORD(lParam);
-		//ScreenToClient(hWnd, &_ptBegin);
-		if (0 < GET_WHEEL_DELTA_WPARAM(wParam))
-			GESTURE_EMULATOR.OnMouseWheelUp(_ptBegin);
-		else
-			GESTURE_EMULATOR.OnMouseWheelDown(_ptBegin);
-	}
-	break;
+		{
+			_ptBegin.x = LOWORD(lParam);
+			_ptBegin.y = HIWORD(lParam);
+			//ScreenToClient(hWnd, &_ptBegin);
+			if (0 < GET_WHEEL_DELTA_WPARAM(wParam))
+				GESTURE_EMULATOR.OnMouseWheelUp(_ptBegin);
+			else
+				GESTURE_EMULATOR.OnMouseWheelDown(_ptBegin);
+		}
+		break;
 
 	case WM_KEYDOWN:
 	{
@@ -121,10 +121,10 @@ void CGestureEngineEmulator::OnMouseWheelUp(POINT cursorPos)
 	const double dZoomFactor = 1.1;
 	zoomCenter.x = cursorPos.x;
 	zoomCenter.y = cursorPos.y;
-
+	
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(cursorPos))
+			if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(cursorPos))
 				EKRAN_HANDLER.getDisplayCell(i, j)->Zoom(dZoomFactor, zoomCenter);
 }
 
@@ -134,26 +134,26 @@ void CGestureEngineEmulator::OnMouseWheelDown(POINT cursorPos)
 	const double dZoomFactor = 0.9;
 	zoomCenter.x = cursorPos.x;
 	zoomCenter.y = cursorPos.y;
-
+	
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(cursorPos))
+			if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(cursorPos))
 				EKRAN_HANDLER.getDisplayCell(i, j)->Zoom(dZoomFactor, zoomCenter);
 }
 
 void CGestureEngineEmulator::ProcessMove(POINT firstCoord, POINT finishCoord)
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
-		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCoord))
-				EKRAN_HANDLER.getDisplayCell(i, j)->Move(firstCoord, finishCoord);
+        for (int j = 0; j < DISPLAY_COLS; j++)
+            if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCoord))
+                EKRAN_HANDLER.getDisplayCell(i, j)->Move(firstCoord, finishCoord);
 }
 
-void CGestureEngineEmulator::ProcessKeyboard(UINT key)
+void CGestureEngineEmulator::ProcessKeyboard(WPARAM key)
 {
 	POINT firstCursorPos;
 	POINT secondCursorPos;
-	switch (key)
+	switch(key)
 	{
 	case VK_LEFT:
 		GetCursorPos(&firstCursorPos);
@@ -163,7 +163,7 @@ void CGestureEngineEmulator::ProcessKeyboard(UINT key)
 		{
 			for (int j = 0; j < DISPLAY_COLS; j++)
 			{
-				if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
+				if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
 				{
 					EKRAN_HANDLER.getDisplayCell(i, j)->Swipe(firstCursorPos, secondCursorPos);
 					return;
@@ -179,7 +179,7 @@ void CGestureEngineEmulator::ProcessKeyboard(UINT key)
 		{
 			for (int j = 0; j < DISPLAY_COLS; j++)
 			{
-				if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
+				if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
 				{
 					EKRAN_HANDLER.getDisplayCell(i, j)->Swipe(firstCursorPos, secondCursorPos);
 					return;
@@ -195,7 +195,7 @@ void CGestureEngineEmulator::ProcessKeyboard(UINT key)
 		{
 			for (int j = 0; j < DISPLAY_COLS; j++)
 			{
-				if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
+				if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
 				{
 					EKRAN_HANDLER.getDisplayCell(i, j)->Swipe(firstCursorPos, secondCursorPos);
 					return;
@@ -210,15 +210,18 @@ void CGestureEngineEmulator::ProcessKeyboard(UINT key)
 		for (int i = 0; i < DISPLAY_ROWS; i++)
 		{
 			for (int j = 0; j < DISPLAY_COLS; j++)
-			{
-				if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
+				if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstCursorPos))
 				{
 					EKRAN_HANDLER.getDisplayCell(i, j)->Swipe(firstCursorPos, secondCursorPos);
 					return;
 				}
-			}
 		}
 		break;
+#ifdef DEBUG
+	case VK_F5:
+		pixelCheck = !pixelCheck;
+		break;
+#endif
 	default:
 		break;
 	}
@@ -234,12 +237,12 @@ void CGestureEngineEmulator::OnLMouseUp(POINT clickCoord)
 			return;
 		}
 		for (int j = 0; j < DISPLAY_ROWS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(j, i) != NULL && EKRAN_HANDLER.getDisplayCell(j, i)->PointIsMine(clickCoord))
-			{
-				MessageBox(NULL, L"ClickHandle", L"", MB_OK);
-				//EKRAN_HANDLER.getDisplayCell(i, j)->LeftClickHandle();
-				return;
-			}
+			if (EKRAN_HANDLER.getDisplayCell(j, i) != nullptr && EKRAN_HANDLER.getDisplayCell(j, i)->PointIsMine(clickCoord))
+				{
+					MessageBox(NULL, L"ClickHandle", L"", MB_OK);
+					//EKRAN_HANDLER.getDisplayCell(i, j)->LeftClickHandle();
+					return;
+				}
 	}
 }
 
@@ -247,7 +250,7 @@ void CGestureEngineEmulator::OnRMouseUp(POINT clickCoord)
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(clickCoord))
+			if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(clickCoord))
 				EKRAN_HANDLER.getDisplayCell(i, j)->Reset();
 }
 
@@ -255,7 +258,7 @@ void CGestureEngineEmulator::OnMouseRotate(const POINT firstTouchCoord, const do
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j) != NULL && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+			if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
 				EKRAN_HANDLER.getDisplayCell(i, j)->Rotate(dAngle, rotateCenter);
 }
 
@@ -263,11 +266,11 @@ bool CGestureEngineEmulator::EmulateTouchIsValid(const POINT touchCoord)
 {
 	bool touchIsValid = false;
 
-	if (touchCoord.x > 0 &&
-		touchCoord.x < TOUCH_EKRAN_WIDTH &&
-		touchCoord.y > MECHANIC_MENU_HEIGHTPX &&
-		touchCoord.y < TOUCH_EKRAN_HEIGHT)
-		touchIsValid = true;
+    if (touchCoord.x > 0 &&
+        touchCoord.x < TOUCH_EKRAN_WIDTH &&
+        touchCoord.y > MECHANIC_MENU_HEIGHTPX &&
+        touchCoord.y < TOUCH_EKRAN_HEIGHT)
+        touchIsValid = true;
 
-	return touchIsValid;
+    return touchIsValid;
 }

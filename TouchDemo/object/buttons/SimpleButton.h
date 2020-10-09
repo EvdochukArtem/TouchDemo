@@ -9,5 +9,5 @@ public:
 	virtual void Draw(HDC hdc);
 	virtual void DrawBackground();
 	virtual void LeftClickHandle();
-	virtual void RightClickHandle();
+	CSimpleButton* ChangePos(UINT x, UINT y);
 };

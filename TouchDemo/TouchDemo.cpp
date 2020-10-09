@@ -40,7 +40,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	mainClassEx.hIcon = 0;
 	mainClassEx.hCursor = LoadCursor(NULL, IDC_ARROW);
 	mainClassEx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	mainClassEx.lpszMenuName = NULL;
+	mainClassEx.lpszMenuName = nullptr;
 	mainClassEx.lpszClassName = szClassName;
 	mainClassEx.hIconSm = 0;
 
@@ -51,8 +51,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance;
 
-	MFIWindow = CreateWindow(szClassName, szTitle, WS_SYSMENU,
-		0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, hInstance, NULL);
+	//MFIWindow = CreateWindow(szClassName, szTitle, WS_SYSMENU, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, hInstance, NULL);
+	MFIWindow = CreateWindow(szClassName, szTitle, WS_POPUP | WS_CLIPSIBLINGS, 0, 0, WIDTHPX, HEIGHTPX, NULL, NULL, hInstance, NULL);
 
 	if (!MFIWindow)
 		return FALSE;

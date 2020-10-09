@@ -2,8 +2,9 @@
 #include "object/DrawingObject.h"
 #include "util/Util.h"
 
-CDrawingObject::CDrawingObject()
+CDrawingObject::CDrawingObject(DRAWOBJ_PRIOR prior)
 {
+	_prior = prior;
 	RegisterDrawingObject();
 }
 
@@ -46,7 +47,7 @@ void CDrawingObject::DrawBorders(HDC hdc)
 bool CDrawingObject::PointIsMine(const POINT touchCoord)
 {
 	bool PointIsMine = false;
-
+	
 	if (touchCoord.x >= (LONG)_x &&
 		touchCoord.x <= ((LONG)_x + (LONG)_cx) &&
 		touchCoord.y >= (LONG)_y &&

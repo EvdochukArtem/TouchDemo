@@ -2,13 +2,13 @@
 
 enum DRAWOBJ_PRIOR
 {
-	MIN, MID, MAX,
+	MIN, MID, MAX, ACTIVE, SOI,
 };
 
 class CDrawingObject
 {
 public:
-	CDrawingObject();
+	CDrawingObject(DRAWOBJ_PRIOR prior);
 	~CDrawingObject();
 	virtual void Draw(HDC hdc) = 0;
 	virtual void DrawBackground() = 0;
@@ -25,8 +25,9 @@ protected:
 	HBRUSH oldBrush;
 	UINT oldTextAlign;
 	COLORREF oldColor;
-	_TCHAR buf[128];						//буфер для текста
-	virtual void DrawBorders(HDC hdc) final;
+	TCHAR buf[128];						//буфер для текста
+	virtual void DrawBorders(HDC hdc);
+
 private:
 	void RegisterDrawingObject();
 	void DeleteDrawingObject();

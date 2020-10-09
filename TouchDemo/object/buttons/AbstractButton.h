@@ -8,8 +8,8 @@ public:
 	~CAbstractButton() {};
 	virtual void Draw(HDC hdc) = 0;
 	virtual void DrawBackground() = 0;
-	virtual void LeftClickHandle() = 0;
-	virtual void RightClickHandle() = 0;
+	virtual void LeftClickHandle() {};
+	virtual void RightClickHandle() {};
 protected:
-	TCHAR _caption[10];
+	TCHAR _caption [10];
 };

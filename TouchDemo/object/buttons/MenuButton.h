@@ -9,9 +9,12 @@ public:
 	virtual void Draw(HDC hdc);
 	virtual void DrawBackground();
 	virtual void LeftClickHandle();
-	virtual void RightClickHandle();
-	void SwitchSOI();
-	bool getSOIStatus() { return isSOI; };
+	void SwitchSOI(bool soi);
+	void Activate();
+	void Disactivate();
+	bool getStatus() { return isActive; };
+	CMenuButton* ChangePos(UINT x, UINT y);
 private:
+	bool isActive;
 	bool isSOI;
 };

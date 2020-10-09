@@ -12,7 +12,7 @@ enum KADR_SIZE
 	EIGHTH,
 };
 
-enum MERGE_DIRECTION
+enum SWIPE_DIRECTION
 {
 	LEFT,
 	RIGHT,
@@ -20,25 +20,28 @@ enum MERGE_DIRECTION
 
 class CKadr : public CDrawingObject
 {
-public:
+public: 
 	CKadr(UINT id, KADR_SIZE kadrSize);
 	~CKadr() {};
 
 	virtual void Draw(HDC hdc);
 	virtual void DrawBackground();
+	virtual void ChangeSize(KADR_SIZE newSize);
+	virtual CKadr* ChangePos(UINT newPos);
 
 	virtual void Move(const POINT firstTouchCoord, const POINT delta);
 	virtual void Zoom(const double dZoomFactor, const POINT zoomCenter);
 	virtual void Rotate(const double dAngle, const POINT rotateCenter);
 	virtual void Swipe(const POINT firstTouchCoord, const POINT secondTouchCoord);
 	virtual void Reset();
+	virtual void ChangeSOIStatus();
 
 protected:
 	UINT _id;										//(0-7)
+	bool isSOI;
 	KADR_SIZE _kadrSize;
 	double  _scalingFactor;
 	double  _rotationAngle;
-	_TCHAR buf[128];
 
 	void CreateKadr();
 
@@ -47,5 +50,4 @@ private:
 	void InitInteractiveObj();
 	void DrawInteractiveObj(HDC hdc);
 	void ResetInteractiveObject();
-
 };

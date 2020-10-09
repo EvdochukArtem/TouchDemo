@@ -6,15 +6,16 @@
 #define KADR_BORDER_X 0
 #define KADR_WORK_AREA_WIDTH (int)(WIDTHPX - 2 * KADR_BORDER_X)
 #define KADR_WORK_AREA_HEIGHT (int)(HEIGHTPX - 2 * KADR_BORDER_Y)
-#define DEAD_ZONE 100
+#define DEAD_ZONE TO_PIXEL(100)
+#define INNER_KADR_INDENT TO_PIXEL(10)
 
 // This macro is used to round double and cast it to LONG
 #define ROUND_DOUBLE_TO_LONG(x) ((LONG)floor(0.5 + (x)))
 
-CKadr::CKadr(UINT id, KADR_SIZE kadrSize)
+CKadr::CKadr(UINT id, KADR_SIZE kadrSize) : CDrawingObject(MIN)
 {
-	oldBrush = NULL;
-	oldPen = NULL;
+	oldBrush = nullptr;
+	oldPen = nullptr;
 	_id = id;
 	_kadrSize = kadrSize;
 
@@ -24,6 +25,8 @@ CKadr::CKadr(UINT id, KADR_SIZE kadrSize)
 	_scalingFactor = 1;
 
 	InitInteractiveObj();
+
+	isSOI = false;
 }
 
 void CKadr::CreateKadr()
@@ -31,28 +34,36 @@ void CKadr::CreateKadr()
 	switch (_kadrSize)
 	{
 	case FULL:
-		_cx = KADR_WORK_AREA_WIDTH;
-		_cy = KADR_WORK_AREA_HEIGHT;
 		_x = KADR_BORDER_X;
 		_y = KADR_BORDER_Y;
+		_cx = KADR_WORK_AREA_WIDTH;
+		_cy = KADR_WORK_AREA_HEIGHT;
 		break;
 	case HALF:
 		_cx = KADR_WORK_AREA_WIDTH / 2;
 		_cy = KADR_WORK_AREA_HEIGHT;
-		_x = KADR_BORDER_X + _id * _cx / 2;
 		_y = KADR_BORDER_Y;
+		_x = KADR_BORDER_X + _id * _cx / 2;
 		break;
 	case QUATER:
-		_cx = KADR_WORK_AREA_WIDTH / 4;
 		_cy = KADR_WORK_AREA_HEIGHT;
-		_x = KADR_BORDER_X + (_id % 4) * (KADR_WORK_AREA_WIDTH / 4);
+		_cx = KADR_WORK_AREA_WIDTH / 4;
 		_y = KADR_BORDER_Y;
+		_x = KADR_BORDER_X + (_id % 4) * _cx;
 		break;
 	case EIGHTH:
-		_cx = KADR_WORK_AREA_WIDTH / 4;
-		_cy = (KADR_WORK_AREA_HEIGHT) / 2;
-		_x = KADR_BORDER_X + (_id % 4) * (KADR_WORK_AREA_WIDTH / 4);
-		_y = KADR_BORDER_Y + (_id / 4) * _cy;
+		if (_id / 4 == 0)
+		{
+			_cx = KADR_WORK_AREA_WIDTH / 4;
+			_cy = KADR_WORK_AREA_HEIGHT / 2;
+			_x = KADR_BORDER_X + (_id % 4) * _cx;
+			_y = KADR_BORDER_Y;
+		} else {
+			_cx = KADR_WORK_AREA_WIDTH / 4 - 2 * INNER_KADR_INDENT;
+			_cy = (KADR_WORK_AREA_HEIGHT) / 2 - 2 * INNER_KADR_INDENT;
+			_x = KADR_BORDER_X + (_id % 4) * (KADR_WORK_AREA_WIDTH / 4) + INNER_KADR_INDENT;
+			_y = KADR_BORDER_Y + KADR_WORK_AREA_HEIGHT / 2 + INNER_KADR_INDENT;
+		}
 		break;
 	default:
 		break;
@@ -72,27 +83,65 @@ void CKadr::InitInteractiveObj()
 
 void CKadr::DrawBackground()
 {
-	oldBrush = (HBRUSH)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.WhiteBrush);
+	//Фон
+	oldPen = (HPEN)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.BlackPen);
+	oldBrush = (HBRUSH)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.BlackBrush);
 	Rectangle(DRAW_ENGINE.getBackgroundHDC(), _x, _y, _x + _cx, _y + _cy);
+	if (_id / 4 == 1 && _kadrSize == EIGHTH)
+	{
+		SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.GreyPen2);
+		DrawBorders(DRAW_ENGINE.getBackgroundHDC());
+	}
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldBrush);
-
-	oldPen = (HPEN)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.BlackPen2);
-	DrawBorders(DRAW_ENGINE.getBackgroundHDC());
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldPen);
+	//Рамки
+	/*if (isSOI)
+		SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.YellowPen3);
+	else
+		SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.GreyPen2);
+	MoveToEx(DRAW_ENGINE.getBackgroundHDC(), _x, _y, NULL);
+	LineTo(DRAW_ENGINE.getBackgroundHDC(), _x, _y + _cy);
+	MoveToEx(DRAW_ENGINE.getBackgroundHDC(), _x + _cx, _y, NULL);
+	LineTo(DRAW_ENGINE.getBackgroundHDC(), _x +_cx, _y + _cy);
+	if (_kadrSize == EIGHTH && _id / 4 == 0)
+	{
+		MoveToEx(DRAW_ENGINE.getBackgroundHDC(), _x, _y + _cy, NULL);
+		LineTo(DRAW_ENGINE.getBackgroundHDC(), _x +_cx, _y + _cy);
+	}*/
 }
 
 void CKadr::Draw(HDC hdc)
 {
-	oldPen = (HPEN)SelectObject(hdc, DRAW_KIT.BlackPen2);
+	oldPen = (HPEN)SelectObject(hdc, DRAW_KIT.GreyPen2);
+	oldBrush = (HBRUSH)SelectObject(hdc, DRAW_KIT.LightGreyBrush);
 
 	DrawInteractiveObj(hdc);
 
+	SelectObject(hdc, oldBrush);
 	SelectObject(hdc, oldPen);
+}
+
+void CKadr::ChangeSOIStatus()
+{
+	isSOI = !isSOI;
+}
+
+void CKadr::ChangeSize(KADR_SIZE newSize)
+{
+	_kadrSize = newSize;
+	CreateKadr();
+	InitInteractiveObj();
+}
+
+CKadr* CKadr::ChangePos(UINT newPos)
+{
+	_id = newPos;
+	return this;
 }
 
 void CKadr::DrawInteractiveObj(HDC hdc)
 {
-	Polyline(hdc, interactiveObj, 4);
+	Polygon(hdc, interactiveObj, 4);
 }
 
 void CKadr::Swipe(const POINT firstTouchCoord, const POINT secondTouchCoord)
@@ -100,9 +149,12 @@ void CKadr::Swipe(const POINT firstTouchCoord, const POINT secondTouchCoord)
 	if (PointIsMine(secondTouchCoord))
 	{
 		if (abs(firstTouchCoord.y - secondTouchCoord.y) < DEAD_ZONE && this->_kadrSize < QUATER) //TODO: мб это стоит переделать лаконичнее
-			EKRAN_HANDLER.DivideKadr(_id, _kadrSize);
+			if (firstTouchCoord.x < secondTouchCoord.x)
+				EKRAN_HANDLER.DivideKadr(_id, _kadrSize, RIGHT);
+			else
+				EKRAN_HANDLER.DivideKadr(_id, _kadrSize, LEFT);
 		if (abs(firstTouchCoord.x - secondTouchCoord.x) < DEAD_ZONE && this->_kadrSize == QUATER)
-			EKRAN_HANDLER.DivideKadr(_id, _kadrSize);
+			EKRAN_HANDLER.DivideKadr(_id, _kadrSize, RIGHT); //тут направление не важно на самом деле
 	}
 	else
 	{
@@ -144,7 +196,8 @@ void CKadr::Move(const POINT firstTouchCoord, const POINT delta)
 		interactiveObj[i].y += delta.y;
 	}
 }
-void CKadr::Zoom(const double dZoomFactor, const POINT zoomCenter)
+
+void CKadr::Zoom(const double dZoomFactor, const POINT zoomCenter) 
 {
 	POINT tmpPoint[INTERACTIVE_OBJ_LENGTH];
 	for (int i = 0; i < INTERACTIVE_OBJ_LENGTH; i++)
@@ -162,6 +215,7 @@ void CKadr::Zoom(const double dZoomFactor, const POINT zoomCenter)
 	}
 	_scalingFactor *= dZoomFactor;
 }
+
 void CKadr::Rotate(const double dAngle, const POINT rotateCenter)
 {
 	double dCos = cos(dAngle);
