@@ -1,3 +1,8 @@
+/*
+*	–одительский класс дл€ всех объектов которые должны быть отрисованы. —одержит базовые
+*	дл€ всех дочерних объектов параметры (нач. координаты, ширина, длина, приоритет и др.)
+*	и некоторые базовые методы.
+*/
 #pragma once
 
 enum DRAWOBJ_PRIOR
@@ -13,19 +18,19 @@ public:
 	virtual void Draw(HDC hdc) = 0;
 	virtual void DrawBackground() = 0;
 	virtual bool PointIsMine(const POINT touchCoord) final;
-	virtual DRAWOBJ_PRIOR getPrior() final { return _prior; };
+	virtual DRAWOBJ_PRIOR GetPrior() final { return _prior; };
 
 protected:
 	UINT _x;								//x координата верхнего левого угла
 	UINT _y;								//y координата верхнего левого угла
 	UINT _cx;								//ширина
 	UINT _cy;								//высота
-	DRAWOBJ_PRIOR _prior;
+	DRAWOBJ_PRIOR _prior;					//приоритет отрисовки
 	HPEN oldPen;
 	HBRUSH oldBrush;
 	UINT oldTextAlign;
 	COLORREF oldColor;
-	TCHAR buf[128];						//буфер дл€ текста
+	TCHAR buf[128];							//буфер дл€ текста
 	virtual void DrawBorders(HDC hdc);
 
 private:

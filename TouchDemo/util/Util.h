@@ -1,3 +1,6 @@
+/*
+*	Класс инкапсулирующий в себе все утилитарные классы пакета.
+*/
 #pragma once
 #include "GestureEngine.h"
 #include "GestureEngineEmulator.h"

@@ -39,8 +39,8 @@ void CMechanicMenu::Draw(HDC hdc)
 
 void CMechanicMenu::ChangeSOIStatus()
 {
-	hiMenu->isSOI = !hiMenu->isSOI;
-	hiMenu->buttons[hiMenu->curActive]->SwitchSOI(hiMenu->isSOI);
+	hiMenu->_isSOI = !hiMenu->_isSOI;
+	hiMenu->buttons[hiMenu->_curActive]->SwitchSOI(hiMenu->_isSOI);
 }
 
 bool CMechanicMenu::PointIsMine(const POINT pt)
@@ -72,20 +72,20 @@ void CMechanicMenu::LeftClickHandle(POINT clickCoord)
 void CMechanicMenu::SetBlock(bool blockStatus)
 {
 	if (blockStatus)
-		hiMenu->buttons[hiMenu->curActive]->Disactivate();
-	hiMenu->blocked = blockStatus;
+		hiMenu->buttons[hiMenu->_curActive]->Disactivate();
+	hiMenu->_blocked = blockStatus;
 	if (!blockStatus)
-		hiMenu->buttons[hiMenu->curActive]->Activate();
+		hiMenu->buttons[hiMenu->_curActive]->Activate();
 }
 
 bool CMechanicMenu::GetBlockStatus()
 {
-	return hiMenu->blocked;
+	return hiMenu->_blocked;
 }
 
 UINT CMechanicMenu::GetActiveButtonPosition()
 {
-	return hiMenu->curActive;
+	return hiMenu->_curActive;
 }
 
 CMechanicMenu* CMechanicMenu::ChangePos(UINT newPos)
@@ -93,8 +93,8 @@ CMechanicMenu* CMechanicMenu::ChangePos(UINT newPos)
 	_id = newPos;
 	hiMenu->_id = newPos;
 	loMenu->_id = newPos;
-	hiMenu->PosMenu();
-	loMenu->PosMenu();
+	hiMenu->PlaceMenu();
+	loMenu->PlaceMenu();
 	for (int i = 0; i < BUTTONS_MAX_NUM; i++)
 		if (_id % 2 == 0)
 		{
@@ -110,15 +110,15 @@ CMechanicMenu* CMechanicMenu::ChangePos(UINT newPos)
 CMechanicMenu::CHiMenu::CHiMenu(UINT id) : CDrawingObject(MAX)
 {
 	_id = id;
-	blocked = false;
-	PosMenu();
+	_blocked = false;
+	PlaceMenu();
 	CreateButtons();
-	curActive = 1;
-	isSOI = false;
-	buttons[curActive]->Activate();
+	_curActive = 1;
+	_isSOI = false;
+	buttons[_curActive]->Activate();
 }
 
-void CMechanicMenu::CHiMenu::PosMenu()
+void CMechanicMenu::CHiMenu::PlaceMenu()
 {
 	_cy = MECHANIC_MENU_HEIGHTPX;
 	_x = _id * EKRAN_WIDTH / 4;
@@ -157,18 +157,18 @@ void CMechanicMenu::CHiMenu::DrawBackground()
 {
 	int shift = (_id % 2 == 0) ? 0 : - 1;
 	UINT neatIndent = TO_PIXEL(10);
-	if (curActive != BUTTONS_MAX_NUM)
+	if (_curActive != BUTTONS_MAX_NUM)
 	{
 		POINT pts[6];
 		pts[0].x = _x;
 		pts[0].y = _cy;
-		pts[1].x = _x + (curActive + shift) * (_cx * SCALE_FACTOR / (BUTTONS_MAX_NUM + 1)) - neatIndent;
+		pts[1].x = _x + (_curActive + shift) * (_cx * SCALE_FACTOR / (BUTTONS_MAX_NUM + 1)) - neatIndent;
 		pts[1].y = _cy;
-		pts[2].x = _x + (curActive + shift) * (_cx * SCALE_FACTOR / (BUTTONS_MAX_NUM + 1)) + neatIndent;
+		pts[2].x = _x + (_curActive + shift) * (_cx * SCALE_FACTOR / (BUTTONS_MAX_NUM + 1)) + neatIndent;
 		pts[2].y = _y + neatIndent;
-		pts[3].x = _x + (curActive + shift + 1) * (_cx * SCALE_FACTOR / (BUTTONS_MAX_NUM + 1)) - neatIndent;
+		pts[3].x = _x + (_curActive + shift + 1) * (_cx * SCALE_FACTOR / (BUTTONS_MAX_NUM + 1)) - neatIndent;
 		pts[3].y = _y + neatIndent;
-		pts[4].x = _x + (curActive + shift + 1) * (_cx * SCALE_FACTOR / (BUTTONS_MAX_NUM + 1)) + neatIndent;
+		pts[4].x = _x + (_curActive + shift + 1) * (_cx * SCALE_FACTOR / (BUTTONS_MAX_NUM + 1)) + neatIndent;
 		pts[4].y = _cy;
 		pts[5].x = _x + _cx;
 		pts[5].y = _cy;
@@ -219,30 +219,30 @@ void CMechanicMenu::CHiMenu::Draw(HDC hdc)
 
 void CMechanicMenu::CHiMenu::LeftClickHandle(POINT clickCoord)
 {
-	if (blocked)
+	if (_blocked)
 		return;
 	for (int i = 0; i < BUTTONS_MAX_NUM; i++)
 		if (buttons[i] != nullptr && buttons[i]->PointIsMine(clickCoord))
 		{
 			if (i == 0)
 				return;
-			if (curActive != i)
-				buttons[curActive]->Disactivate();
-			curActive = i;
-			buttons[curActive]->LeftClickHandle();
-			if (isSOI)
-				buttons[curActive]->SwitchSOI(true);
+			if (_curActive != i)
+				buttons[_curActive]->Disactivate();
+			_curActive = i;
+			buttons[_curActive]->LeftClickHandle();
+			if (_isSOI)
+				buttons[_curActive]->SwitchSOI(true);
 		}
 }
 
 CMechanicMenu::CLoMenu::CLoMenu(UINT id) : CDrawingObject(MID)
 {
 	_id = id;
-	PosMenu();
+	PlaceMenu();
 	CreateButtons();
 }
 
-void CMechanicMenu::CLoMenu::PosMenu()
+void CMechanicMenu::CLoMenu::PlaceMenu()
 {
 	_cy = MECHANIC_MENU_HEIGHTPX;
 	_x = _id * EKRAN_WIDTH / 4;

@@ -1,3 +1,9 @@
+/*
+*	Родительский класс для всех кадров используемых в приложении. Содержит интерактивный объект
+*	для отработки жестов (в будущем необходимо заменить на меню выбора кадра) и методы взаимодействия
+*	с ним. Дочерние классы должны переопределить объект, заменяя их на объекты символизирующие
+*	индикацию приборов и другие объекты кадра.
+*/
 #pragma once
 
 #include "object/DrawingObject.h"
@@ -20,7 +26,7 @@ enum SWIPE_DIRECTION
 
 class CKadr : public CDrawingObject
 {
-public: 
+public:
 	CKadr(UINT id, KADR_SIZE kadrSize);
 	~CKadr() {};
 
@@ -35,17 +41,21 @@ public:
 	virtual void Swipe(const POINT firstTouchCoord, const POINT secondTouchCoord);
 	virtual void Reset();
 	virtual void ChangeSOIStatus();
+	virtual bool GetBlockStatus() { return _blocked; };
+	virtual void SetBlock(bool blockStatus) { _blocked = blockStatus; };
 
 protected:
 	UINT _id;										//(0-7)
-	bool isSOI;
+	bool _isSOI;
+	bool _blocked;
 	KADR_SIZE _kadrSize;
 	double  _scalingFactor;
 	double  _rotationAngle;
 
-	void CreateKadr();
+	void PlaceKadr();
 
 private:
+	UINT ID;
 	POINT interactiveObj[INTERACTIVE_OBJ_LENGTH];
 	void InitInteractiveObj();
 	void DrawInteractiveObj(HDC hdc);

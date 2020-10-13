@@ -19,17 +19,20 @@ CKadr::CKadr(UINT id, KADR_SIZE kadrSize) : CDrawingObject(MIN)
 	_id = id;
 	_kadrSize = kadrSize;
 
-	CreateKadr();
+	ID = id;
+
+	PlaceKadr();
 
 	_rotationAngle = 0;
 	_scalingFactor = 1;
 
 	InitInteractiveObj();
 
-	isSOI = false;
+	_isSOI = false;
+	_blocked = false;
 }
 
-void CKadr::CreateKadr()
+void CKadr::PlaceKadr()
 {
 	switch (_kadrSize)
 	{
@@ -83,6 +86,8 @@ void CKadr::InitInteractiveObj()
 
 void CKadr::DrawBackground()
 {
+	if (_blocked)
+		return;
 	//Фон
 	oldPen = (HPEN)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.BlackPen);
 	oldBrush = (HBRUSH)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.BlackBrush);
@@ -95,7 +100,7 @@ void CKadr::DrawBackground()
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldBrush);
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldPen);
 	//Рамки
-	/*if (isSOI)
+	/*if (_isSOI)
 		SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.YellowPen3);
 	else
 		SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.GreyPen2);
@@ -112,6 +117,8 @@ void CKadr::DrawBackground()
 
 void CKadr::Draw(HDC hdc)
 {
+	if (_blocked)
+		return;
 	oldPen = (HPEN)SelectObject(hdc, DRAW_KIT.GreyPen2);
 	oldBrush = (HBRUSH)SelectObject(hdc, DRAW_KIT.LightGreyBrush);
 
@@ -123,25 +130,31 @@ void CKadr::Draw(HDC hdc)
 
 void CKadr::ChangeSOIStatus()
 {
-	isSOI = !isSOI;
+	_isSOI = !_isSOI;
 }
 
 void CKadr::ChangeSize(KADR_SIZE newSize)
 {
 	_kadrSize = newSize;
-	CreateKadr();
+	PlaceKadr();
 	InitInteractiveObj();
 }
 
 CKadr* CKadr::ChangePos(UINT newPos)
 {
 	_id = newPos;
+	PlaceKadr();
+	InitInteractiveObj();
 	return this;
 }
 
 void CKadr::DrawInteractiveObj(HDC hdc)
 {
+	_stprintf_s(buf, _T("%d"), ID + 1);
 	Polygon(hdc, interactiveObj, 4);
+	oldTextAlign = SetTextAlign(hdc, TA_BASELINE | TA_CENTER);
+	TextOut(hdc, interactiveObj[0].x, interactiveObj[0].y + TO_PIXEL(25), buf, (int)_tcslen(buf));
+	SetTextAlign(hdc, oldTextAlign);
 }
 
 void CKadr::Swipe(const POINT firstTouchCoord, const POINT secondTouchCoord)
@@ -153,7 +166,7 @@ void CKadr::Swipe(const POINT firstTouchCoord, const POINT secondTouchCoord)
 				EKRAN_HANDLER.DivideKadr(_id, _kadrSize, RIGHT);
 			else
 				EKRAN_HANDLER.DivideKadr(_id, _kadrSize, LEFT);
-		if (abs(firstTouchCoord.x - secondTouchCoord.x) < DEAD_ZONE && this->_kadrSize == QUATER)
+		if (abs(firstTouchCoord.x - secondTouchCoord.x) < DEAD_ZONE && firstTouchCoord.y > secondTouchCoord.y && this->_kadrSize == QUATER)
 			EKRAN_HANDLER.DivideKadr(_id, _kadrSize, RIGHT); //тут направление не важно на самом деле
 	}
 	else
@@ -163,7 +176,7 @@ void CKadr::Swipe(const POINT firstTouchCoord, const POINT secondTouchCoord)
 				EKRAN_HANDLER.MergeKadr(_id, _kadrSize, RIGHT);
 			else
 				EKRAN_HANDLER.MergeKadr(_id, _kadrSize, LEFT);
-		if (abs(firstTouchCoord.x - secondTouchCoord.x) < DEAD_ZONE && this->_kadrSize == EIGHTH)
+		if (abs(firstTouchCoord.x - secondTouchCoord.x) < DEAD_ZONE && firstTouchCoord.y < secondTouchCoord.y && this->_kadrSize == EIGHTH)
 			EKRAN_HANDLER.MergeKadr(_id, _kadrSize, RIGHT); //тут направление не важно на самом деле
 	}
 }

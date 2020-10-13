@@ -68,11 +68,43 @@ void CEkranHandler::SetSOI(UINT newSOI)
 	mechanicMenu[curSOI]->ChangeSOIStatus();
 }
 
-void CEkranHandler::SwipeMenus(UINT leftOne)
+void CEkranHandler::SwapMenus(UINT leftOne)
 {
 	CMechanicMenu* tmp = mechanicMenu[leftOne];
 	mechanicMenu[leftOne] = mechanicMenu[leftOne + 1]->ChangePos(leftOne);
 	mechanicMenu[leftOne + 1] = tmp->ChangePos(leftOne + 1);
+	if (curSOI == leftOne)
+		curSOI = leftOne + 1;
+	else if (curSOI == leftOne + 1)
+		curSOI = leftOne;
+}
+
+void CEkranHandler::SwapKadr(UINT leftOne)
+{
+	CKadr* tmp = nullptr;
+	if (displayCells[1][leftOne] != nullptr)
+	{
+		tmp = displayCells[1][leftOne];
+		if (displayCells[1][leftOne + 1] == nullptr)
+			displayCells[1][leftOne] = nullptr;
+		else
+			displayCells[1][leftOne] = displayCells[1][leftOne + 1]->ChangePos(leftOne);
+		displayCells[1][leftOne + 1] = tmp->ChangePos(leftOne + 1);
+	}
+	tmp = displayCells[0][leftOne];
+	displayCells[0][leftOne] = displayCells[0][leftOne + 1]->ChangePos(leftOne);
+	displayCells[0][leftOne + 1] = tmp->ChangePos(leftOne + 1);
+	if (curSOI == leftOne)
+		curSOI = leftOne + 1;
+	else if (curSOI == leftOne + 1)
+		curSOI = leftOne;
+}
+
+void CEkranHandler::SwapFrames(UINT leftOne)
+{
+	CFrame* tmp = frames[leftOne];
+	frames[leftOne] = frames[leftOne + 1]->ChangePos(leftOne);
+	frames[leftOne + 1] = tmp->ChangePos(leftOne + 1);
 	if (curSOI == leftOne)
 		curSOI = leftOne + 1;
 	else if (curSOI == leftOne + 1)
@@ -95,23 +127,23 @@ void CEkranHandler::DivideKadr(UINT kadrID, KADR_SIZE kadrSize, SWIPE_DIRECTION 
 	{
 		if (swipeDir == RIGHT)
 		{
-			displayCells[0][col + 1] = displayCells[0][col]->ChangePos(col + 1);
-			displayCells[0][col + 1]->ChangeSize(QUATER);
-			displayCells[0][col] = new CKadr(col, QUATER);
-			frames[col + 1] = frames[col]->ChangePos(col + 1);
-			frames[col + 1]->ChangeSize(QUATER);
-			frames[col] = new CFrame(col, mechanicMenu[col]->GetActiveButtonPosition(), QUATER);
+			displayCells[0][col]->ChangeSize(QUATER);
+			SwapKadr(col);
+			frames[col]->ChangeSize(QUATER);
+			SwapFrames(col);
 			if (!mechanicMenu[col]->GetBlockStatus())
-				SwipeMenus(col);
+				SwapMenus(col);
 			mechanicMenu[col]->SetBlock(false);
+			frames[col]->SetBlock(false);
+			displayCells[0][col]->SetBlock(false);
 		} else {
 			displayCells[0][col]->ChangeSize(QUATER);
-			displayCells[0][col + 1] = new CKadr(col + 1, QUATER);
 			frames[col]->ChangeSize(QUATER);
-			frames[col + 1] = new CFrame(col + 1, mechanicMenu[col + 1]->GetActiveButtonPosition(), QUATER);
 			if (mechanicMenu[col]->GetBlockStatus())
-				SwipeMenus(col);
+				SwapMenus(col);
 			mechanicMenu[col + 1]->SetBlock(false);
+			frames[col + 1]->SetBlock(false);
+			displayCells[0][col + 1]->SetBlock(false);
 		}
 	}
 	break;
@@ -162,25 +194,24 @@ void CEkranHandler::MergeKadr(UINT kadrID, KADR_SIZE kadrSize, SWIPE_DIRECTION s
 				return;
 			else
 			{
-				if (col < 2 && displayCells[0][col + 2] == nullptr)
+				if (col < 2 && displayCells[0][col + 2]->GetBlockStatus())
 				{
-					displayCells[0][col + 2] = displayCells[0][col + 1]->ChangePos(col + 2);
 					displayCells[0][col + 1]->ChangeSize(QUATER);
-					displayCells[0][col + 1] = nullptr;
-					frames[col + 2] = frames[col + 1]->ChangePos(col + 2);
-					frames[col + 2]->ChangeSize(QUATER);
-					frames[col + 1] = nullptr;
-					if (mechanicMenu[col + 2]->GetBlockStatus())
-						SwipeMenus(col + 1);
-					if (col + 1 == curSOI)
-						SetSOI(col + 2);
+					SwapKadr(col+1);
+					frames[col + 1]->ChangeSize(QUATER);
+					SwapFrames(col + 1);
+					if (!mechanicMenu[col + 1]->GetBlockStatus())
+						SwapMenus(col + 1);
 				} else {
-					delete displayCells[0][col + 1];
-					displayCells[0][col + 1] = nullptr;
-					delete displayCells[1][col + 1];
-					displayCells[1][col + 1] = nullptr;
-					delete frames[col + 1];
-					frames[col + 1] = nullptr;
+					displayCells[0][col + 1]->SetBlock(true);
+					if (displayCells[1][col + 1] != nullptr)
+					{
+						delete displayCells[1][col + 1];
+						displayCells[1][col + 1] = nullptr;
+						displayCells[0][col + 1]->ChangeSize(QUATER);
+						frames[col + 1]->ChangeSize(QUATER);
+					}
+					frames[col + 1]->SetBlock(true);
 					mechanicMenu[col + 1]->SetBlock(true);
 					if (col + 1 == curSOI)
 						SetSOI(col);
@@ -188,54 +219,44 @@ void CEkranHandler::MergeKadr(UINT kadrID, KADR_SIZE kadrSize, SWIPE_DIRECTION s
 				displayCells[0][col]->ChangeSize(HALF);
 				frames[col]->ChangeSize(HALF);
 			}
-		}
-		else
-		{
+		} else {
 			if (col == 0)
 				return;
 			else
 			{
-				if (displayCells[0][col - 1] == nullptr)
+				if (displayCells[0][col - 1]->GetBlockStatus())
 				{
 					displayCells[0][col - 2]->ChangeSize(QUATER);
 					frames[col - 2]->ChangeSize(QUATER);
 					if (mechanicMenu[col - 2]->GetBlockStatus())
-						SwipeMenus(col - 2);
-					if (curSOI == col - 1)
-						SetSOI(col - 2);
-				}
-				else {
-					delete displayCells[0][col - 1];
-					displayCells[0][col - 1] = nullptr;
-					delete displayCells[1][col - 1];
-					displayCells[1][col - 1] = nullptr;
-					delete frames[col - 1];
-					frames[col - 1] = nullptr;
-					mechanicMenu[col - 1]->SetBlock(true);
+						SwapMenus(col - 2);
+				} else {
 					if (curSOI == col - 1)
 						SetSOI(col);
+					if (displayCells[1][col - 1] != nullptr)
+					{
+						delete displayCells[1][col - 1];
+						displayCells[1][col - 1] = nullptr;
+						displayCells[0][col - 1]->ChangeSize(QUATER);
+						frames[col - 1]->ChangeSize(QUATER);
+					}
 				}
-				displayCells[0][col - 1] = displayCells[0][col]->ChangePos(col - 1);
 				displayCells[0][col]->ChangeSize(HALF);
-				frames[col - 1] = frames[col]->ChangePos(col - 1);
 				frames[col]->ChangeSize(HALF);
-				displayCells[0][col] = nullptr;
-				frames[col] = nullptr;
+				SwapKadr(col - 1);
+				SwapFrames(col - 1);
+				displayCells[0][col]->SetBlock(true);
+				frames[col]->SetBlock(true);
+				mechanicMenu[col - 1]->SetBlock(true);
 			}
 		}
 	}
-		break;
+	break;
 	case EIGHTH:
 	{
-		if (row == 1)
-		{
-			delete displayCells[0][col];
-			displayCells[0][col] = nullptr;
-		} else
-			delete displayCells[1][col];
-		displayCells[0][col] = displayCells[row][col]->ChangePos(col);
-		displayCells[row][col]->ChangeSize(QUATER);
+		displayCells[0][col]->ChangeSize(QUATER);
 		frames[col]->ChangeSize(QUATER);
+		delete displayCells[1][col];
 		displayCells[1][col] = nullptr;
 	}
 		break;

@@ -138,12 +138,12 @@ void CDrawEngine::LinkedPriorList::Add(CDrawingObject* obj)
 	else {
 		Node* prev = nullptr;
 		Node* cur = head;
-		while (cur->next != nullptr && cur->obj->getPrior() < obj->getPrior())
+		while (cur->next != nullptr && cur->obj->GetPrior() < obj->GetPrior())
 		{
 			prev = cur;
 			cur = cur->next;
 		}
-		if (cur->obj->getPrior() < obj->getPrior())
+		if (cur->obj->GetPrior() < obj->GetPrior())
 		{
 			newNode->next = cur->next;
 			cur->next = newNode;

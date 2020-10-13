@@ -188,7 +188,7 @@ void CGestureEngine::ProcessMove(const POINT firstTouchCoord, const POINT finish
 {
     for (int i = 0; i < DISPLAY_ROWS; i++)
         for (int j = 0; j < DISPLAY_COLS; j++)
-            if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+            if (EKRAN_HANDLER.getDisplayCell(i, j)->GetBlockStatus() == false && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
 			{
                 EKRAN_HANDLER.getDisplayCell(i, j)->Move(firstTouchCoord, finishCoord);
 				return;
@@ -204,7 +204,7 @@ void CGestureEngine::ProcessRotate(const POINT firstTouchCoord, const double dAn
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+			if (EKRAN_HANDLER.getDisplayCell(i, j)->GetBlockStatus() == false && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
 			{
 				EKRAN_HANDLER.getDisplayCell(i, j)->Rotate(dAngle, rotateCenter);
 				return;
@@ -215,7 +215,7 @@ void CGestureEngine::ProcessTwoFingerTap(const POINT firstTouchCoord)
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+			if (EKRAN_HANDLER.getDisplayCell(i, j)->GetBlockStatus() == false && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
 			{
 				EKRAN_HANDLER.getDisplayCell(i, j)->Reset();
 				return;
@@ -226,7 +226,7 @@ void CGestureEngine::ProcessZoom(const POINT firstTouchCoord, const double dZoom
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+			if (EKRAN_HANDLER.getDisplayCell(i, j)->GetBlockStatus() == false && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
 			{
 				EKRAN_HANDLER.getDisplayCell(i, j)->Zoom(dZoomFactor, zoomCenter);
 				return;
@@ -237,7 +237,7 @@ void CGestureEngine::ProcessSwipe(const POINT firstTouchCoord, const POINT secon
 {
     for (int i = 0; i < DISPLAY_ROWS; i++)
         for (int j = 0; j < DISPLAY_COLS; j++)
-            if (EKRAN_HANDLER.getDisplayCell(i, j) != nullptr && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+            if (EKRAN_HANDLER.getDisplayCell(i, j)->GetBlockStatus() == false && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
             {
 				EKRAN_HANDLER.getDisplayCell(i, j)->Swipe(firstTouchCoord, secondTouchCoord);
 				return;

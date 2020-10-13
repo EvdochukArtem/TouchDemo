@@ -7,11 +7,12 @@ CFrame::CFrame(UINT id, UINT activeButton, KADR_SIZE frameSize) : CDrawingObject
 	_id = id;
 	_activeButton = activeButton;
 	_isSOI = false;
+	_blocked = false;
 	_frameSize = frameSize;
-	CreateFrame();
+	PlaceFrame();
 }
 
-void CFrame::CreateFrame()
+void CFrame::PlaceFrame()
 {
 	switch (_frameSize)
 	{
@@ -41,6 +42,8 @@ void CFrame::CreateFrame()
 
 void CFrame::DrawBackground()
 {
+	if (_blocked)
+		return;
 	if (_isSOI)
 		oldPen = (HPEN)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.YellowPen3);
 	else
@@ -62,11 +65,12 @@ void CFrame::ChangeSOIStatus()
 void CFrame::ChangeSize(KADR_SIZE newSize)
 {
 	_frameSize = newSize;
-	CreateFrame();
+	PlaceFrame();
 }
 
 CFrame* CFrame::ChangePos(UINT newPos)
 {
 	_id = newPos;
+	PlaceFrame();
 	return this;
 }

@@ -1,3 +1,7 @@
+/*
+*	Класс оболочка, содержащий в себе внутренние классы hiMenu и loMenu, символизиующие 
+*	механиническое меню кадра.
+*/
 #pragma once
 #include "object/DrawingObject.h"
 #include "buttons/AbstractButton.h"
@@ -40,7 +44,7 @@ class CMechanicMenu::CHiMenu : public CDrawingObject
 private:
 	CHiMenu(UINT id);
 	~CHiMenu() {};
-	void PosMenu();
+	void PlaceMenu();
 
 	void Draw(HDC hdc);
 	void DrawBackground();
@@ -49,10 +53,10 @@ private:
 	void LeftClickHandle(POINT clickCoord);
 
 	CMenuButton* buttons [BUTTONS_MAX_NUM];
-	UINT curActive;
-	bool isSOI;
+	UINT _curActive;
+	bool _isSOI;
 	UINT _id;
-	bool blocked;
+	bool _blocked;
 };
 
 class CMechanicMenu::CLoMenu : public CDrawingObject
@@ -61,7 +65,7 @@ class CMechanicMenu::CLoMenu : public CDrawingObject
 private:
 	CLoMenu(UINT id);
 	~CLoMenu() {};
-	void PosMenu();
+	void PlaceMenu();
 
 	void Draw(HDC hdc);
 	void DrawBackground();

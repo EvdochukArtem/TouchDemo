@@ -1,3 +1,6 @@
+/*
+*	Класс отвечает за создание, управление и доступ к базовым объектам программы.
+*/
 #pragma once
 #include "object/Kadr.h"
 #include "object/MechanicMenu.h"
@@ -20,7 +23,9 @@ private:
 	CEkranHandler();
 	~CEkranHandler() {};
 	BOOL Create();
-	void SwipeMenus(UINT leftOne);
+	void SwapMenus(UINT leftOne);
+	void SwapFrames(UINT leftOne);
+	void SwapKadr(UINT leftOne);
 	friend class CUtil;
 
 	//TODO: СОИ должны быть сделаны по аналогии с существующими и разещены в commontypes. Тк существующие неподходят пока будет такой имитатор.
