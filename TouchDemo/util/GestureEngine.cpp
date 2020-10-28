@@ -3,9 +3,9 @@
 #include "util/Util.h"
 
 #define _USE_MATH_DEFINES
-#define TOUCH_EKRAN_WIDTH WIDTHPX
-#define TOUCH_EKRAN_HEIGHT HEIGHTPX - MECHANIC_MENU_HEIGHTPX
-#define PAN_TIMER_ID       (001)
+const int TOUCH_EKRAN_WIDTH		= WIDTHPX;
+const int TOUCH_EKRAN_HEIGHT	= HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
+#define PAN_TIMER_ID (001)
 
 // One of the fields in GESTUREINFO structure is type of ULONGLONG (8 bytes).
 // The relevant gesture information is stored in lower 4 bytes. This
@@ -28,9 +28,6 @@ BOOL CGestureEngine::Create()
 
 LRESULT CGestureEngine::WndProc(HWND hWnd, WPARAM wParam, LPARAM lParam)
 {
-    POINT ptZoomCenter;
-    double k;
-
     GESTUREINFO gi;
     gi.cbSize = sizeof(gi);
     BOOL bResult = GetGestureInfo((HGESTUREINFO)lParam, &gi);
@@ -41,141 +38,27 @@ LRESULT CGestureEngine::WndProc(HWND hWnd, WPARAM wParam, LPARAM lParam)
         return FALSE;
     }
 
+	// Здесь можно подумать о том, чтобы каждый кейс вынести в поименованную человечьим образом функцию
     switch (gi.dwID)
     {
     case GID_ZOOM:
-        switch (gi.dwFlags)
-        {
-        case GF_BEGIN:
-            _dwArguments = LODWORD(gi.ullArguments);
-            _ptFirst.x = gi.ptsLocation.x;
-            _ptFirst.y = gi.ptsLocation.y;
-            ScreenToClient(hWnd, &_ptFirst);
-            break;
-
-        default:
-            // We read here the second point of the gesture. This is middle point between 
-            // fingers in this new position.
-            _ptSecond.x = gi.ptsLocation.x;
-            _ptSecond.y = gi.ptsLocation.y;
-            ScreenToClient(hWnd, &_ptSecond);
-            if (TouchIsValid(_ptSecond) == false)
-                break;
-
-            // We have to calculate zoom center point 
-            ptZoomCenter.x = (_ptFirst.x + _ptSecond.x) / 2;
-            ptZoomCenter.y = (_ptFirst.y + _ptSecond.y) / 2;
-
-            // The zoom factor is the ratio between the new and the old distance. 
-            // The new distance between two fingers is stored in gi.ullArguments 
-            // (lower DWORD) and the old distance is stored in _dwArguments.
-            k = (double)(LODWORD(gi.ullArguments)) / (double)(_dwArguments);
-
-            // Now we process zooming in/out of the object
-            ProcessZoom(_ptFirst, k, ptZoomCenter);
-
-            // Now we have to store new information as a starting information 
-            // for the next step in this gesture.
-            _ptFirst = _ptSecond;
-            _dwArguments = LODWORD(gi.ullArguments);
-        }
+		HandleZoom(hWnd, gi);
         break;
 
     case GID_PAN:
-        switch (gi.dwFlags)
-        {
-        case GF_BEGIN:
-			_ptFirst.x = gi.ptsLocation.x;
-			_ptFirst.y = gi.ptsLocation.y;
-			ScreenToClient(hWnd, &_ptFirst);
-			if (TouchIsValid(_ptFirst) == false)
-				break;
-			if (LODWORD(gi.ullArguments) != 0)
-				panIsComplete = false;
-            break;
-		case GF_END:
-			_dwArguments = LODWORD(gi.ullArguments);
-			_ptSecond.x = gi.ptsLocation.x;
-			_ptSecond.y = gi.ptsLocation.y;
-			ScreenToClient(hWnd, &_ptSecond);
-			if (TouchIsValid(_ptSecond) == false)
-				break;
-            if (_dwArguments != 0)
-            {
-                ProcessSwipe(_ptFirst, _ptSecond);
-				panIsComplete = true;
-				SendMessage(hWnd, WM_UPDATE, 0, 0);
-            }
-			else {
-				POINT pt = {_ptSecond.x - _ptFirst.x, _ptSecond.y - _ptFirst.y};
-				ProcessMove(_ptFirst, pt);
-				_ptFirst = _ptSecond;
-			}
-            break;
-		default:
-            _ptSecond.x = gi.ptsLocation.x;
-			_ptSecond.y = gi.ptsLocation.y;
-			ScreenToClient(hWnd, &_ptSecond);
-			if (TouchIsValid(_ptSecond) == false)
-				break;
-            if (gi.ullArguments != 0)
-            {
-				SetTimer(hWnd, PAN_TIMER_ID, 200, (TIMERPROC) PanTimerProc);
-			}
-			else 
-			{
-				POINT pt = {_ptSecond.x - _ptFirst.x, _ptSecond.y - _ptFirst.y};
-				ProcessMove(_ptFirst, pt);
-                _ptFirst = _ptSecond;
-			}
-            break;
-        }
+		HandlePan(hWnd, gi);
         break;
 
     case GID_ROTATE:
-        switch (gi.dwFlags)
-        {
-        case GF_BEGIN:
-            _dwArguments = 0;
-            break;
-
-        default:
-            _ptFirst.x = gi.ptsLocation.x;
-            _ptFirst.y = gi.ptsLocation.y;
-            ScreenToClient(hWnd, &_ptFirst);
-            if (TouchIsValid(_ptFirst) == false)
-                break;
-            ProcessRotate(_ptFirst,
-                GID_ROTATE_ANGLE_FROM_ARGUMENT(LODWORD(gi.ullArguments))
-                - GID_ROTATE_ANGLE_FROM_ARGUMENT(_dwArguments),
-                _ptFirst
-				);
-            _dwArguments = LODWORD(gi.ullArguments);
-            break;
-        }
+		HandleRotate(hWnd, gi);
         break;
 
     case GID_TWOFINGERTAP:
-		_ptFirst.x = gi.ptsLocation.x;
-		_ptFirst.y = gi.ptsLocation.y;
-		ScreenToClient(hWnd, &_ptFirst);
-        if (TouchIsValid(_ptFirst) == false)
-            break;
-        ProcessTwoFingerTap(_ptFirst);
+		HandleTwoFingerTap(hWnd, gi);
         break;
 
     case GID_PRESSANDTAP:
-        switch (gi.dwFlags)
-        {
-        case GF_BEGIN:
-			_ptFirst.x = gi.ptsLocation.x;
-			_ptFirst.y = gi.ptsLocation.y;
-			ScreenToClient(hWnd, &_ptFirst);
-            if (TouchIsValid(_ptFirst) == false)
-                break;
-            ProcessPressAndTap(_ptFirst);
-            break;
-        }
+		HandlePressAndTap(hWnd, gi);
         break;
     }
 
@@ -184,13 +67,13 @@ LRESULT CGestureEngine::WndProc(HWND hWnd, WPARAM wParam, LPARAM lParam)
     return TRUE;
 }
 
-void CGestureEngine::ProcessMove(const POINT firstTouchCoord, const POINT finishCoord)
+void CGestureEngine::ProcessMove(const POINT beginCoord, const POINT firstTouchCoord, const POINT finishCoord)
 {
     for (int i = 0; i < DISPLAY_ROWS; i++)
         for (int j = 0; j < DISPLAY_COLS; j++)
-            if (EKRAN_HANDLER.getDisplayCell(i, j)->GetBlockStatus() == false && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+            if (!EKRAN_HANDLER.GetKadr(i, j)->GetBlockStatus() && EKRAN_HANDLER.GetKadr(i, j)->PointIsMine(beginCoord))
 			{
-                EKRAN_HANDLER.getDisplayCell(i, j)->Move(firstTouchCoord, finishCoord);
+                EKRAN_HANDLER.GetKadr(i, j)->Move(firstTouchCoord, finishCoord);
 				return;
 			}
 }
@@ -204,9 +87,9 @@ void CGestureEngine::ProcessRotate(const POINT firstTouchCoord, const double dAn
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j)->GetBlockStatus() == false && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+			if (!EKRAN_HANDLER.GetKadr(i, j)->GetBlockStatus() && EKRAN_HANDLER.GetKadr(i, j)->PointIsMine(firstTouchCoord))
 			{
-				EKRAN_HANDLER.getDisplayCell(i, j)->Rotate(dAngle, rotateCenter);
+				EKRAN_HANDLER.GetKadr(i, j)->Rotate(dAngle, rotateCenter);
 				return;
 			}
 }
@@ -215,9 +98,9 @@ void CGestureEngine::ProcessTwoFingerTap(const POINT firstTouchCoord)
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j)->GetBlockStatus() == false && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+			if (!EKRAN_HANDLER.GetKadr(i, j)->GetBlockStatus() && EKRAN_HANDLER.GetKadr(i, j)->PointIsMine(firstTouchCoord))
 			{
-				EKRAN_HANDLER.getDisplayCell(i, j)->Reset();
+				EKRAN_HANDLER.GetKadr(i, j)->Reset();
 				return;
 			}
 }
@@ -226,9 +109,9 @@ void CGestureEngine::ProcessZoom(const POINT firstTouchCoord, const double dZoom
 {
 	for (int i = 0; i < DISPLAY_ROWS; i++)
 		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (EKRAN_HANDLER.getDisplayCell(i, j)->GetBlockStatus() == false && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+			if (!EKRAN_HANDLER.GetKadr(i, j)->GetBlockStatus() && EKRAN_HANDLER.GetKadr(i, j)->PointIsMine(firstTouchCoord))
 			{
-				EKRAN_HANDLER.getDisplayCell(i, j)->Zoom(dZoomFactor, zoomCenter);
+				EKRAN_HANDLER.GetKadr(i, j)->Zoom(dZoomFactor, zoomCenter);
 				return;
 			}
 }
@@ -237,9 +120,9 @@ void CGestureEngine::ProcessSwipe(const POINT firstTouchCoord, const POINT secon
 {
     for (int i = 0; i < DISPLAY_ROWS; i++)
         for (int j = 0; j < DISPLAY_COLS; j++)
-            if (EKRAN_HANDLER.getDisplayCell(i, j)->GetBlockStatus() == false && EKRAN_HANDLER.getDisplayCell(i, j)->PointIsMine(firstTouchCoord))
+            if (!EKRAN_HANDLER.GetKadr(i, j)->GetBlockStatus() && EKRAN_HANDLER.GetKadr(i, j)->PointIsMine(firstTouchCoord))
             {
-				EKRAN_HANDLER.getDisplayCell(i, j)->Swipe(firstTouchCoord, secondTouchCoord);
+				EKRAN_HANDLER.GetKadr(i, j)->Swipe(firstTouchCoord, secondTouchCoord);
 				return;
 			}
 }
@@ -265,4 +148,147 @@ void CGestureEngine::PanTimerProc(HWND hWnd, UINT message, UINT idTimer, DWORD d
 	pGestureEngine->panIsComplete = true;
 	SendMessage(hWnd, WM_UPDATE, 0, 0);
 	KillTimer(hWnd, PAN_TIMER_ID);
+}
+
+void CGestureEngine::HandleZoom(HWND hWnd, GESTUREINFO gi)
+{
+	POINT ptZoomCenter;
+    double k;
+	switch (gi.dwFlags) // А свич в свиче точно надо выносить в функцию
+	{
+	case GF_BEGIN:
+		_dwArguments = LODWORD(gi.ullArguments);
+		_ptFirst.x = gi.ptsLocation.x;
+		_ptFirst.y = gi.ptsLocation.y;
+		ScreenToClient(hWnd, &_ptFirst);
+		break;
+
+	default:
+		// We read here the second point of the gesture. This is middle point between 
+		// fingers in this new position.
+		_ptSecond.x = gi.ptsLocation.x;
+		_ptSecond.y = gi.ptsLocation.y;
+		ScreenToClient(hWnd, &_ptSecond);
+		if (TouchIsValid(_ptSecond) == false)
+			break;
+
+		// We have to calculate zoom center point 
+		ptZoomCenter.x = (_ptFirst.x + _ptSecond.x) / 2;
+		ptZoomCenter.y = (_ptFirst.y + _ptSecond.y) / 2;
+
+		// The zoom factor is the ratio between the new and the old distance. 
+		// The new distance between two fingers is stored in gi.ullArguments 
+		// (lower DWORD) and the old distance is stored in _dwArguments.
+		k = (double)(LODWORD(gi.ullArguments)) / (double)(_dwArguments);
+
+		// Now we process zooming in/out of the object
+		ProcessZoom(_ptFirst, k, ptZoomCenter);
+
+		// Now we have to store new information as a starting information 
+		// for the next step in this gesture.
+		_ptFirst = _ptSecond;
+		_dwArguments = LODWORD(gi.ullArguments);
+	}
+}
+
+void CGestureEngine::HandlePan(HWND hWnd, GESTUREINFO gi)
+{
+	switch (gi.dwFlags)
+    {
+    case GF_BEGIN:
+		_ptFirst.x = gi.ptsLocation.x;
+		_ptFirst.y = gi.ptsLocation.y;
+		_ptBegin = _ptFirst;
+		ScreenToClient(hWnd, &_ptFirst);
+		if (TouchIsValid(_ptFirst) == false)
+			break;
+		if (LODWORD(gi.ullArguments) != 0)
+			panIsComplete = false;
+        break;
+	case GF_END:
+		_dwArguments = LODWORD(gi.ullArguments);
+		_ptSecond.x = gi.ptsLocation.x;
+		_ptSecond.y = gi.ptsLocation.y;
+		ScreenToClient(hWnd, &_ptSecond);
+		if (TouchIsValid(_ptSecond) == false)
+			break;
+        if (_dwArguments != 0)
+        {
+            ProcessSwipe(_ptFirst, _ptSecond);
+			panIsComplete = true;
+			SendMessage(hWnd, WM_UPDATE, 0, 0);
+        }
+		else {
+			POINT pt = {_ptSecond.x - _ptFirst.x, _ptSecond.y - _ptFirst.y};
+			ProcessMove(_ptBegin, _ptFirst, pt);
+			_ptFirst = _ptSecond;
+		}
+        break;
+	default:
+        _ptSecond.x = gi.ptsLocation.x;
+		_ptSecond.y = gi.ptsLocation.y;
+		ScreenToClient(hWnd, &_ptSecond);
+		if (TouchIsValid(_ptSecond) == false)
+			break;
+        if (gi.ullArguments != 0)
+        {
+			SetTimer(hWnd, PAN_TIMER_ID, 200, (TIMERPROC) PanTimerProc);
+		}
+		else 
+		{
+			POINT pt = {_ptSecond.x - _ptFirst.x, _ptSecond.y - _ptFirst.y};
+			ProcessMove(_ptBegin, _ptFirst, pt);
+            _ptFirst = _ptSecond;
+		}
+        break;
+    }
+}
+
+void CGestureEngine::HandleRotate(HWND hWnd, GESTUREINFO gi)
+{
+	switch (gi.dwFlags)
+    {
+    case GF_BEGIN:
+        _dwArguments = 0;
+        break;
+
+    default:
+        _ptFirst.x = gi.ptsLocation.x;
+        _ptFirst.y = gi.ptsLocation.y;
+        ScreenToClient(hWnd, &_ptFirst);
+        if (TouchIsValid(_ptFirst) == false)
+            break;
+        ProcessRotate(_ptFirst,
+            GID_ROTATE_ANGLE_FROM_ARGUMENT(LODWORD(gi.ullArguments))
+            - GID_ROTATE_ANGLE_FROM_ARGUMENT(_dwArguments),
+            _ptFirst
+			);
+        _dwArguments = LODWORD(gi.ullArguments);
+        break;
+    }
+}
+
+void CGestureEngine::HandleTwoFingerTap(HWND hWnd, GESTUREINFO gi)
+{
+	_ptFirst.x = gi.ptsLocation.x;
+	_ptFirst.y = gi.ptsLocation.y;
+	ScreenToClient(hWnd, &_ptFirst);
+    if (TouchIsValid(_ptFirst) == false)
+        return;
+    ProcessTwoFingerTap(_ptFirst);
+}
+
+void CGestureEngine::HandlePressAndTap(HWND hWnd, GESTUREINFO gi)
+{
+	switch (gi.dwFlags)
+    {
+    case GF_BEGIN:
+		_ptFirst.x = gi.ptsLocation.x;
+		_ptFirst.y = gi.ptsLocation.y;
+		ScreenToClient(hWnd, &_ptFirst);
+        if (TouchIsValid(_ptFirst) == false)
+            break;
+        ProcessPressAndTap(_ptFirst);
+        break;
+    }
 }

@@ -14,10 +14,11 @@ public:
 	void AddDrawingObject(CDrawingObject* obj);
 	void DeleteDrawingObject(CDrawingObject* obj);
 	void ResetDrawingObject(CDrawingObject* obj) { DeleteDrawingObject(obj); AddDrawingObject(obj); };
-	void Draw(HDC hdc);
+	void Draw(HDC& hdc);
 	void UpdateBackground();
-	HDC getBackgroundHDC() { return backgroundHDC; };
+	HDC& getBackgroundHDC() { return backgroundHDC; };
 	CDrawingObject* getDrawingObject(POINT pt);
+	std::vector<CDrawingObject*> getAllDrawingObjects(POINT pt);
 
 private:
 	CDrawEngine();
@@ -25,9 +26,9 @@ private:
 	BOOL Create();
 
 	friend class CUtil;
-	class LinkedPriorList;
+	class PriorObjectList;
 	
-	LinkedPriorList* drawingObjects;
+	PriorObjectList* drawingObjects;
 
 	HDC backgroundHDC;
 	HDC tmpHDC;
@@ -35,12 +36,12 @@ private:
 	HBITMAP tmpBITMAP;
 };
 
-class CDrawEngine::LinkedPriorList
+class CDrawEngine::PriorObjectList
 {
 	friend class CDrawEngine;
 
-	LinkedPriorList();
-	~LinkedPriorList() { Clear(); };
+	PriorObjectList();
+	~PriorObjectList() { Clear(); };
 
 	void Add(CDrawingObject* obj);
 	BOOL Remove(CDrawingObject* obj);
@@ -55,9 +56,14 @@ class CDrawEngine::LinkedPriorList
 	Node* head;
 
 
-	void Draw(HDC hdc);
+	void Draw(HDC& hdc);	// —мешиваютс€ структура данных и функциональность. 
+						// Ќазвание PriorObjectList выгл€дит как название контейнера дл€ произвольных данных.
+						// ≈сть смысл или разделить на контейнер PriorObjectList и от него отнаследовать ObjectList,
+						// или махнуть рукой и назвать сам класс ObjectList. 
 	void UpdateBackground();
 	CDrawingObject* getDrawingObject(POINT pt);
+	std::vector<CDrawingObject*> getAllDrawingObjects(POINT pt);
+	std::vector<CDrawingObject*> foundObj;
 
 #ifdef DEBUG
 	std::vector<CDrawingObject*> arr;

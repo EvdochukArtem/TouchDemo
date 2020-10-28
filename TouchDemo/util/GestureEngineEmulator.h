@@ -7,23 +7,19 @@ class CGestureEngineEmulator
 {
 public:
 	LRESULT WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	void OnMouseWheelUp(POINT pt);			//зум+
-	void OnMouseWheelDown(POINT pt);		//зум-
-	void ProcessMove(const POINT firstCoord, const POINT finishCoord);	
-	void ProcessKeyboard(WPARAM key);			//сдвиг (сопоставить с координатами курсора)
+	void OnMouseWheelUp(POINT pt);													//зум+
+	void OnMouseWheelDown(POINT pt);												//зум-
+	void ProcessMove(POINT beginCoord, POINT firstCoord, POINT finishCoord);	
+	void ProcessKeyboard(WPARAM key);												//сдвиг (сопоставить с координатами курсора)
 	void OnLMouseUp(POINT clickCoord);
-	void OnRMouseUp(POINT clickCoord);	//сброс
-	void OnMouseRotate(const POINT firstTouchCoord, const double dAngle, const POINT rotateCenter);	//поворот
+	void OnRMouseUp(POINT clickCoord);												//сброс
+	void OnMouseRotate(POINT firstTouchCoord, double dAngle, POINT rotateCenter);	//поворот
 #ifdef DEBUG
 	bool pixelCheck;
 #endif
-	
+	bool GetLButtonStatus() { return _lButtonPressed; };
 private:
-	CGestureEngineEmulator() {
-#ifdef DEBUG
-		pixelCheck = false;
-#endif
-	};
+	CGestureEngineEmulator();
 	~CGestureEngineEmulator() {};
 	BOOL Create() { return TRUE; };
 
@@ -32,6 +28,7 @@ private:
 	POINT _ptBegin;
     POINT _ptFirst;    
     POINT _ptSecond;
-	DWORD _timer;
+	int _timer;
     bool EmulateTouchIsValid(const POINT touchCoordEmulate);
+	bool  _lButtonPressed;
 };

@@ -34,7 +34,7 @@ CDrawEngine::~CDrawEngine()
 		::DeleteDC(tmpHDC);
 		tmpHDC = nullptr;
 	}
-	drawingObjects->~LinkedPriorList();
+	drawingObjects->~PriorObjectList();
 }
 
 BOOL CDrawEngine::Create()
@@ -48,11 +48,11 @@ BOOL CDrawEngine::Create()
 	if (backgroundBITMAP == nullptr)
 		return FALSE;
 
-	//Выбираем битмап в конткст фона
+	//Выбираем битмап в контекст фона
 	::SelectObject(backgroundHDC, backgroundBITMAP);
 	::SetGraphicsMode(backgroundHDC, GM_ADVANCED);
 
-	drawingObjects = new LinkedPriorList();
+	drawingObjects = new PriorObjectList();
 
 	return TRUE;
 }
@@ -72,6 +72,9 @@ void CDrawEngine::DeleteDrawingObject(CDrawingObject* obj)
 	if (obj == nullptr)
 		return;
 	drawingObjects->Remove(obj);
+#ifdef DEBUG
+	drawingObjects->asArray();
+#endif
 }
 
 void CDrawEngine::UpdateBackground()
@@ -79,7 +82,7 @@ void CDrawEngine::UpdateBackground()
 	drawingObjects->UpdateBackground();
 }
 
-void CDrawEngine::Draw(HDC hdc)
+void CDrawEngine::Draw(HDC& hdc)
 {
 	tmpHDC = CreateCompatibleDC(hdc);
 	tmpBITMAP = CreateCompatibleBitmap(hdc, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
@@ -121,12 +124,17 @@ CDrawingObject* CDrawEngine::getDrawingObject(POINT pt)
 	return drawingObjects->getDrawingObject(pt);
 }
 
-CDrawEngine::LinkedPriorList::LinkedPriorList()
+std::vector<CDrawingObject*> CDrawEngine::getAllDrawingObjects(POINT pt)
+{
+	return drawingObjects->getAllDrawingObjects(pt);
+}
+
+CDrawEngine::PriorObjectList::PriorObjectList()
 {
 	head = nullptr;
 }
 
-void CDrawEngine::LinkedPriorList::Add(CDrawingObject* obj)
+void CDrawEngine::PriorObjectList::Add(CDrawingObject* obj)
 {
 	if (obj == nullptr)
 		return;
@@ -161,7 +169,7 @@ void CDrawEngine::LinkedPriorList::Add(CDrawingObject* obj)
 }
 
 #ifdef DEBUG
-void CDrawEngine::LinkedPriorList::asArray()
+void CDrawEngine::PriorObjectList::asArray()
 {
 	arr.clear();
 	Node* cur = head;
@@ -173,7 +181,7 @@ void CDrawEngine::LinkedPriorList::asArray()
 }
 #endif
 
-BOOL CDrawEngine::LinkedPriorList::Remove(CDrawingObject* obj)
+BOOL CDrawEngine::PriorObjectList::Remove(CDrawingObject* obj)
 {
 	if (isEmpty())
 		return false;
@@ -185,7 +193,7 @@ BOOL CDrawEngine::LinkedPriorList::Remove(CDrawingObject* obj)
 		return true;
 	}
 	Node* prev = head;
-	while (tmp != nullptr)
+	while (tmp != nullptr) 
 		if (tmp->obj == obj)
 		{
 			prev->next = tmp->next;
@@ -198,7 +206,7 @@ BOOL CDrawEngine::LinkedPriorList::Remove(CDrawingObject* obj)
 	return false;
 }
 
-void CDrawEngine::LinkedPriorList::Clear()
+void CDrawEngine::PriorObjectList::Clear()
 {
 	if (isEmpty())
 		return;
@@ -213,7 +221,7 @@ void CDrawEngine::LinkedPriorList::Clear()
 	head = nullptr;
 }
 
-void CDrawEngine::LinkedPriorList::Draw(HDC hdc)
+void CDrawEngine::PriorObjectList::Draw(HDC& hdc)
 {
 	if (isEmpty())
 		return;
@@ -225,7 +233,7 @@ void CDrawEngine::LinkedPriorList::Draw(HDC hdc)
 	}
 }
 
-void CDrawEngine::LinkedPriorList::UpdateBackground()
+void CDrawEngine::PriorObjectList::UpdateBackground()
 {
 	if (isEmpty())
 		return;
@@ -237,7 +245,7 @@ void CDrawEngine::LinkedPriorList::UpdateBackground()
 	}
 }
 
-CDrawingObject* CDrawEngine::LinkedPriorList::getDrawingObject(POINT pt)
+CDrawingObject* CDrawEngine::PriorObjectList::getDrawingObject(POINT pt)
 {
 	if (isEmpty())
 		return nullptr;
@@ -249,4 +257,19 @@ CDrawingObject* CDrawEngine::LinkedPriorList::getDrawingObject(POINT pt)
 		cur = cur->next;
 	}
 	return nullptr;
+}
+
+std::vector<CDrawingObject*> CDrawEngine::PriorObjectList::getAllDrawingObjects(POINT pt)
+{
+	foundObj.clear();
+	if (isEmpty())
+		return foundObj;
+	Node* cur = head;
+	while (cur != nullptr)
+	{
+		if (cur->obj->PointIsMine(pt))
+			foundObj.push_back(cur->obj);
+		cur = cur->next;
+	}
+	return foundObj;
 }

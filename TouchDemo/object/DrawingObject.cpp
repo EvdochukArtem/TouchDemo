@@ -1,9 +1,10 @@
 #include "StdAfx.h"
-#include "object/DrawingObject.h"
+#include "DrawingObject.h"
 #include "util/Util.h"
 
 CDrawingObject::CDrawingObject(DRAWOBJ_PRIOR prior)
 {
+	_hidden = false;
 	_prior = prior;
 	RegisterDrawingObject();
 }
@@ -23,7 +24,7 @@ void CDrawingObject::DeleteDrawingObject()
 	DRAW_ENGINE.DeleteDrawingObject(this);
 };
 
-void CDrawingObject::DrawBorders(HDC hdc)
+void CDrawingObject::DrawBorders(HDC& hdc)
 {
 	POINT border[5];
 	// upper left cofner
@@ -44,7 +45,8 @@ void CDrawingObject::DrawBorders(HDC hdc)
 	Polyline(hdc, border, 5);
 }
 
-bool CDrawingObject::PointIsMine(const POINT touchCoord)
+
+bool CDrawingObject::PointIsMine(const POINT& touchCoord)
 {
 	bool PointIsMine = false;
 	

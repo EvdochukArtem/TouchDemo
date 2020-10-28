@@ -2,40 +2,47 @@
 #include "MenuButton.h"
 #include "util/Util.h"
 
-CMenuButton::CMenuButton(UINT x, UINT y, UINT cx, UINT cy, LPCWSTR caption) : CAbstractButton(x, y, cx, cy, caption)
+CMenuButton::CMenuButton(UINT x, UINT y, UINT cx, UINT cy, LPCTSTR caption, void(CALLBACK* handler)(BUTTON_EVENT, CMenuButton*)) : CAbstractButton(x, y, cx, cy, caption)
 {
 	isActive = false;
 	isSOI = false;
+	_handler = handler;
 }
 
-void CMenuButton::Draw(HDC hdc)
+void CMenuButton::Draw(HDC& hdc)
 {
+	if (_hidden)
+		return;
 	oldTextAlign = SetTextAlign(hdc, TA_BASELINE | TA_CENTER);
 	TextOut(hdc, _x + _cx / 2, _y + _cy / 2 + TO_PIXEL(10), _caption, (int)_tcslen(_caption));
 	SetTextAlign(hdc, oldTextAlign);
-	/*
-	oldPen = (HPEN)SelectObject(hdc, DRAW_KIT.GreenPen2);
+	
+	/*oldPen = (HPEN)SelectObject(hdc, DRAW_KIT.GreenPen);
 	DrawBorders(hdc);
-	SelectObject(hdc, oldPen);
-	*/
+	MoveToEx(hdc, _x,_cy, NULL);
+	LineTo(hdc, _x, HEIGHTPX);
+	MoveToEx(hdc, _x + _cx, _cy, NULL);
+	LineTo(hdc, _x + _cx, HEIGHTPX);
+	SelectObject(hdc, oldPen);*/
+	
 }
 
 void CMenuButton::DrawBackground()
 {
+	if (_hidden)
+		return;
 	if (!isActive)
 		return;
-	if (isSOI)
-		oldPen = (HPEN)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.YellowPen3);
-	else
-		oldPen = (HPEN)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.GreyPen2);
-	DrawBorders(DRAW_ENGINE.getBackgroundHDC());
-	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldPen);
 }
 
 void CMenuButton::LeftClickHandle()
 {
+	if (_hidden)
+		return;
 	if (!isActive)
-		Activate();
+	{	if (_handler)
+			_handler(LM_DOWN, this);//Activate();
+	}	
 	else
 	{
 		POINT pt = {_x + _cx / 2,_y + _cy / 2};

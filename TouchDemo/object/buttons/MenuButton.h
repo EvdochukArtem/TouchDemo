@@ -1,12 +1,12 @@
 #pragma once
-#include "object/buttons/AbstractButton.h"
+#include "AbstractButton.h"
 
 class CMenuButton : public CAbstractButton
 {
 public:
-	CMenuButton(UINT x, UINT y, UINT cx, UINT cy, LPCWSTR caption);
+	CMenuButton(UINT x, UINT y, UINT cx, UINT cy, LPCTSTR caption, void(CALLBACK* handler)(BUTTON_EVENT, CMenuButton*));
 	~CMenuButton() {};
-	virtual void Draw(HDC hdc);
+	virtual void Draw(HDC& hdc);
 	virtual void DrawBackground();
 	virtual void LeftClickHandle();
 	void SwitchSOI(bool soi);
@@ -17,4 +17,7 @@ public:
 private:
 	bool isActive;
 	bool isSOI;
+	void(CALLBACK* _handler)(BUTTON_EVENT, CMenuButton*);
+
+	friend class CMenuButtonHandler;
 };

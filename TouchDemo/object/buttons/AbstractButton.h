@@ -1,12 +1,20 @@
 #pragma once
 #include "../DrawingObject.h"
 
+enum BUTTON_EVENT
+{
+	LM_DOWN,
+	LM_UP,
+	MW_DOWM,
+	MW_UP,
+};
+
 class CAbstractButton : public CDrawingObject
 {
 public:
-	CAbstractButton(UINT x, UINT y, UINT cx, UINT cy, LPCWSTR caption);
+	CAbstractButton(UINT x, UINT y, UINT cx, UINT cy, LPCTSTR caption);
 	~CAbstractButton() {};
-	virtual void Draw(HDC hdc) = 0;
+	virtual void Draw(HDC& hdc) = 0;
 	virtual void DrawBackground() = 0;
 	virtual void LeftClickHandle() {};
 	virtual void RightClickHandle() {};

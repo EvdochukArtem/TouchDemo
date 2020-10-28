@@ -69,7 +69,14 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>D:\Документы\Visual Studio 2017\Projects\TouchDemo\Exe\$(Configuration)\</OutDir>
+    <IntDir>D:\Документы\Visual Studio 2017\Projects\TouchDemo\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>C:\Users\Артем\Documents\Visual Studio 2017\Projects\TouchDemo\Exe\$(Configuration)\</OutDir>
+    <IntDir>C:\Users\Артем\Documents\Visual Studio 2017\Projects\TouchDemo\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -89,6 +96,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>./;</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
+      <PreprocessorDefinitions>DEBUG;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -130,7 +138,15 @@
   <ItemGroup>
     <ClCompile Include="object\buttons\AbstractButton.cpp" />
     <ClCompile Include="object\buttons\MenuButton.cpp" />
+    <ClCompile Include="object\buttons\MenuButtonHandler.cpp" />
     <ClCompile Include="object\buttons\SimpleButton.cpp" />
+    <ClCompile Include="object\buttons\SimpleButtonHandler.cpp" />
+    <ClCompile Include="object\Frame.cpp" />
+    <ClCompile Include="object\KadrCAM\KadrCAM.cpp" />
+    <ClCompile Include="object\KadrMAP\KadrMAP.cpp" />
+    <ClCompile Include="object\KadrPIL\KadrPIL.cpp" />
+    <ClCompile Include="object\KadrRDR\KadrRDR.cpp" />
+    <ClCompile Include="object\KadrSYS\KadrSYS.cpp" />
     <ClCompile Include="util\GestureEngineEmulator.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="util\DrawEngine.cpp" />
@@ -146,7 +162,15 @@
   <ItemGroup>
     <ClInclude Include="object\buttons\AbstractButton.h" />
     <ClInclude Include="object\buttons\MenuButton.h" />
+    <ClInclude Include="object\buttons\MenuButtonHandler.h" />
     <ClInclude Include="object\buttons\SimpleButton.h" />
+    <ClInclude Include="object\buttons\SimpleButtonHandler.h" />
+    <ClInclude Include="object\Frame.h" />
+    <ClInclude Include="object\KadrCAM\KadrCAM.h" />
+    <ClInclude Include="object\KadrMAP\KadrMAP.h" />
+    <ClInclude Include="object\KadrPIL\KadrPIL.h" />
+    <ClInclude Include="object\KadrRDR\KadrRDR.h" />
+    <ClInclude Include="object\KadrSYS\KadrSYS.h" />
     <ClInclude Include="util\GestureEngineEmulator.h" />
     <ClInclude Include="util\DrawEngine.h" />
     <ClInclude Include="object\DrawingObject.h" />
