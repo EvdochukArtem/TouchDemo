@@ -12,12 +12,12 @@ enum BUTTON_EVENT
 class CAbstractButton : public CDrawingObject
 {
 public:
-	CAbstractButton(UINT x, UINT y, UINT cx, UINT cy, LPCTSTR caption);
+	CAbstractButton(int x, int y, int cx, int cy, LPCTSTR caption);
 	~CAbstractButton() {};
-	virtual void Draw(HDC& hdc) = 0;
-	virtual void DrawBackground() = 0;
-	virtual void LeftClickHandle() {};
-	virtual void RightClickHandle() {};
+	//virtual void Draw(HDC& hdc) = 0;
+	//virtual void DrawBackground() = 0;
+	virtual void LeftClickHandle() = 0;
+	virtual void RightClickHandle() = 0;
 protected:
 	TCHAR _caption [10];
 };

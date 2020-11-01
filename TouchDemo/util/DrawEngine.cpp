@@ -10,6 +10,7 @@ CDrawEngine::CDrawEngine()
 	tmpHDC = nullptr;
 	backgroundBITMAP = nullptr;
 	tmpBITMAP = nullptr;
+	drawingObjects = nullptr;
 }
 
 CDrawEngine::~CDrawEngine()
@@ -119,14 +120,14 @@ void CDrawEngine::Draw(HDC& hdc)
 	DeleteObject(hOld);
 }
 
-CDrawingObject* CDrawEngine::getDrawingObject(POINT pt)
+CDrawingObject* CDrawEngine::getObjectInPoint(POINT pt)
 {
-	return drawingObjects->getDrawingObject(pt);
+	return drawingObjects->getObjectInPoint(pt);
 }
 
-std::vector<CDrawingObject*> CDrawEngine::getAllDrawingObjects(POINT pt)
+std::vector<CDrawingObject*> CDrawEngine::getAllObjectsInPoint(POINT pt)
 {
-	return drawingObjects->getAllDrawingObjects(pt);
+	return drawingObjects->getAllObjectsInPoint(pt);
 }
 
 CDrawEngine::PriorObjectList::PriorObjectList()
@@ -245,7 +246,7 @@ void CDrawEngine::PriorObjectList::UpdateBackground()
 	}
 }
 
-CDrawingObject* CDrawEngine::PriorObjectList::getDrawingObject(POINT pt)
+CDrawingObject* CDrawEngine::PriorObjectList::getObjectInPoint(POINT pt)
 {
 	if (isEmpty())
 		return nullptr;
@@ -259,7 +260,7 @@ CDrawingObject* CDrawEngine::PriorObjectList::getDrawingObject(POINT pt)
 	return nullptr;
 }
 
-std::vector<CDrawingObject*> CDrawEngine::PriorObjectList::getAllDrawingObjects(POINT pt)
+std::vector<CDrawingObject*> CDrawEngine::PriorObjectList::getAllObjectsInPoint(POINT pt)
 {
 	foundObj.clear();
 	if (isEmpty())

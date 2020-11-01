@@ -2,7 +2,7 @@
 #include "MenuButton.h"
 #include "util/Util.h"
 
-CMenuButton::CMenuButton(UINT x, UINT y, UINT cx, UINT cy, LPCTSTR caption, void(CALLBACK* handler)(BUTTON_EVENT, CMenuButton*)) : CAbstractButton(x, y, cx, cy, caption)
+CMenuButton::CMenuButton(int x, int y, int cx, int cy, LPCTSTR caption, void(CALLBACK* handler)(BUTTON_EVENT, CMenuButton*)) : CAbstractButton(x, y, cx, cy, caption)
 {
 	isActive = false;
 	isSOI = false;
@@ -40,7 +40,8 @@ void CMenuButton::LeftClickHandle()
 	if (_hidden)
 		return;
 	if (!isActive)
-	{	if (_handler)
+	{
+		if (_handler)
 			_handler(LM_DOWN, this);//Activate();
 	}	
 	else
@@ -83,7 +84,7 @@ void CMenuButton::SwitchSOI(bool soi)
 	}
 }
 
-CMenuButton* CMenuButton::ChangePos(UINT x, UINT y)
+CMenuButton* CMenuButton::ChangePos(int x, int y)
 {
 	_x = x;
 	_y = y;

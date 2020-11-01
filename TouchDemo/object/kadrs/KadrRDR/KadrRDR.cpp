@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "KadrPIL.h"
+#include "KadrRDR.h"
 #include "util/Util.h"
 
-CKadrPIL::CKadrPIL(UINT id, KADR_SIZE kadrSize) : CKadr(id, kadrSize)
+CKadrRDR::CKadrRDR(UINT id, KADR_SIZE kadrSize) : CAbstractKadr(id, kadrSize)
 {
-	_kadrType = PLD;
+	_kadrType = RDR;
 }
 
-void CKadrPIL::Draw(HDC& hdc)
+void CKadrRDR::Draw(HDC& hdc)
 {
 	if (_blocked)
 		return;
-	::TextOut(hdc, _x+_cx/2, _y+_cy/2, L"PIL KADR", 9);
+	::TextOut(hdc, _x+_cx/2, _y+_cy/2, L"RDR KADR", 9);
 }
 
-void CKadrPIL::DrawBackground()
+void CKadrRDR::DrawBackground()
 {
 	if (_blocked)
 		return;
@@ -29,4 +29,17 @@ void CKadrPIL::DrawBackground()
 	}
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldBrush);
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldPen);
+}
+
+void CKadrRDR::ChangeSize(KADR_SIZE newSize)
+{
+	_kadrSize = newSize;
+	PlaceKadr();
+}
+
+CAbstractKadr* CKadrRDR::ChangePos(UINT newPos)
+{
+	_id = newPos;
+	PlaceKadr();
+	return this;
 }

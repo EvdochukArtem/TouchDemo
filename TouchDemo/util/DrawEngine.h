@@ -17,8 +17,8 @@ public:
 	void Draw(HDC& hdc);
 	void UpdateBackground();
 	HDC& getBackgroundHDC() { return backgroundHDC; };
-	CDrawingObject* getDrawingObject(POINT pt);
-	std::vector<CDrawingObject*> getAllDrawingObjects(POINT pt);
+	CDrawingObject* getObjectInPoint(POINT pt);
+	std::vector<CDrawingObject*> getAllObjectsInPoint(POINT pt);
 
 private:
 	CDrawEngine();
@@ -61,8 +61,8 @@ class CDrawEngine::PriorObjectList
 						// Есть смысл или разделить на контейнер PriorObjectList и от него отнаследовать ObjectList,
 						// или махнуть рукой и назвать сам класс ObjectList. 
 	void UpdateBackground();
-	CDrawingObject* getDrawingObject(POINT pt);
-	std::vector<CDrawingObject*> getAllDrawingObjects(POINT pt);
+	CDrawingObject* getObjectInPoint(POINT pt);
+	std::vector<CDrawingObject*> getAllObjectsInPoint(POINT pt);
 	std::vector<CDrawingObject*> foundObj;
 
 #ifdef DEBUG

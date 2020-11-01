@@ -1,9 +1,26 @@
 #include "StdAfx.h"
 #include "EkranHandler.h"
+#include "object/kadrs/BlankKadr.h"
+#include "object/kadrs/KadrCAM/KadrCAM.h"
+#include "object/kadrs/KadrMAP/KadrMAP.h"
+#include "object/kadrs/KadrPIL/KadrPIL.h"
+#include "object/kadrs/KadrRDR/KadrRDR.h"
+#include "object/kadrs/KadrSYS/KadrSYS.h"
 
 CEkranHandler::CEkranHandler()
 {
 	curSOI = 1;
+}
+
+CEkranHandler::~CEkranHandler()
+{
+	for (int i = 0; i < DISPLAY_COLS; i++)
+	{
+		delete kadrs[0][i];
+		delete kadrs[1][i];
+		delete mechanicMenu[i];
+		delete frames[i];
+	}
 }
 
 BOOL CEkranHandler::Create()
@@ -14,7 +31,7 @@ BOOL CEkranHandler::Create()
 	kadrs[0][3] = new CKadrSYS(3, QUARTER);
 	for (int i = 0; i < DISPLAY_COLS; i++)
 	{
-		//kadrs[0][i] = new CKadr(i, QUARTER);
+		//kadrs[0][i] = new CBlankKadr(i, QUARTER);
 		kadrs[1][i] = nullptr;
 		mechanicMenu[i] = new CMechanicMenu(i, kadrs[0][i]->GetKadrType());
 		frames[i] = new CFrame(i, mechanicMenu[i]->GetActiveButtonPosition(), QUARTER);
@@ -78,7 +95,7 @@ void CEkranHandler::SwapMenus(UINT leftOne)
 
 void CEkranHandler::SwapKadr(UINT leftOne)
 {
-	CKadr* tmp = nullptr;
+	CAbstractKadr* tmp = nullptr;
 	tmp = kadrs[0][leftOne];
 	kadrs[0][leftOne] = kadrs[0][leftOne + 1]->ChangePos(leftOne);
 	kadrs[0][leftOne + 1] = tmp->ChangePos(leftOne + 1);
@@ -144,7 +161,7 @@ void CEkranHandler::DivideKadr(UINT kadrID, KADR_SIZE kadrSize, SWIPE_DIRECTION 
 	{
 		kadrs[0][col]->ChangeSize(EIGHTH);
 		frames[col]->ChangeSize(EIGHTH);
-		kadrs[1][col] = new CKadr(4 + col, EIGHTH);
+		kadrs[1][col] = new CBlankKadr(4 + col, EIGHTH);
 	}
 	break;
 	default:
@@ -211,9 +228,9 @@ void CEkranHandler::RightMerge(SWIPE_DIRECTION swipeDir, UINT col)
 			if (!mechanicMenu[col + 1]->GetBlockStatus())	
 				SwapMenus(col + 1);
 		} else {
-			kadrs[0][col + 1]->SetBlock(true);	//блокировка соседнего кадра
 			if (kadrs[1][col + 1] != nullptr)
 				MergeKadr(col + 1, EIGHTH, swipeDir);
+			kadrs[0][col + 1]->SetBlock(true);	//блокировка соседнего кадра
 			frames[col + 1]->SetBlock(true);
 			mechanicMenu[col + 1]->SetBlock(true, swipeDir);
 			if (col + 1 == curSOI)
@@ -242,10 +259,10 @@ void CEkranHandler::LeftMerge(SWIPE_DIRECTION swipeDir, UINT col)
 			if (kadrs[1][col - 1] != nullptr)
 				MergeKadr(col - 1, EIGHTH, swipeDir);
 		}
-		kadrs[0][col]->ChangeSize(HALF);
-		frames[col]->ChangeSize(HALF);
 		SwapKadr(col - 1);
 		SwapFrames(col - 1);
+		kadrs[0][col - 1]->ChangeSize(HALF);
+		frames[col - 1]->ChangeSize(HALF);
 		kadrs[0][col]->SetBlock(true);
 		frames[col]->SetBlock(true);
 		mechanicMenu[col - 1]->SetBlock(true, swipeDir);

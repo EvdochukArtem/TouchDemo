@@ -31,35 +31,47 @@
     <Filter Include="Source Files\object\buttons">
       <UniqueIdentifier>{5cf93ac5-e7be-4892-bba8-ba0ee913cee4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\object\KadrMAP">
-      <UniqueIdentifier>{25aaf416-9fff-4c7a-b25e-5bcd42d2da61}</UniqueIdentifier>
+    <Filter Include="Header Files\object\kadrs">
+      <UniqueIdentifier>{0c5b2c44-9a70-4f75-8dfe-09c8a43a4456}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\object\KadrPIL">
-      <UniqueIdentifier>{086b5faf-d96c-4c78-9676-243267206e96}</UniqueIdentifier>
+    <Filter Include="Source Files\object\kadrs">
+      <UniqueIdentifier>{1845d9d3-ec8e-4ecc-9967-0cf1b729429f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\object\KadrRDR">
-      <UniqueIdentifier>{5b07d00b-584d-4cf1-8d4c-6e494d894c8e}</UniqueIdentifier>
+    <Filter Include="Header Files\object\kadrs\KadrCAM">
+      <UniqueIdentifier>{dd6c6db3-106b-4a74-b337-4aa8d4490f7b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\object\KadrSYS">
-      <UniqueIdentifier>{7afc84aa-0355-4d1d-84b1-bd613659d1cc}</UniqueIdentifier>
+    <Filter Include="Header Files\object\kadrs\KadrMAP">
+      <UniqueIdentifier>{5cb50c38-1137-4824-8c15-abb1b2aa4659}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\object\KadrCAM">
-      <UniqueIdentifier>{2bd248ea-7064-4820-8a58-bbd472dcbdca}</UniqueIdentifier>
+    <Filter Include="Header Files\object\kadrs\KadrPIL">
+      <UniqueIdentifier>{a1ecc3c2-e17f-46ae-a0ff-94f77ab3aadd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\object\KadrPIL">
-      <UniqueIdentifier>{ad7ac905-4218-4bf8-8507-2d8c99866f14}</UniqueIdentifier>
+    <Filter Include="Header Files\object\kadrs\KadrRDR">
+      <UniqueIdentifier>{6a772b32-b192-4357-991c-3a35dd2e3ab2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\object\KadrMAP">
-      <UniqueIdentifier>{bc524220-f758-43dd-b061-8165638213f3}</UniqueIdentifier>
+    <Filter Include="Header Files\object\kadrs\KadrSYS">
+      <UniqueIdentifier>{7236ac30-79cc-4aa5-bba6-d12194cb56af}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\object\KadrCAM">
-      <UniqueIdentifier>{6963e9bd-57a6-48c8-ae3c-c2d2947fb526}</UniqueIdentifier>
+    <Filter Include="Source Files\object\kadrs\KadrCAM">
+      <UniqueIdentifier>{44de00a9-9c06-4b55-8e41-eb42f6c96ae1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\object\KadrRDR">
-      <UniqueIdentifier>{b5bce722-6ed7-4740-9f76-398152704d09}</UniqueIdentifier>
+    <Filter Include="Source Files\object\kadrs\KadrPIL">
+      <UniqueIdentifier>{babad1c3-09e4-433f-9332-8de1776156fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\object\KadrSYS">
-      <UniqueIdentifier>{15d87843-9035-4c05-a419-9e9f7aad111c}</UniqueIdentifier>
+    <Filter Include="Source Files\object\kadrs\KadrSYS">
+      <UniqueIdentifier>{a71d4df9-efe7-44e3-8d24-0864e94b1335}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object\kadrs\KadrRDR">
+      <UniqueIdentifier>{4ff6fdef-32e3-44c6-9256-5326cf4dc42a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object\kadrs\KadrMAP">
+      <UniqueIdentifier>{74aa51af-a861-43e1-a001-3f32e6d0b13d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\object\auxilary">
+      <UniqueIdentifier>{cf113ecb-9d2e-41e9-bb4e-4d95975cb491}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object\auxilary">
+      <UniqueIdentifier>{3723972f-0b48-4160-834c-2dc4358ee532}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -76,9 +88,6 @@
       <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="object\DrawingObject.cpp">
-      <Filter>Source Files\object</Filter>
-    </ClCompile>
-    <ClCompile Include="object\Kadr.cpp">
       <Filter>Source Files\object</Filter>
     </ClCompile>
     <ClCompile Include="object\MechanicMenu.cpp">
@@ -114,20 +123,32 @@
     <ClCompile Include="object\buttons\SimpleButtonHandler.cpp">
       <Filter>Source Files\object\buttons</Filter>
     </ClCompile>
-    <ClCompile Include="object\KadrCAM\KadrCAM.cpp">
-      <Filter>Source Files\object\KadrCAM</Filter>
+    <ClCompile Include="object\kadrs\AbstractKadr.cpp">
+      <Filter>Source Files\object\kadrs</Filter>
     </ClCompile>
-    <ClCompile Include="object\KadrPIL\KadrPIL.cpp">
-      <Filter>Source Files\object\KadrPIL</Filter>
+    <ClCompile Include="object\kadrs\BlankKadr.cpp">
+      <Filter>Source Files\object\kadrs</Filter>
     </ClCompile>
-    <ClCompile Include="object\KadrMAP\KadrMAP.cpp">
-      <Filter>Source Files\object\KadrMAP</Filter>
+    <ClCompile Include="object\kadrs\KadrCAM\KadrCAM.cpp">
+      <Filter>Source Files\object\kadrs\KadrCAM</Filter>
     </ClCompile>
-    <ClCompile Include="object\KadrRDR\KadrRDR.cpp">
-      <Filter>Source Files\object\KadrRDR</Filter>
+    <ClCompile Include="object\kadrs\KadrPIL\KadrPIL.cpp">
+      <Filter>Source Files\object\kadrs\KadrPIL</Filter>
     </ClCompile>
-    <ClCompile Include="object\KadrSYS\KadrSYS.cpp">
-      <Filter>Source Files\object\KadrSYS</Filter>
+    <ClCompile Include="object\kadrs\KadrSYS\EngineSys.cpp">
+      <Filter>Source Files\object\kadrs\KadrSYS</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\KadrSYS\KadrSYS.cpp">
+      <Filter>Source Files\object\kadrs\KadrSYS</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\KadrRDR\KadrRDR.cpp">
+      <Filter>Source Files\object\kadrs\KadrRDR</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\KadrMAP\KadrMAP.cpp">
+      <Filter>Source Files\object\kadrs\KadrMAP</Filter>
+    </ClCompile>
+    <ClCompile Include="object\auxilary\Arrow.cpp">
+      <Filter>Source Files\object\auxilary</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -147,9 +168,6 @@
       <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="object\DrawingObject.h">
-      <Filter>Header Files\object</Filter>
-    </ClInclude>
-    <ClInclude Include="object\Kadr.h">
       <Filter>Header Files\object</Filter>
     </ClInclude>
     <ClInclude Include="object\MechanicMenu.h">
@@ -182,20 +200,32 @@
     <ClInclude Include="object\buttons\SimpleButtonHandler.h">
       <Filter>Header Files\object\buttons</Filter>
     </ClInclude>
-    <ClInclude Include="object\KadrCAM\KadrCAM.h">
-      <Filter>Header Files\object\KadrCAM</Filter>
+    <ClInclude Include="object\kadrs\AbstractKadr.h">
+      <Filter>Header Files\object\kadrs</Filter>
     </ClInclude>
-    <ClInclude Include="object\KadrMAP\KadrMAP.h">
-      <Filter>Header Files\object\KadrMAP</Filter>
+    <ClInclude Include="object\kadrs\BlankKadr.h">
+      <Filter>Header Files\object\kadrs</Filter>
     </ClInclude>
-    <ClInclude Include="object\KadrPIL\KadrPIL.h">
-      <Filter>Header Files\object\KadrPIL</Filter>
+    <ClInclude Include="object\kadrs\KadrCAM\KadrCAM.h">
+      <Filter>Header Files\object\kadrs\KadrCAM</Filter>
     </ClInclude>
-    <ClInclude Include="object\KadrRDR\KadrRDR.h">
-      <Filter>Header Files\object\KadrRDR</Filter>
+    <ClInclude Include="object\kadrs\KadrMAP\KadrMAP.h">
+      <Filter>Header Files\object\kadrs\KadrMAP</Filter>
     </ClInclude>
-    <ClInclude Include="object\KadrSYS\KadrSYS.h">
-      <Filter>Header Files\object\KadrSYS</Filter>
+    <ClInclude Include="object\kadrs\KadrPIL\KadrPIL.h">
+      <Filter>Header Files\object\kadrs\KadrPIL</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrRDR\KadrRDR.h">
+      <Filter>Header Files\object\kadrs\KadrRDR</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrSYS\EngineSys.h">
+      <Filter>Header Files\object\kadrs\KadrSYS</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrSYS\KadrSYS.h">
+      <Filter>Header Files\object\kadrs\KadrSYS</Filter>
+    </ClInclude>
+    <ClInclude Include="object\auxilary\Arrow.h">
+      <Filter>Header Files\object\auxilary</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

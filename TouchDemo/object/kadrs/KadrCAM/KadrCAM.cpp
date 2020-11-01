@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "KadrRDR.h"
+#include "KadrCAM.h"
 #include "util/Util.h"
 
-CKadrRDR::CKadrRDR(UINT id, KADR_SIZE kadrSize) : CKadr(id, kadrSize)
+CKadrCAM::CKadrCAM(UINT id, KADR_SIZE kadrSize) : CAbstractKadr(id, kadrSize)
 {
-	_kadrType = RDR;
+	_kadrType = CAM;
 }
 
-void CKadrRDR::Draw(HDC& hdc)
+void CKadrCAM::Draw(HDC& hdc)
 {
 	if (_blocked)
 		return;
-	::TextOut(hdc, _x+_cx/2, _y+_cy/2, L"RDR KADR", 9);
+	TextOut(hdc, _x+_cx/2, _y+_cy/2, L"CAM KADR", 10);
 }
 
-void CKadrRDR::DrawBackground()
+void CKadrCAM::DrawBackground()
 {
 	if (_blocked)
 		return;
@@ -29,4 +29,17 @@ void CKadrRDR::DrawBackground()
 	}
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldBrush);
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldPen);
+}
+
+void CKadrCAM::ChangeSize(KADR_SIZE newSize)
+{
+	_kadrSize = newSize;
+	PlaceKadr();
+}
+
+CAbstractKadr* CKadrCAM::ChangePos(UINT newPos)
+{
+	_id = newPos;
+	PlaceKadr();
+	return this;
 }

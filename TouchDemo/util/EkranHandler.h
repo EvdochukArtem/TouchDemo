@@ -2,12 +2,7 @@
 *	Класс отвечает за создание, управление и доступ к базовым объектам программы.
 */
 #pragma once
-#include "object/Kadr.h"
-#include "object/KadrSYS/KadrSYS.h"
-#include "object/KadrMAP/KadrMAP.h"
-#include "object/KadrPIL/KadrPIL.h"
-#include "object/KadrRDR/KadrRDR.h"
-#include "object/KadrCAM/KadrCAM.h"
+#include "object/kadrs/AbstractKadr.h"
 #include "object/MechanicMenu.h"
 #include "object/Frame.h"
 
@@ -19,7 +14,7 @@ enum EKRAN_HANDLER_COMMANDS;
 class CEkranHandler
 {
 public:
-	CKadr* GetKadr(UINT row, UINT col) { return kadrs[row][col]; };
+	CAbstractKadr* GetKadr(UINT row, UINT col) { return kadrs[row][col]; };
 	CMechanicMenu* GetMechanicMenu(UINT col) { return mechanicMenu[col]; };
 	CFrame* GetFrames(UINT col) { return frames[col]; };
 	void DivideKadr(UINT kadrID, KADR_SIZE kadrSize, SWIPE_DIRECTION swipeDir);	//Для восьмушек направление не важно
@@ -32,7 +27,7 @@ public:
 
 private:
 	CEkranHandler();
-	~CEkranHandler() {};
+	~CEkranHandler();
 	BOOL Create();
 	void SwapMenus(UINT leftOne);
 	void SwapFrames(UINT leftOne);
@@ -48,7 +43,7 @@ private:
 	// Смотрим какое положение кадр занимает на экране. Его левый верхний угол указывает
 	// на ячейку которую он будет занимать в массиве. Например 2 кадра каждый размером в полэкрана
 	// будут иметь ID 0 и 2 соотственно, а индексы будут [0][0] и [0][2].
-	CKadr* kadrs[DISPLAY_ROWS][DISPLAY_COLS];
+	CAbstractKadr* kadrs[DISPLAY_ROWS][DISPLAY_COLS];
 
 	CMechanicMenu* mechanicMenu[DISPLAY_COLS];
 

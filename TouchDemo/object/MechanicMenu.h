@@ -6,7 +6,7 @@
 #include "DrawingObject.h"
 #include "buttons/SimpleButtonHandler.h"
 #include "buttons/MenuButtonHandler.h"
-#include "Kadr.h"
+#include "kadrs/AbstractKadr.h"
 
 const int BUTTONS_MAX_NUM = 6;
 

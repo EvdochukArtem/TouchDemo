@@ -136,47 +136,53 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="object\auxilary\Arrow.cpp" />
     <ClCompile Include="object\buttons\AbstractButton.cpp" />
     <ClCompile Include="object\buttons\MenuButton.cpp" />
     <ClCompile Include="object\buttons\MenuButtonHandler.cpp" />
     <ClCompile Include="object\buttons\SimpleButton.cpp" />
     <ClCompile Include="object\buttons\SimpleButtonHandler.cpp" />
     <ClCompile Include="object\Frame.cpp" />
-    <ClCompile Include="object\KadrCAM\KadrCAM.cpp" />
-    <ClCompile Include="object\KadrMAP\KadrMAP.cpp" />
-    <ClCompile Include="object\KadrPIL\KadrPIL.cpp" />
-    <ClCompile Include="object\KadrRDR\KadrRDR.cpp" />
-    <ClCompile Include="object\KadrSYS\KadrSYS.cpp" />
+    <ClCompile Include="object\kadrs\AbstractKadr.cpp" />
+    <ClCompile Include="object\kadrs\BlankKadr.cpp" />
+    <ClCompile Include="object\kadrs\KadrCAM\KadrCAM.cpp" />
+    <ClCompile Include="object\kadrs\KadrMAP\KadrMAP.cpp" />
+    <ClCompile Include="object\kadrs\KadrPIL\KadrPIL.cpp" />
+    <ClCompile Include="object\kadrs\KadrRDR\KadrRDR.cpp" />
+    <ClCompile Include="object\kadrs\KadrSYS\EngineSys.cpp" />
+    <ClCompile Include="object\kadrs\KadrSYS\KadrSYS.cpp" />
     <ClCompile Include="util\GestureEngineEmulator.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="util\DrawEngine.cpp" />
     <ClCompile Include="object\DrawingObject.cpp" />
     <ClCompile Include="util\DrawKit.cpp" />
     <ClCompile Include="util\GestureEngine.cpp" />
-    <ClCompile Include="object\Kadr.cpp" />
     <ClCompile Include="util\EkranHandler.cpp" />
     <ClCompile Include="object\MechanicMenu.cpp" />
     <ClCompile Include="TouchDemo.cpp" />
     <ClCompile Include="util\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="object\auxilary\Arrow.h" />
     <ClInclude Include="object\buttons\AbstractButton.h" />
     <ClInclude Include="object\buttons\MenuButton.h" />
     <ClInclude Include="object\buttons\MenuButtonHandler.h" />
     <ClInclude Include="object\buttons\SimpleButton.h" />
     <ClInclude Include="object\buttons\SimpleButtonHandler.h" />
     <ClInclude Include="object\Frame.h" />
-    <ClInclude Include="object\KadrCAM\KadrCAM.h" />
-    <ClInclude Include="object\KadrMAP\KadrMAP.h" />
-    <ClInclude Include="object\KadrPIL\KadrPIL.h" />
-    <ClInclude Include="object\KadrRDR\KadrRDR.h" />
-    <ClInclude Include="object\KadrSYS\KadrSYS.h" />
+    <ClInclude Include="object\kadrs\AbstractKadr.h" />
+    <ClInclude Include="object\kadrs\BlankKadr.h" />
+    <ClInclude Include="object\kadrs\KadrCAM\KadrCAM.h" />
+    <ClInclude Include="object\kadrs\KadrMAP\KadrMAP.h" />
+    <ClInclude Include="object\kadrs\KadrPIL\KadrPIL.h" />
+    <ClInclude Include="object\kadrs\KadrRDR\KadrRDR.h" />
+    <ClInclude Include="object\kadrs\KadrSYS\EngineSys.h" />
+    <ClInclude Include="object\kadrs\KadrSYS\KadrSYS.h" />
     <ClInclude Include="util\GestureEngineEmulator.h" />
     <ClInclude Include="util\DrawEngine.h" />
     <ClInclude Include="object\DrawingObject.h" />
     <ClInclude Include="util\DrawKit.h" />
     <ClInclude Include="util\GestureEngine.h" />
-    <ClInclude Include="object\Kadr.h" />
     <ClInclude Include="util\EkranHandler.h" />
     <ClInclude Include="object\MechanicMenu.h" />
     <ClInclude Include="StdAfx.h" />

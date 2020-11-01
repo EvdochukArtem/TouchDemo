@@ -1,46 +1,23 @@
 #include "StdAfx.h"
-#include "Kadr.h"
+#include "BlankKadr.h"
 #include "util/Util.h"
 
-// Ќет ли смысла уйти от т€жкого наследи€ —и и заменить макроопределени€ на константы?
-#define KADR_BORDER_Y			MECHANIC_MENU_HEIGHTPX
-#define KADR_BORDER_X			0
-#define KADR_WORK_AREA_WIDTH	(WIDTHPX - 2 * KADR_BORDER_X)
-#define KADR_WORK_AREA_HEIGHT	(HEIGHTPX - 2 * KADR_BORDER_Y)
-#define DEAD_ZONE				TO_PIXEL(100)
-#define INNER_KADR_INDENT		TO_PIXEL(10)
-#define TIMER_ID				(001)
+#define TIMER_ID (001)
 
 // This macro is used to round double and cast it to LONG
 #define ROUND_DOUBLE_TO_LONG(x) ((LONG)floor(0.5 + (x)))
 
-CKadr* CKadr::pKadr = nullptr;
+CBlankKadr* CBlankKadr::pKadr = nullptr;
 
-CKadr::CKadr(UINT id, KADR_SIZE kadrSize) : CDrawingObject(MIN)
+CBlankKadr::CBlankKadr(UINT id, KADR_SIZE kadrSize) : CAbstractKadr(id, kadrSize)
 {
-	oldBrush = nullptr;
-	oldPen = nullptr;
-	_id = id;
-	_kadrSize = kadrSize;
-	_kadrType = EMPTY;
-
+	_kadrType = MAX_KADR_TYPE;
 	ID = id;
-
-	for (int i = 0; i < MAX_KADR_TYPE - 1; i++)
-		btn[i] = nullptr;
-
-	PlaceKadr();
-
-	_rotationAngle = 0;
-	_scalingFactor = 1;
-
-	InitInteractiveObj();
-
-	_isSOI = false;
-	_blocked = false;
+	//InitInteractiveObj();
+	BtnInit();
 }
 
-CKadr::~CKadr()
+CBlankKadr::~CBlankKadr()
 {
 	for (int i = 0; i < MAX_KADR_TYPE - 1; i++)
 	{
@@ -49,42 +26,7 @@ CKadr::~CKadr()
 	}
 }
 
-void CKadr::PlaceKadr()
-{
-	switch (_kadrSize)
-	{
-	case HALF:
-		_cx = KADR_WORK_AREA_WIDTH / 2;
-		_cy = KADR_WORK_AREA_HEIGHT;
-		_y = KADR_BORDER_Y;
-		_x = KADR_BORDER_X + _id * _cx / 2;
-		break;
-	case QUARTER:
-		_cy = KADR_WORK_AREA_HEIGHT;
-		_cx = KADR_WORK_AREA_WIDTH / 4;
-		_y = KADR_BORDER_Y;
-		_x = KADR_BORDER_X + (_id % 4) * _cx;
-		break;
-	case EIGHTH:
-		if (_id / 4 == 0)
-		{
-			_cx = KADR_WORK_AREA_WIDTH / 4;
-			_cy = KADR_WORK_AREA_HEIGHT / 2;
-			_x = KADR_BORDER_X + (_id % 4) * _cx;
-			_y = KADR_BORDER_Y;
-		} else {
-			_cx = KADR_WORK_AREA_WIDTH / 4 - 2 * INNER_KADR_INDENT;
-			_cy = (KADR_WORK_AREA_HEIGHT) / 2 - 2 * INNER_KADR_INDENT;
-			_x = KADR_BORDER_X + (_id % 4) * (KADR_WORK_AREA_WIDTH / 4) + INNER_KADR_INDENT;
-			_y = KADR_BORDER_Y + KADR_WORK_AREA_HEIGHT / 2 + INNER_KADR_INDENT;
-		}
-		break;
-	default:
-		break;
-	}
-}
-
-void CKadr::InitInteractiveObj()
+void CBlankKadr::InitInteractiveObj()
 {
 	interactiveObj[0].x = _x + _cx / 2;
 	interactiveObj[0].y = _y + _cy / 2;
@@ -95,7 +37,7 @@ void CKadr::InitInteractiveObj()
 	interactiveObj[3] = interactiveObj[0];
 }
 
-void CKadr::BtnInit()
+void CBlankKadr::BtnInit()
 {
 	btn[0] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + _cy / 7.0,
 							 TO_PIXEL(100), TO_PIXEL(50),
@@ -118,7 +60,7 @@ void CKadr::BtnInit()
 							 _T("RDR"), CMenuButtonHandler::OnRDRButtonPress);
 }
 
-void CKadr::DrawBackground()
+void CBlankKadr::DrawBackground()
 {
 	if (_blocked)
 		return;
@@ -126,6 +68,8 @@ void CKadr::DrawBackground()
 	oldPen = (HPEN)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.BlackPen);
 	oldBrush = (HBRUSH)SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.BlackBrush);
 	Rectangle(DRAW_ENGINE.getBackgroundHDC(), _x, _y, _x + _cx, _y + _cy);
+	if (_id / 4 == 0 && _kadrSize == EIGHTH)
+		Rectangle(DRAW_ENGINE.getBackgroundHDC(), _x, _y + _cy, _x + _cx, _y + _cy + INNER_KADR_INDENT - TO_PIXEL(2));
 	if (_id / 4 == 1 && _kadrSize == EIGHTH)
 	{
 		SelectObject(DRAW_ENGINE.getBackgroundHDC(), DRAW_KIT.GreyPen2);
@@ -135,16 +79,13 @@ void CKadr::DrawBackground()
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldPen);
 }
 
-void CKadr::Draw(HDC& hdc)
+void CBlankKadr::Draw(HDC& hdc)
 {
 	if (_blocked)
 		return;
 	oldPen = (HPEN)SelectObject(hdc, DRAW_KIT.GreyPen2);
 	oldBrush = (HBRUSH)SelectObject(hdc, DRAW_KIT.LightGreyBrush);
 	
-	if (btn[0] == nullptr)
-		BtnInit();
-
 	for (int i = 0; i < MAX_KADR_TYPE - 1; i++)
 		btn[i]->DrawBorders(hdc);
 	//DrawInteractiveObj(hdc);
@@ -155,12 +96,7 @@ void CKadr::Draw(HDC& hdc)
 	SelectObject(hdc, oldPen);
 }
 
-void CKadr::SetSOIStatus(bool soiStatus)
-{
-	_isSOI = soiStatus;
-}
-
-void CKadr::ChangeSize(KADR_SIZE newSize)
+void CBlankKadr::ChangeSize(KADR_SIZE newSize)
 {
 	_kadrSize = newSize;
 	PlaceKadr();
@@ -170,7 +106,7 @@ void CKadr::ChangeSize(KADR_SIZE newSize)
 			btn[i]->ChangePos(_x + _cx / 2 - TO_PIXEL(25), _y + (i + 1) * (_cy / 7.0));
 }
 
-CKadr* CKadr::ChangePos(UINT newPos)
+CAbstractKadr* CBlankKadr::ChangePos(UINT newPos)
 {
 	_id = newPos;
 	PlaceKadr();
@@ -181,7 +117,7 @@ CKadr* CKadr::ChangePos(UINT newPos)
 	return this;
 }
 
-void CKadr::DrawInteractiveObj(HDC& hdc)
+void CBlankKadr::DrawInteractiveObj(HDC& hdc)
 {
 	_stprintf_s(buf, _T("%d"), ID + 1);
 	Polygon(hdc, interactiveObj, 4);
@@ -190,43 +126,19 @@ void CKadr::DrawInteractiveObj(HDC& hdc)
 	SetTextAlign(hdc, oldTextAlign);
 }
 
-void CKadr::Swipe(const POINT firstTouchCoord, const POINT secondTouchCoord)
-{
-	if (PointIsMine(secondTouchCoord))
-	{
-		if (abs(firstTouchCoord.y - secondTouchCoord.y) < DEAD_ZONE && this->_kadrSize < QUARTER) //TODO: мб это стоит переделать лаконичнее
-			if (firstTouchCoord.x < secondTouchCoord.x)
-				EKRAN_HANDLER.DivideKadr(_id, _kadrSize, RIGHT);
-			else
-				EKRAN_HANDLER.DivideKadr(_id, _kadrSize, LEFT);
-		if (abs(firstTouchCoord.x - secondTouchCoord.x) < DEAD_ZONE && firstTouchCoord.y > secondTouchCoord.y && this->_kadrSize == QUARTER)
-			EKRAN_HANDLER.DivideKadr(_id, _kadrSize, RIGHT); //тут направление не важно на самом деле
-	}
-	else
-	{
-		if (abs(firstTouchCoord.y - secondTouchCoord.y) < DEAD_ZONE && this->_kadrSize <= QUARTER)
-			if (firstTouchCoord.x < secondTouchCoord.x)
-				EKRAN_HANDLER.MergeKadr(_id, _kadrSize, RIGHT);
-			else
-				EKRAN_HANDLER.MergeKadr(_id, _kadrSize, LEFT);
-		if (abs(firstTouchCoord.x - secondTouchCoord.x) < DEAD_ZONE && firstTouchCoord.y < secondTouchCoord.y && this->_kadrSize == EIGHTH)
-			EKRAN_HANDLER.MergeKadr(_id, _kadrSize, RIGHT); //тут направление не важно на самом деле
-	}
-}
-
-void CKadr::Reset()
+void CBlankKadr::Reset()
 {
 	ResetInteractiveObject();
 }
 
-void CKadr::ResetInteractiveObject()
+void CBlankKadr::ResetInteractiveObject()
 {
 	_rotationAngle = 0;
 	_scalingFactor = 1;
 	InitInteractiveObj();
 }
 
-void CKadr::Move(const POINT firstTouchCoord, const POINT delta)
+void CBlankKadr::Move(const POINT firstTouchCoord, const POINT delta)
 {
 	for (int i = 0; i < INTERACTIVE_OBJ_LENGTH; i++)
 	{
@@ -243,7 +155,7 @@ void CKadr::Move(const POINT firstTouchCoord, const POINT delta)
 	}
 }
 
-void CKadr::Zoom(const double dZoomFactor, const POINT zoomCenter) 
+void CBlankKadr::Zoom(const double dZoomFactor, const POINT zoomCenter) 
 {
 	POINT tmpPoint[INTERACTIVE_OBJ_LENGTH];
 	for (int i = 0; i < INTERACTIVE_OBJ_LENGTH; i++)
@@ -262,7 +174,7 @@ void CKadr::Zoom(const double dZoomFactor, const POINT zoomCenter)
 	_scalingFactor *= dZoomFactor;
 }
 
-void CKadr::Rotate(const double dAngle, const POINT rotateCenter)
+void CBlankKadr::Rotate(const double dAngle, const POINT rotateCenter)
 {
 	double dCos = cos(dAngle);
 	double dSin = sin(dAngle);
@@ -286,7 +198,7 @@ void CKadr::Rotate(const double dAngle, const POINT rotateCenter)
 	_rotationAngle += dAngle;
 }
 
-void CKadr::Hide(bool hidden)
+void CBlankKadr::Hide(bool hidden)
 {
 	_hidden = hidden;
 	if (btn[0] != nullptr)
@@ -294,10 +206,8 @@ void CKadr::Hide(bool hidden)
 			btn[i]->Hide(hidden);
 }
 
-void CKadr::LeftClickHandle(POINT clickCoord)
+void CBlankKadr::LeftClickHandle(POINT clickCoord)
 {
-	if (_hidden)
-		return;
 	if (btn[0] != nullptr)
 		for (int i = 0; i < MAX_KADR_TYPE - 1; i++)
 			if (btn[i]->PointIsMine(clickCoord))
@@ -307,12 +217,12 @@ void CKadr::LeftClickHandle(POINT clickCoord)
 			}
 	_ptCoords = clickCoord;
 	_paintClickZone = true;
-	CKadr::pKadr = this;
+	CBlankKadr::pKadr = this;
 	SetTimer(NULL, TIMER_ID, 150, (TIMERPROC) TimerProc);
 }
 
-void CKadr::TimerProc(HWND hWnd, UINT message, UINT idTimer, DWORD dwTime)
+void CBlankKadr::TimerProc(HWND hWnd, UINT message, UINT idTimer, DWORD dwTime)
 {
-	CKadr::pKadr->_paintClickZone = false;
+	CBlankKadr::pKadr->_paintClickZone = false;
 	KillTimer(hWnd, TIMER_ID);
 }

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "AbstractButton.h"
 
-CAbstractButton::CAbstractButton(UINT x, UINT y, UINT cx, UINT cy, LPCTSTR caption) : CDrawingObject(MAX)
+CAbstractButton::CAbstractButton(int x, int y, int cx, int cy, LPCTSTR caption) : CDrawingObject(MAX)
 {
 	_x = x;
 	_y = y;

@@ -2,7 +2,7 @@
 #include "SimpleButton.h"
 #include "util/Util.h"
 
-CSimpleButton::CSimpleButton(UINT x, UINT y, UINT cx, UINT cy, LPCTSTR caption, void(CALLBACK* handler)(BUTTON_EVENT, CSimpleButton*)) : CAbstractButton(x, y, cx, cy, caption)
+CSimpleButton::CSimpleButton(int x, int y, int cx, int cy, LPCTSTR caption, void(CALLBACK* handler)(BUTTON_EVENT, CSimpleButton*)) : CAbstractButton(x, y, cx, cy, caption)
 {
 	_handler = handler;
 }
@@ -19,7 +19,7 @@ void CSimpleButton::Draw(HDC& hdc)
 	SelectObject(hdc, oldPen);*/
 }
 
-CSimpleButton* CSimpleButton::ChangePos(UINT x, UINT y)
+CSimpleButton* CSimpleButton::ChangePos(int x, int y)
 {
 	_x = x;
 	_y = y;

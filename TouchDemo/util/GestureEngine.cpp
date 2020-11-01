@@ -2,7 +2,6 @@
 #include "GestureEngine.h"
 #include "util/Util.h"
 
-#define _USE_MATH_DEFINES
 const int TOUCH_EKRAN_WIDTH		= WIDTHPX;
 const int TOUCH_EKRAN_HEIGHT	= HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
 #define PAN_TIMER_ID (001)

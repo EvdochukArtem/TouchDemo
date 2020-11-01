@@ -2,13 +2,12 @@
 #include "GestureEngineEmulator.h"
 #include "util/Util.h"
 
-#define _USE_MATH_DEFINES
 const int TOUCH_EKRAN_WIDTH		= WIDTHPX;
 const int TOUCH_EKRAN_HEIGHT	= HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
 const int DEAD_ZONE				= TO_PIXEL(10);
 const int CLICK_TIME			= TO_PIXEL(200);
 const int SHIFT_X				= TO_PIXEL(300);
-const int SHIFT_Y				= TO_PIXEL(50);
+const int SHIFT_Y				= TO_PIXEL(150);
 
 CGestureEngineEmulator::CGestureEngineEmulator()
 {
@@ -41,7 +40,10 @@ LRESULT CGestureEngineEmulator::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 			LONG diffX = _ptSecond.x - _ptBegin.x;
 			LONG diffY = _ptSecond.y - _ptBegin.y;
 			if (_timer < CLICK_TIME && diffX < DEAD_ZONE && diffX > -DEAD_ZONE && diffY < DEAD_ZONE && diffY > -DEAD_ZONE)
+			{
 				OnLMouseUp(_ptFirst);
+				SendMessage(hWnd, WM_UPDATE, 0, 0);
+			}
 			else
 			{
 				if (EmulateTouchIsValid(_ptSecond) == false)

@@ -85,9 +85,6 @@ void CMechanicMenu::LeftClickHandle(POINT clickCoord)
 			hiButton[1]->LeftClickHandle();
 		else if (loRotary[1]->PointIsMine(clickCoord))
 			loRotary[1]->LeftClickHandle();
-
-	extern HWND MFIWindow;
-	SendMessage(MFIWindow, WM_UPDATE, 0, 0);
 }
 
 void CMechanicMenu::SetBlock(bool blockStatus, SWIPE_DIRECTION swipeDir)
@@ -200,7 +197,7 @@ void CMechanicMenu::CHiMenu::CreateButtons(KADR_TYPE type)
 	{
 	case EMPTY:
 	{
-		_stprintf_s(buf, _T("ESC"), (int)_tcslen(buf));
+		_stprintf_s(buf, _T("ESC"));
 		buttons[0] = new CMenuButton(_x + BUTTON_INDENT + (1 - _id % 2) * (_cx / (BUTTONS_MAX_NUM + 1)), _y + BUTTON_INDENT,
 										_cx / (BUTTONS_MAX_NUM + 1), _cy - BUTTON_INDENT,
 										buf, CMenuButtonHandler::OnEscButtonPress);
@@ -222,21 +219,22 @@ void CMechanicMenu::CHiMenu::CreateButtons(KADR_TYPE type)
 	}
 		break;
 	case PLD:
-		_stprintf_s(buf, _T("PLD"), (int)_tcslen(buf));
+		_stprintf_s(buf, _T("PLD"));
 		break;
 	case SYST:
-		_stprintf_s(buf, _T("SYST"), (int)_tcslen(buf));
+		_stprintf_s(buf, _T("SYST"));
 		break;
 	case CAM:
-		_stprintf_s(buf, _T("CAM"), (int)_tcslen(buf));
+		_stprintf_s(buf, _T("CAM"));
 		break;
 	case MAP:
-		_stprintf_s(buf, _T("MAP"), (int)_tcslen(buf));
+		_stprintf_s(buf, _T("MAP"));
 		break;
 	case RDR:
-		_stprintf_s(buf, _T("RDR"), (int)_tcslen(buf));
+		_stprintf_s(buf, _T("RDR"));
 		break;
 	case MAX_KADR_TYPE:
+		_stprintf_s(buf, _T("XXX"));
 		break;
 	default:
 		break;
@@ -276,7 +274,7 @@ void CMechanicMenu::CHiMenu::LeftClickHandle(POINT clickCoord)
 	for (int i = 0; i < BUTTONS_MAX_NUM; i++)
 		if (buttons[i] != nullptr && buttons[i]->PointIsMine(clickCoord))
 		{
-			if (i != 0)
+			if (i != 0 && !kadrSelection)
 			{
 				if (_curActive != i)
 					buttons[_curActive]->Disactivate();

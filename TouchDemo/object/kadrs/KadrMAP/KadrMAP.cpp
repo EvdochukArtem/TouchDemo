@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "KadrCAM.h"
+#include "KadrMAP.h"
 #include "util/Util.h"
 
-CKadrCAM::CKadrCAM(UINT id, KADR_SIZE kadrSize) : CKadr(id, kadrSize)
+CKadrMAP::CKadrMAP(UINT id, KADR_SIZE kadrSize) : CAbstractKadr(id, kadrSize)
 {
-	_kadrType = CAM;
+	_kadrType = MAP;
 }
 
-void CKadrCAM::Draw(HDC& hdc)
+void CKadrMAP::Draw(HDC& hdc)
 {
 	if (_blocked)
 		return;
-	::TextOut(hdc, _x+_cx/2, _y+_cy/2, L"CAM KADR", 10);
+	::TextOut(hdc, _x+_cx/2, _y+_cy/2, L"MAP KADR", 9);
 }
 
-void CKadrCAM::DrawBackground()
+void CKadrMAP::DrawBackground()
 {
 	if (_blocked)
 		return;
@@ -29,4 +29,17 @@ void CKadrCAM::DrawBackground()
 	}
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldBrush);
 	SelectObject(DRAW_ENGINE.getBackgroundHDC(), oldPen);
+}
+
+void CKadrMAP::ChangeSize(KADR_SIZE newSize)
+{
+	_kadrSize = newSize;
+	PlaceKadr();
+}
+
+CAbstractKadr* CKadrMAP::ChangePos(UINT newPos)
+{
+	_id = newPos;
+	PlaceKadr();
+	return this;
 }

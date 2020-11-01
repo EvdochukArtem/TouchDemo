@@ -3,7 +3,7 @@
 */
 #pragma once
 #include "DrawingObject.h"
-#include "Kadr.h"
+#include "kadrs/AbstractKadr.h"
 
 class CFrame : public CDrawingObject
 {
