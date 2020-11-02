@@ -10,6 +10,7 @@ public:
 
 	void DrawBackground();
 	void Draw(HDC& hdc);
+	void Dispose() {};
 
 private:
 	double* rud;

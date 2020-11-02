@@ -34,12 +34,12 @@ void CKadrPIL::DrawBackground()
 void CKadrPIL::ChangeSize(KADR_SIZE newSize)
 {
 	_kadrSize = newSize;
-	PlaceKadr();
+	Dispose();
 }
 
 CAbstractKadr* CKadrPIL::ChangePos(UINT newPos)
 {
 	_id = newPos;
-	PlaceKadr();
+	Dispose();
 	return this;
 }

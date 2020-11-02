@@ -43,7 +43,7 @@ void CKadrSYS::DeletePribors()
 void CKadrSYS::ChangeSize(KADR_SIZE newSize)
 {
 	_kadrSize = newSize;
-	PlaceKadr();
+	Dispose();
 	DeletePribors();
 	CreatePribors();
 }
@@ -51,7 +51,7 @@ void CKadrSYS::ChangeSize(KADR_SIZE newSize)
 CAbstractKadr* CKadrSYS::ChangePos(UINT newPos)
 {
 	_id = newPos;
-	PlaceKadr();
+	Dispose();
 	DeletePribors();
 	CreatePribors();
 	return this;
