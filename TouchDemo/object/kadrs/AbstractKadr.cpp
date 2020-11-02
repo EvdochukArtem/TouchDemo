@@ -20,7 +20,7 @@ CAbstractKadr::CAbstractKadr(UINT id, KADR_SIZE kadrSize) : CDrawingObject(MIN)
 	_kadrSize = kadrSize;
 	_rotationAngle = 0;
 	_scalingFactor = 1;
-	PlaceKadr();
+	Dispose();
 }
 
 void CAbstractKadr::SetSOIStatus(bool soiStatus)
@@ -28,7 +28,7 @@ void CAbstractKadr::SetSOIStatus(bool soiStatus)
 	_isSOI = soiStatus;
 }
 
-void CAbstractKadr::PlaceKadr()
+void CAbstractKadr::Dispose()
 {
 	switch (_kadrSize)
 	{
@@ -53,7 +53,7 @@ void CAbstractKadr::PlaceKadr()
 			_y = KADR_BORDER_Y_HI;
 		} else {
 			_cx = KADR_WORK_AREA_WIDTH / 4 - 2 * INNER_KADR_INDENT;
-			_cy = (KADR_WORK_AREA_HEIGHT) / 2 - 2 * INNER_KADR_INDENT;
+			_cy = KADR_WORK_AREA_HEIGHT / 2 - 2 * INNER_KADR_INDENT;
 			_x = KADR_BORDER_X + (_id % 4) * (KADR_WORK_AREA_WIDTH / 4) + INNER_KADR_INDENT;
 			_y = KADR_BORDER_Y_HI + KADR_WORK_AREA_HEIGHT / 2 + INNER_KADR_INDENT;
 		}

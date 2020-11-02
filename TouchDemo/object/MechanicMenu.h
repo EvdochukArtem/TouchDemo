@@ -46,7 +46,7 @@ class CMechanicMenu::CHiMenu : public CDrawingObject
 private:
 	CHiMenu(UINT id, KADR_TYPE type);
 	~CHiMenu();
-	void PlaceMenu();
+	void Dispose();
 
 	void Draw(HDC& hdc);
 	void DrawBackground();
@@ -71,7 +71,7 @@ class CMechanicMenu::CLoMenu : public CDrawingObject
 private:
 	CLoMenu(UINT id);
 	~CLoMenu();
-	void PlaceMenu();
+	void Dispose();
 
 	void Draw(HDC& hdc);
 	void DrawBackground();

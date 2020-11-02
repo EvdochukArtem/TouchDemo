@@ -10,7 +10,6 @@ public:
 	virtual void DrawBackground();
 	virtual void LeftClickHandle();
 	virtual void RightClickHandle() {};
-	CSimpleButton* ChangePos(int x, int y);
 private:
 	void(CALLBACK* _handler)(BUTTON_EVENT, CSimpleButton*);
 };

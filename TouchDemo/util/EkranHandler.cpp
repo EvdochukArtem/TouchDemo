@@ -123,8 +123,8 @@ void CEkranHandler::DivideKadr(UINT kadrID, KADR_SIZE kadrSize, SWIPE_DIRECTION 
 	frames[col]->DisableKadrTypeSelection();
 	if (swipeDir == LEFT && col > 0 && kadrSize != QUARTER)
 	{
-		mechanicMenu[col - 1]->DisableKadrTypeSelection();
-		frames[col - 1]->DisableKadrTypeSelection();
+		mechanicMenu[col + 1]->DisableKadrTypeSelection();
+		frames[col + 1]->DisableKadrTypeSelection();
 	}
 	if (swipeDir == RIGHT && col < 3 && kadrSize != QUARTER)
 	{
@@ -302,14 +302,20 @@ void CEkranHandler::ProcessCommand(EKRAN_HANDLER_COMMANDS cmd, POINT pt)
 		{
 			int curCol = FindMechMenu(pt);
 			mechanicMenu[curCol]->EnableKadrTypeSelection();
-			frames[curCol]->EnableKadrTypeSelection();
+			if (frames[curCol]->GetBlockStatus())
+				frames[curCol - 1]->EnableKadrTypeSelection();
+			else
+				frames[curCol]->EnableKadrTypeSelection();
 		}
 		break;
 	case DISABLE_KADR_TYPE_SELECTION:
 		{
 			int curCol = FindMechMenu(pt);
 			mechanicMenu[curCol]->DisableKadrTypeSelection();
-			frames[curCol]->DisableKadrTypeSelection();
+			if (frames[curCol]->GetBlockStatus())
+				frames[curCol - 1]->DisableKadrTypeSelection();
+			else
+				frames[curCol]->DisableKadrTypeSelection();
 		}
 		break;
 	case SWITCH_PLD:
@@ -365,13 +371,13 @@ void CEkranHandler::SwitchKadr(KADR_TYPE type, POINT pt)
 		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrSYS(4*rowAndCol.first + rowAndCol.second, size);
 		break;
 	case CAM:
-		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrCAM(4*rowAndCol.first + rowAndCol.second, size);
+		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrCAM(4 * rowAndCol.first + rowAndCol.second, size);
 		break;
 	case MAP:
-		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrMAP(4*rowAndCol.first + rowAndCol.second, size);
+		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrMAP(4 * rowAndCol.first + rowAndCol.second, size);
 		break;
 	case RDR:
-		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrRDR(4*rowAndCol.first + rowAndCol.second, size);
+		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrRDR(4 * rowAndCol.first + rowAndCol.second, size);
 		break;
 	default:
 		break;
@@ -381,5 +387,11 @@ void CEkranHandler::SwitchKadr(KADR_TYPE type, POINT pt)
 	{
 		mechanicMenu[menuCol] = new CMechanicMenu(menuCol, kadrs[0][rowAndCol.second]->GetKadrType());
 		frames[rowAndCol.second]->DisableKadrTypeSelection();
+	}
+
+	if (rowAndCol.first == 0 && rowAndCol.second == curSOI)
+	{
+		kadrs[0][curSOI]->SetSOIStatus(true);
+		mechanicMenu[curSOI]->SetSOIStatus(true);
 	}
 }

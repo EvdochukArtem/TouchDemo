@@ -25,7 +25,7 @@ public:
 
 private:
 
-	void PlaceFrame();
+	void Dispose();
 
 	UINT _id;
 	UINT _activeButton;

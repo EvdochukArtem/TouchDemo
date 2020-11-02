@@ -83,10 +83,3 @@ void CMenuButton::SwitchSOI(bool soi)
 		isSOI = false;
 	}
 }
-
-CMenuButton* CMenuButton::ChangePos(int x, int y)
-{
-	_x = x;
-	_y = y;
-	return this;
-}

@@ -20,8 +20,8 @@ public:
 	CDrawKit& getDrawKit() { return drawKit; };
 	CDrawEngine& getDrawEngine() { return drawEngine; };
 	
-	static POINT Rotate(POINT &pts, float angle, int smx, int smy);
-	static POINT Rotate(int x, int y, float angle, int smx, int smy);
+	static POINT Rotate(POINT &pts, double angle, int smx, int smy);
+	static POINT Rotate(int x, int y, double angle, int smx, int smy);
 private:
 	static bool created;
 	CUtil() {};

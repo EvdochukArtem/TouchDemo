@@ -38,6 +38,8 @@ protected:
 	HFONT oldFont;
 	TCHAR buf[128];							//буфер для текста
 
+	virtual void Dispose() = 0;
+
 private:
 	void RegisterDrawingObject();
 	void DeleteDrawingObject();

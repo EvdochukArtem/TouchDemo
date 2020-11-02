@@ -19,13 +19,6 @@ void CSimpleButton::Draw(HDC& hdc)
 	SelectObject(hdc, oldPen);*/
 }
 
-CSimpleButton* CSimpleButton::ChangePos(int x, int y)
-{
-	_x = x;
-	_y = y;
-	return this;
-}
-
 void CSimpleButton::DrawBackground()
 {
 	if (_hidden)

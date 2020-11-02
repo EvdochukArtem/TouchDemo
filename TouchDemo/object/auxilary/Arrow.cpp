@@ -12,10 +12,10 @@ CArrow::CArrow(POINT X0Y0, POINT* XY, int numOfPts)
 CArrow::~CArrow()
 {}
 
-void CArrow::Draw(HDC& hdc, float angle)
+void CArrow::Draw(HDC& hdc, double angle)
 {	
 	std::vector<POINT> tmp(arrowPts.size());
-	for (int i = 0; i < arrowPts.size(); i++)
+	for (int i = 0; i < (int)arrowPts.size(); i++)
 		tmp[i] = CUtil::Rotate(arrowPts[i], angle, center.x, center.y);
 	::Polygon(hdc, &tmp[0], tmp.size());
 }

@@ -14,7 +14,6 @@ public:
 	void Activate();
 	void Disactivate();
 	bool getStatus() { return isActive; };
-	CMenuButton* ChangePos(int x, int y);
 private:
 	bool isActive;
 	bool isSOI;

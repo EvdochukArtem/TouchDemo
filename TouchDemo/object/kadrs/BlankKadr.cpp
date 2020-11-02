@@ -13,7 +13,9 @@ CBlankKadr::CBlankKadr(UINT id, KADR_SIZE kadrSize) : CAbstractKadr(id, kadrSize
 {
 	_kadrType = MAX_KADR_TYPE;
 	ID = id;
-	//InitInteractiveObj();
+	for (int i = 0; i < MAX_KADR_TYPE - 1; i++)
+		btn[i] = nullptr;
+	InitInteractiveObj();
 	BtnInit();
 }
 
@@ -39,23 +41,23 @@ void CBlankKadr::InitInteractiveObj()
 
 void CBlankKadr::BtnInit()
 {
-	btn[0] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + _cy / 7.0,
+	btn[0] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + _cy / 7,
 							 TO_PIXEL(100), TO_PIXEL(50),
 							 _T("PLD"), CMenuButtonHandler::OnPLDButtonPress);
 	
-	btn[1] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + 2 * _cy / 7.0,
+	btn[1] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + 2 * _cy / 7,
 							 TO_PIXEL(100), TO_PIXEL(50),
 							 _T("SYST"), CMenuButtonHandler::OnSYSTButtonPress);
 	
-	btn[2] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + 3 * _cy / 7.0,
+	btn[2] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + 3 * _cy / 7,
 							 TO_PIXEL(100), TO_PIXEL(50),
 							 _T("CAM"), CMenuButtonHandler::OnCAMButtonPress);
 	
-	btn[3] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + 4 * _cy / 7.0,
+	btn[3] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + 4 * _cy / 7,
 							 TO_PIXEL(100), TO_PIXEL(50),
 							 _T("MAP"), CMenuButtonHandler::OnMAPButtonPress);
 	
-	btn[4] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + 5 * _cy / 7.0,
+	btn[4] = new CMenuButton(_x + _cx / 2 - TO_PIXEL(25), _y + 5 * _cy / 7,
 							 TO_PIXEL(100), TO_PIXEL(50),
 							 _T("RDR"), CMenuButtonHandler::OnRDRButtonPress);
 }
@@ -99,21 +101,21 @@ void CBlankKadr::Draw(HDC& hdc)
 void CBlankKadr::ChangeSize(KADR_SIZE newSize)
 {
 	_kadrSize = newSize;
-	PlaceKadr();
+	Dispose();
 	InitInteractiveObj();
 	if (btn[0] != nullptr)
 		for (int i = 0; i < MAX_KADR_TYPE - 1; i++)
-			btn[i]->ChangePos(_x + _cx / 2 - TO_PIXEL(25), _y + (i + 1) * (_cy / 7.0));
+			btn[i]->ChangePos(_x + _cx / 2 - TO_PIXEL(25), _y + (i + 1) * (_cy / 7));
 }
 
 CAbstractKadr* CBlankKadr::ChangePos(UINT newPos)
 {
 	_id = newPos;
-	PlaceKadr();
+	Dispose();
 	InitInteractiveObj();
 	if (btn[0] != nullptr)
 		for (int i = 0; i < MAX_KADR_TYPE - 1; i++)
-			btn[i]->ChangePos(_x + _cx / 2 - TO_PIXEL(25), _y + (i + 1) * (_cy / 7.0));
+			btn[i]->ChangePos(_x + _cx / 2 - TO_PIXEL(25), _y + (i + 1) * (_cy / 7));
 	return this;
 }
 

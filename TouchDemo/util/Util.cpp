@@ -49,7 +49,7 @@ BOOL CUtil::Create()
 	return TRUE;
 }
 
-POINT CUtil::Rotate(POINT &pts, float angle, int smx, int smy)
+POINT CUtil::Rotate(POINT &pts, double angle, int smx, int smy)
 {
 	POINT ret;
 
@@ -59,7 +59,7 @@ POINT CUtil::Rotate(POINT &pts, float angle, int smx, int smy)
 	return ret;
 }
 
-POINT CUtil::Rotate(int x, int y, float angle, int smx, int smy)
+POINT CUtil::Rotate(int x, int y, double angle, int smx, int smy)
 {
 	POINT ret;
 

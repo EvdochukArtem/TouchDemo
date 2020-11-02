@@ -9,11 +9,11 @@
 
 CSimpleButton* CMechanicMenu::hiButton[2] = {new CSimpleButton(BUTTON_INDENT,
 															   BUTTON_INDENT,
-															   WIDTHPX / 28 * SCALE_FACTOR,
+														 (int)(WIDTHPX / 28 * SCALE_FACTOR),
 															   MECHANIC_MENU_HEIGHTPX - BUTTON_INDENT,
 															   L"ÏÇÊ1",
 															   CSimpleButtonHandler::OnPZKPress),
-											new CSimpleButton(WIDTHPX - WIDTHPX / 28 * SCALE_FACTOR - 2 * BUTTON_INDENT,
+											new CSimpleButton(WIDTHPX - (int)(WIDTHPX / 28 * SCALE_FACTOR) - 2 * BUTTON_INDENT,
 															  0,
 															  WIDTHPX / 28,
 															  MECHANIC_MENU_HEIGHTPX,
@@ -21,11 +21,11 @@ CSimpleButton* CMechanicMenu::hiButton[2] = {new CSimpleButton(BUTTON_INDENT,
 															  CSimpleButtonHandler::OnPZKPress)};
 CSimpleButton* CMechanicMenu::loRotary[2] = {new CSimpleButton(BUTTON_INDENT,
 															   HEIGHTPX - MECHANIC_MENU_HEIGHTPX + BUTTON_INDENT,
-															   WIDTHPX / 28 * SCALE_FACTOR + BUTTON_INDENT,
+														 (int)(WIDTHPX / 28 * SCALE_FACTOR) + BUTTON_INDENT,
 															   MECHANIC_MENU_HEIGHTPX - BUTTON_INDENT,
 															   L"ÌÔÌ1",
 															   CSimpleButtonHandler::OnMFMPress),
-											new CSimpleButton(WIDTHPX - WIDTHPX / 28 * SCALE_FACTOR - 2 * BUTTON_INDENT,
+											new CSimpleButton(WIDTHPX - (int)(WIDTHPX / 28 * SCALE_FACTOR) - 2 * BUTTON_INDENT,
 															  HEIGHTPX - MECHANIC_MENU_HEIGHTPX + BUTTON_INDENT,
 															  WIDTHPX / 28,
 															  MECHANIC_MENU_HEIGHTPX - BUTTON_INDENT,
@@ -114,8 +114,8 @@ CMechanicMenu* CMechanicMenu::ChangePos(UINT newPos)
 	_id = newPos;
 	hiMenu->_id = newPos;
 	loMenu->_id = newPos;
-	hiMenu->PlaceMenu();
-	loMenu->PlaceMenu();
+	hiMenu->Dispose();
+	loMenu->Dispose();
 	for (int i = 0; i < BUTTONS_MAX_NUM; i++)
 		if (_id % 2 == 0)
 		{
@@ -169,7 +169,7 @@ CMechanicMenu::CHiMenu::CHiMenu(UINT id, KADR_TYPE type) : CDrawingObject(MAX)
 	_id = id;
 	_blocked = false;
 	_blockerSide = LEFT;
-	PlaceMenu();
+	Dispose();
 	_curActive = 1;
 	CreateButtons(type);
 	_isSOI = false;
@@ -180,10 +180,13 @@ CMechanicMenu::CHiMenu::CHiMenu(UINT id, KADR_TYPE type) : CDrawingObject(MAX)
 CMechanicMenu::CHiMenu::~CHiMenu()
 {
 	for (int i = 0; i < BUTTONS_MAX_NUM; i++)
+	{
 		delete buttons[i];
+		delete tmp[i];
+	}
 }
 
-void CMechanicMenu::CHiMenu::PlaceMenu()
+void CMechanicMenu::CHiMenu::Dispose()
 {
 	_cy = MECHANIC_MENU_HEIGHTPX;
 	_x = _id * EKRAN_WIDTH / 4;
@@ -288,9 +291,14 @@ void CMechanicMenu::CHiMenu::LeftClickHandle(POINT clickCoord)
 				if (i == 0)
 					buttons[i]->LeftClickHandle();
 			} else {
-				buttons[i]->LeftClickHandle();
-				if (!kadrSelection && _isSOI)
-					buttons[_curActive]->SwitchSOI(true);
+				if (kadrSelection)
+					buttons[i]->LeftClickHandle();
+				else
+				{
+					buttons[i]->LeftClickHandle();
+					if (!kadrSelection && _isSOI)
+						buttons[_curActive]->SwitchSOI(true);
+				}
 			}
 			return;
 		}
@@ -299,7 +307,7 @@ void CMechanicMenu::CHiMenu::LeftClickHandle(POINT clickCoord)
 CMechanicMenu::CLoMenu::CLoMenu(UINT id) : CDrawingObject(MID)
 {
 	_id = id;
-	PlaceMenu();
+	Dispose();
 	CreateButtons();
 }
 
@@ -309,7 +317,7 @@ CMechanicMenu::CLoMenu::~CLoMenu()
 		delete buttons[i];
 }
 
-void CMechanicMenu::CLoMenu::PlaceMenu()
+void CMechanicMenu::CLoMenu::Dispose()
 {
 	_cy = MECHANIC_MENU_HEIGHTPX;
 	_x = _id * EKRAN_WIDTH / 4;

@@ -12,10 +12,10 @@ CFrame::CFrame(UINT id, UINT activeButton, KADR_SIZE frameSize) : CDrawingObject
 	_blocked = false;
 	kadrSelection = false;
 	_frameSize = frameSize;
-	PlaceFrame();
+	Dispose();
 }
 
-void CFrame::PlaceFrame()
+void CFrame::Dispose()
 {
 	switch (_frameSize)
 	{
@@ -218,13 +218,13 @@ void CFrame::SetSOIStatus(bool soiStatus)
 void CFrame::ChangeSize(KADR_SIZE newSize)
 {
 	_frameSize = newSize;
-	PlaceFrame();
+	Dispose();
 }
 
 CFrame* CFrame::ChangePos(UINT newPos)
 {
 	_id = newPos;
-	PlaceFrame();
+	Dispose();
 	return this;
 }
 

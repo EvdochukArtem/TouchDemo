@@ -62,7 +62,7 @@ protected:
 	double  _scalingFactor;
 	double  _rotationAngle;
 
-	virtual void PlaceKadr() final;
+	virtual void Dispose() final;
 	virtual void Hide(bool hidden) { _hidden = hidden; };
 };
 

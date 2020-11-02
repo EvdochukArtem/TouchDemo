@@ -14,10 +14,10 @@ class CAbstractButton : public CDrawingObject
 public:
 	CAbstractButton(int x, int y, int cx, int cy, LPCTSTR caption);
 	~CAbstractButton() {};
-	//virtual void Draw(HDC& hdc) = 0;
-	//virtual void DrawBackground() = 0;
 	virtual void LeftClickHandle() = 0;
 	virtual void RightClickHandle() = 0;
+	CAbstractButton* ChangePos(int x, int y);
+	virtual void Dispose() {};
 protected:
 	TCHAR _caption [10];
 };

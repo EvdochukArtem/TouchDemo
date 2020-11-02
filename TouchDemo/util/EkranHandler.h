@@ -49,6 +49,7 @@ private:
 
 	CFrame* frames[DISPLAY_COLS];
 
+
 	UINT FindMechMenu(POINT pt);
 	UINT FindFrame(POINT pt);
 	std::pair<UINT, UINT> FindKadr(POINT pt);
