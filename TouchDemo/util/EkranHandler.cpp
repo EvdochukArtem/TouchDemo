@@ -345,7 +345,10 @@ void CEkranHandler::SwitchKadr(KADR_TYPE type, POINT pt)
 	int menuCol = FindMechMenu(pt);
 	
 	if (menuCol == -1)
+	{
 		rowAndCol = FindKadr(pt); // значит команда пришла от нижней восьмушки и мех меню переключать не надо
+		menuCol = rowAndCol.second;
+	}
 	else
 		if (kadrs[0][menuCol]->GetBlockStatus())
 			rowAndCol.second = menuCol - 1;
