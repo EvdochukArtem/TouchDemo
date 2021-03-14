@@ -126,8 +126,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_GESTURE:
 		return GESTURE_ENGINE.WndProc(hWnd, wParam, lParam);
 		break;
-	}
 
+	case WM_DESTROY:
+		if (!UnregisterTouchWindow(hWnd))
+		{
+			MessageBox(NULL, L"Cannot unregister application window for touch input", L"Error", MB_OK);
+		}
+		PostQuitMessage(0);
+		break;
+	}
 
 	return (DefWindowProc(hWnd, message, wParam, lParam));
 }
