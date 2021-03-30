@@ -1,70 +1,49 @@
 #include "StdAfx.h"
 #include "util/Util.h"
-#include <cassert>
-
-bool CUtil::created = false;
 
 CUtil& CUtil::Instance()
 {
 	static CUtil util;
-	if (!CUtil::created)
-		assert(util.Create());
 	return util;
 }
 
 BOOL CUtil::Create()
 {
-	CUtil::created = true;
 
 	if (!drawKit.Create())
-	{
-		CUtil::created = false;
 		return FALSE;
-	}
 
 	if (!gestureEngine.Create())
-	{
-		CUtil::created = false;
 		return FALSE;
-	}
 
 	if (!gestureEngineEmulator.Create())
-	{
-		CUtil::created = false;
 		return FALSE;
-	}
 
 	if (!drawEngine.Create())
-	{
-		CUtil::created = false;
 		return FALSE;
-	}
 
-	if (!EkranHandler.Create())
-	{
-		CUtil::created = false;
+	if (!ekranHandler.Create())
 		return FALSE;
-	}
 
 	return TRUE;
 }
 
-POINT CUtil::Rotate(POINT &pts, double angle, int smx, int smy)
+BOOL CUtil::CleanUp()
 {
-	POINT ret;
+	if (!drawKit.CleanUp())
+		return FALSE;
 
-	ret.x = (int)(pts.x * cos(angle) - pts.y * sin(angle))+smx;
-	ret.y = (int)(pts.x * sin(angle) + pts.y * cos(angle))+smy;
+	if (!gestureEngine.CleanUp())
+		return FALSE;
 
-	return ret;
-}
+	if (!gestureEngineEmulator.CleanUp())
+		return FALSE;
 
-POINT CUtil::Rotate(int x, int y, double angle, int smx, int smy)
-{
-	POINT ret;
+	if (!drawEngine.CleanUp())
+		return FALSE;
 
-	ret.x = (int)(x * cos(angle) - y * sin(angle))+smx;
-	ret.y = (int)(x * sin(angle) + y * cos(angle))+smy;
+	if (!ekranHandler.CleanUp())
+		return FALSE;
 
-	return ret;
+	return TRUE;
 }

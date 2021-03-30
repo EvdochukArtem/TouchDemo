@@ -7,7 +7,8 @@ class CDrawKit
 public:
 
 	static void	Prepare(){CleanUp();Create();};
-	static void	CleanUp();
+	static BOOL	CleanUp();
+
 	static const COLORREF &GetWhiteColor(){return ActualColorWhite;};
 	static const COLORREF &GetBlueColor(){return ActualColorBlue;};
 	static const COLORREF &GetRedColor(){return ActualColorRed;};
@@ -27,6 +28,7 @@ public:
 	static HBRUSH	BlueBrush;
 	static HBRUSH	GreyBrush;
 	static HBRUSH	LightGreyBrush;
+	static HBRUSH	ActiveButtonBrush;
 	static HBRUSH   NullBrush;
 
 	static HPEN		BluePen;
@@ -52,11 +54,15 @@ public:
 	static HPEN		GreyPen;
     static HPEN		GreyPen2;
     static HPEN		GreyPen3;
+	static HPEN		ActiveButtonPen;
 	
 	static HFONT	BorderFont;
+	static HFONT	Arial23;
 	static HFONT	Arial16;
+	static HFONT	Arial14;
 	static HFONT	Arial13;
 	static HFONT	Arial12;
+	static HFONT	Arial10b;
 
 private:
 	CDrawKit() {};
@@ -86,4 +92,6 @@ private:
 	static  COLORREF	ActualColorBlack;
 	static const COLORREF	ColorsRed[MAX_COLOR];
 	static  COLORREF	ActualColorRed;
+	static const COLORREF	ColorsActiveButton[MAX_COLOR];
+	static  COLORREF	ActualColorActiveButton;
 };

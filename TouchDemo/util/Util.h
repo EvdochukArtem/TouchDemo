@@ -13,27 +13,25 @@ class CUtil
 public:
 	static CUtil& Instance();
 	BOOL Create();
+	BOOL CleanUp();
 
-	CGestureEngine& getGestureEngine() { return gestureEngine; };
-	CGestureEngineEmulator& getGestureEngineEmulator() { return gestureEngineEmulator; };
-	CEkranHandler& getEkranHandler() { return EkranHandler; };
-	CDrawKit& getDrawKit() { return drawKit; };
-	CDrawEngine& getDrawEngine() { return drawEngine; };
-	
-	static POINT Rotate(POINT &pts, double angle, int smx, int smy);
-	static POINT Rotate(int x, int y, double angle, int smx, int smy);
+	CGestureEngine&			GetGestureEngine() { return gestureEngine; };
+	CGestureEngineEmulator&	GetGestureEngineEmulator() { return gestureEngineEmulator; };
+	CEkranHandler&			GetEkranHandler() { return ekranHandler; };
+	CDrawKit&				GetDrawKit() { return drawKit; };
+	CDrawEngine&			GetDrawEngine() { return drawEngine; };
+
 private:
-	static bool created;
 	CUtil() {};
 	~CUtil() {};
 	CUtil(const CUtil&);
 
 	CUtil& operator=(const CUtil&);
 
-	CGestureEngine gestureEngine;
-	CGestureEngineEmulator gestureEngineEmulator;
-	CEkranHandler EkranHandler;
-	CDrawEngine drawEngine;
-	CDrawKit drawKit;
+	CGestureEngine			gestureEngine;
+	CGestureEngineEmulator	gestureEngineEmulator;
+	CEkranHandler			ekranHandler;
+	CDrawEngine				drawEngine;
+	CDrawKit				drawKit;
 };
 

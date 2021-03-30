@@ -37,23 +37,11 @@
     <Filter Include="Source Files\object\kadrs">
       <UniqueIdentifier>{1845d9d3-ec8e-4ecc-9967-0cf1b729429f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\object\kadrs\KadrCAM">
-      <UniqueIdentifier>{dd6c6db3-106b-4a74-b337-4aa8d4490f7b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\object\kadrs\KadrMAP">
-      <UniqueIdentifier>{5cb50c38-1137-4824-8c15-abb1b2aa4659}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\object\kadrs\KadrPIL">
       <UniqueIdentifier>{a1ecc3c2-e17f-46ae-a0ff-94f77ab3aadd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\object\kadrs\KadrRDR">
-      <UniqueIdentifier>{6a772b32-b192-4357-991c-3a35dd2e3ab2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\object\kadrs\KadrSYS">
       <UniqueIdentifier>{7236ac30-79cc-4aa5-bba6-d12194cb56af}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\object\kadrs\KadrCAM">
-      <UniqueIdentifier>{44de00a9-9c06-4b55-8e41-eb42f6c96ae1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\object\kadrs\KadrPIL">
       <UniqueIdentifier>{babad1c3-09e4-433f-9332-8de1776156fc}</UniqueIdentifier>
@@ -61,17 +49,53 @@
     <Filter Include="Source Files\object\kadrs\KadrSYS">
       <UniqueIdentifier>{a71d4df9-efe7-44e3-8d24-0864e94b1335}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\object\kadrs\KadrRDR">
-      <UniqueIdentifier>{4ff6fdef-32e3-44c6-9256-5326cf4dc42a}</UniqueIdentifier>
+    <Filter Include="Header Files\object\buttons\mechButtons">
+      <UniqueIdentifier>{e7d218a3-9f65-48e0-a739-8e81f71a8c1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\object\buttons\touchButtons">
+      <UniqueIdentifier>{0501d838-6118-4845-8bae-c63f2a23f976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object\buttons\mechButtons">
+      <UniqueIdentifier>{a3f07e17-0a70-4a51-a838-3ff657f203ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object\buttons\touchButtons">
+      <UniqueIdentifier>{50fb55e5-9633-4f25-b05d-1872daf3f377}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\object\kadrs\KadrCAM">
+      <UniqueIdentifier>{6aa9382d-d597-4311-9b99-8d7df9455adf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\object\kadrs\KadrRDR">
+      <UniqueIdentifier>{fcb2f9bc-e4e6-4999-b7e7-3c927cbe294c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\object\kadrs\KadrMAP">
+      <UniqueIdentifier>{13bdcb76-e0cb-45d2-a784-2ca139f523f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object\kadrs\KadrCAM">
+      <UniqueIdentifier>{9f187737-82a8-4b5e-a0ec-af0403bca1dc}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\object\kadrs\KadrMAP">
-      <UniqueIdentifier>{74aa51af-a861-43e1-a001-3f32e6d0b13d}</UniqueIdentifier>
+      <UniqueIdentifier>{f3163749-e391-46a1-8ca2-56a10babf2e8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\object\auxilary">
-      <UniqueIdentifier>{cf113ecb-9d2e-41e9-bb4e-4d95975cb491}</UniqueIdentifier>
+    <Filter Include="Source Files\object\kadrs\KadrRDR">
+      <UniqueIdentifier>{99fb68d2-aac2-4b41-b4b2-e9936420b2ea}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\object\auxilary">
-      <UniqueIdentifier>{3723972f-0b48-4160-834c-2dc4358ee532}</UniqueIdentifier>
+    <Filter Include="Header Files\object\kadrs\KadrMAP\Database">
+      <UniqueIdentifier>{3f0f94fb-74ef-4693-9390-7ce3a0a1a75f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\object\kadrs\KadrMAP\Map">
+      <UniqueIdentifier>{8dd6449e-79fa-4fb4-a737-b48988ae938e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object\kadrs\KadrMAP\Database">
+      <UniqueIdentifier>{d201590d-48f2-4dc7-abe3-05a41f812cc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object\kadrs\KadrMAP\Map">
+      <UniqueIdentifier>{b9766e96-51c7-43e6-8c88-31f34b307317}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\object\kadrs\common objects">
+      <UniqueIdentifier>{43514def-183f-45c5-b586-81eaaf2e4204}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object\kadrs\common objects">
+      <UniqueIdentifier>{5c5ae62a-4ff9-4c37-8e7e-fafbef12a685}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -105,32 +129,17 @@
     <ClCompile Include="object\buttons\AbstractButton.cpp">
       <Filter>Source Files\object\buttons</Filter>
     </ClCompile>
-    <ClCompile Include="object\buttons\MenuButton.cpp">
-      <Filter>Source Files\object\buttons</Filter>
-    </ClCompile>
-    <ClCompile Include="object\buttons\SimpleButton.cpp">
-      <Filter>Source Files\object\buttons</Filter>
-    </ClCompile>
     <ClCompile Include="util\Util.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="object\Frame.cpp">
       <Filter>Source Files\object</Filter>
     </ClCompile>
-    <ClCompile Include="object\buttons\MenuButtonHandler.cpp">
-      <Filter>Source Files\object\buttons</Filter>
-    </ClCompile>
-    <ClCompile Include="object\buttons\SimpleButtonHandler.cpp">
-      <Filter>Source Files\object\buttons</Filter>
-    </ClCompile>
     <ClCompile Include="object\kadrs\AbstractKadr.cpp">
       <Filter>Source Files\object\kadrs</Filter>
     </ClCompile>
     <ClCompile Include="object\kadrs\BlankKadr.cpp">
       <Filter>Source Files\object\kadrs</Filter>
-    </ClCompile>
-    <ClCompile Include="object\kadrs\KadrCAM\KadrCAM.cpp">
-      <Filter>Source Files\object\kadrs\KadrCAM</Filter>
     </ClCompile>
     <ClCompile Include="object\kadrs\KadrPIL\KadrPIL.cpp">
       <Filter>Source Files\object\kadrs\KadrPIL</Filter>
@@ -141,14 +150,116 @@
     <ClCompile Include="object\kadrs\KadrSYS\KadrSYS.cpp">
       <Filter>Source Files\object\kadrs\KadrSYS</Filter>
     </ClCompile>
-    <ClCompile Include="object\kadrs\KadrRDR\KadrRDR.cpp">
-      <Filter>Source Files\object\kadrs\KadrRDR</Filter>
+    <ClCompile Include="object\InfoLine.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\TouchSymbol.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\ChangePageTButton.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\MenuTButton.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\MenuTButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\RadioTButton.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\RadioTButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\SetTButton.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\SetTButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\SimpleTButton.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\SimpleTButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\SwitchTButton.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\touchButtons\SwitchTButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\touchButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\MenuButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\ParamButton.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\ParamButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\RadioButton.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\RadioButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\RotaryButton.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\RotaryButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\SimpleButton.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\SimpleButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\SwitchButton.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\SwitchButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\TabButton.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\buttons\mechButtons\TabButtonHandler.cpp">
+      <Filter>Source Files\object\buttons\mechButtons</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\BlankAuxKadr.cpp">
+      <Filter>Source Files\object\kadrs</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\KadrCAM\KadrCAM.cpp">
+      <Filter>Source Files\object\kadrs\KadrCAM</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\KadrCAM\KadrCAMButtons.cpp">
+      <Filter>Source Files\object\kadrs\KadrCAM</Filter>
     </ClCompile>
     <ClCompile Include="object\kadrs\KadrMAP\KadrMAP.cpp">
       <Filter>Source Files\object\kadrs\KadrMAP</Filter>
     </ClCompile>
-    <ClCompile Include="object\auxilary\Arrow.cpp">
-      <Filter>Source Files\object\auxilary</Filter>
+    <ClCompile Include="object\kadrs\KadrRDR\KadrRDR.cpp">
+      <Filter>Source Files\object\kadrs\KadrRDR</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\KadrMAP\KadrMAPButtons.cpp">
+      <Filter>Source Files\object\kadrs\KadrMAP</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\KadrMAP\Database\DatabasePage.cpp">
+      <Filter>Source Files\object\kadrs\KadrMAP\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\KadrMAP\Map\MapPage.cpp">
+      <Filter>Source Files\object\kadrs\KadrMAP\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\KadrMAP\Map\ScaleCircle.cpp">
+      <Filter>Source Files\object\kadrs\KadrMAP\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="object\kadrs\common objects\Arrow.cpp">
+      <Filter>Source Files\object\kadrs\common objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,23 +293,11 @@
     <ClInclude Include="object\buttons\AbstractButton.h">
       <Filter>Header Files\object\buttons</Filter>
     </ClInclude>
-    <ClInclude Include="object\buttons\MenuButton.h">
-      <Filter>Header Files\object\buttons</Filter>
-    </ClInclude>
-    <ClInclude Include="object\buttons\SimpleButton.h">
-      <Filter>Header Files\object\buttons</Filter>
-    </ClInclude>
     <ClInclude Include="util\Util.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
     <ClInclude Include="object\Frame.h">
       <Filter>Header Files\object</Filter>
-    </ClInclude>
-    <ClInclude Include="object\buttons\MenuButtonHandler.h">
-      <Filter>Header Files\object\buttons</Filter>
-    </ClInclude>
-    <ClInclude Include="object\buttons\SimpleButtonHandler.h">
-      <Filter>Header Files\object\buttons</Filter>
     </ClInclude>
     <ClInclude Include="object\kadrs\AbstractKadr.h">
       <Filter>Header Files\object\kadrs</Filter>
@@ -206,17 +305,8 @@
     <ClInclude Include="object\kadrs\BlankKadr.h">
       <Filter>Header Files\object\kadrs</Filter>
     </ClInclude>
-    <ClInclude Include="object\kadrs\KadrCAM\KadrCAM.h">
-      <Filter>Header Files\object\kadrs\KadrCAM</Filter>
-    </ClInclude>
-    <ClInclude Include="object\kadrs\KadrMAP\KadrMAP.h">
-      <Filter>Header Files\object\kadrs\KadrMAP</Filter>
-    </ClInclude>
     <ClInclude Include="object\kadrs\KadrPIL\KadrPIL.h">
       <Filter>Header Files\object\kadrs\KadrPIL</Filter>
-    </ClInclude>
-    <ClInclude Include="object\kadrs\KadrRDR\KadrRDR.h">
-      <Filter>Header Files\object\kadrs\KadrRDR</Filter>
     </ClInclude>
     <ClInclude Include="object\kadrs\KadrSYS\EngineSys.h">
       <Filter>Header Files\object\kadrs\KadrSYS</Filter>
@@ -224,8 +314,122 @@
     <ClInclude Include="object\kadrs\KadrSYS\KadrSYS.h">
       <Filter>Header Files\object\kadrs\KadrSYS</Filter>
     </ClInclude>
-    <ClInclude Include="object\auxilary\Arrow.h">
-      <Filter>Header Files\object\auxilary</Filter>
+    <ClInclude Include="CommonConstants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object\InfoLine.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\TouchSymbol.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\MenuButtonHandler.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\ParamButton.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\ParamButtonHandler.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\RadioButton.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\RadioButtonHandler.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\RotaryButton.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\RotaryButtonHandler.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\SimpleButton.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\SimpleButtonHandler.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\SwitchButton.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\SwitchButtonHandler.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\TabButton.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\mechButtons\TabButtonHandler.h">
+      <Filter>Header Files\object\buttons\mechButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\ChangePageTButton.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\MenuTButton.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\MenuTButtonHandler.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\RadioTButton.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\RadioTButtonHandler.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\SetTButton.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\SetTButtonHandler.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\SimpleTButton.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\SimpleTButtonHandler.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\SwitchTButton.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\buttons\touchButtons\SwitchTButtonHandler.h">
+      <Filter>Header Files\object\buttons\touchButtons</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\BlankAuxKadr.h">
+      <Filter>Header Files\object\kadrs</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\Page.h">
+      <Filter>Header Files\object\kadrs</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrMAP\KadrMAP.h">
+      <Filter>Header Files\object\kadrs\KadrMAP</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrRDR\KadrRDR.h">
+      <Filter>Header Files\object\kadrs\KadrRDR</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrCAM\KadrCAM.h">
+      <Filter>Header Files\object\kadrs\KadrCAM</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrCAM\KadrCAMButtons.h">
+      <Filter>Header Files\object\kadrs\KadrCAM</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrMAP\KadrMAPButtons.h">
+      <Filter>Header Files\object\kadrs\KadrMAP</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrMAP\Database\DatabasePage.h">
+      <Filter>Header Files\object\kadrs\KadrMAP\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrMAP\Map\MapPage.h">
+      <Filter>Header Files\object\kadrs\KadrMAP\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\KadrMAP\Map\ScaleCircle.h">
+      <Filter>Header Files\object\kadrs\KadrMAP\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="object\kadrs\common objects\Arrow.h">
+      <Filter>Header Files\object\kadrs\common objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

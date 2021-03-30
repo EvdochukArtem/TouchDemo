@@ -15,45 +15,62 @@ CDrawEngine::CDrawEngine()
 
 CDrawEngine::~CDrawEngine()
 {
-	if (backgroundHDC)
-	{
-		::DeleteObject(backgroundBITMAP);
-		backgroundBITMAP = nullptr;
-	}
-	if (backgroundBITMAP)
-	{
-		::DeleteDC(backgroundHDC);
-		backgroundHDC = nullptr;
-	}
-	if (tmpBITMAP)
-	{
-		::DeleteObject(tmpBITMAP);
-		tmpBITMAP = nullptr;
-	}
-	if (tmpHDC)
-	{
-		::DeleteDC(tmpHDC);
-		tmpHDC = nullptr;
-	}
-	drawingObjects->~PriorObjectList();
+	CleanUp();
+	delete drawingObjects;
+	drawingObjects = nullptr;
 }
 
 BOOL CDrawEngine::Create()
 {
 	//Создаем все необходиные объекты GDI
-	backgroundHDC = ::CreateCompatibleDC(::GetDC(NULL));
+	HDC tmp = GetDC(NULL);
+	backgroundHDC = CreateCompatibleDC(tmp);
 	if (backgroundHDC == nullptr)
 		return FALSE;
 
-	backgroundBITMAP = ::CreateCompatibleBitmap(::GetDC(NULL), WIDTHPX, HEIGHTPX);
+	backgroundBITMAP = CreateCompatibleBitmap(tmp, X0_PX + WIDTHPX, Y0_PX + HEIGHTPX);
 	if (backgroundBITMAP == nullptr)
 		return FALSE;
 
 	//Выбираем битмап в контекст фона
-	::SelectObject(backgroundHDC, backgroundBITMAP);
-	::SetGraphicsMode(backgroundHDC, GM_ADVANCED);
+	SelectObject(backgroundHDC, backgroundBITMAP);
+	SetGraphicsMode(backgroundHDC, GM_ADVANCED);
 
 	drawingObjects = new PriorObjectList();
+
+#ifdef DEBUG
+		if (QueryPerformanceFrequency(&counter) == FALSE)
+			MessageBox(NULL, _T("Таймер не прошел"), _T(""), MB_OK);
+		ZeroMemory(&count, sizeof(count));
+#endif
+	DeleteDC(tmp);
+	return TRUE;
+}
+
+BOOL CDrawEngine::CleanUp()
+{
+	if (backgroundHDC)
+	{
+		DeleteDC(backgroundHDC);
+		backgroundHDC = nullptr;
+	}
+	if (backgroundBITMAP)
+	{
+		DeleteObject(backgroundBITMAP);
+		backgroundBITMAP = nullptr;
+	}
+	if (tmpBITMAP)
+	{
+		DeleteObject(tmpBITMAP);
+		tmpBITMAP = nullptr;
+	}
+	if (tmpHDC)
+	{
+		DeleteDC(tmpHDC);
+		tmpHDC = nullptr;
+	}
+	
+	drawingObjects->Clear();
 
 	return TRUE;
 }
@@ -86,9 +103,9 @@ void CDrawEngine::UpdateBackground()
 void CDrawEngine::Draw(HDC& hdc)
 {
 	tmpHDC = CreateCompatibleDC(hdc);
-	tmpBITMAP = CreateCompatibleBitmap(hdc, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+	tmpBITMAP = CreateCompatibleBitmap(hdc, GetSystemMetrics(SM_CXVIRTUALSCREEN), GetSystemMetrics(SM_CYVIRTUALSCREEN));
 	HANDLE hOld = SelectObject(tmpHDC, tmpBITMAP);
-	BitBlt(tmpHDC, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), backgroundHDC, 0, 0, SRCCOPY);
+	BitBlt(tmpHDC, 0, 0, GetSystemMetrics(SM_CXVIRTUALSCREEN), GetSystemMetrics(SM_CYVIRTUALSCREEN), backgroundHDC, 0, 0, SRCCOPY);
 	
 	drawingObjects->Draw(tmpHDC);
 	
@@ -96,22 +113,40 @@ void CDrawEngine::Draw(HDC& hdc)
 	if (GESTURE_EMULATOR.pixelCheck)
 	{
 		HPEN oldPen = (HPEN)SelectObject(tmpHDC, DRAW_KIT.RedPen);
-		for (int a = 0; a < WIDTHPX; a += TO_PIXEL(10))
+		int oldAlign = SetTextAlign(tmpHDC, TA_LEFT|TA_TOP);
+		int i = 0;
+		for (int a = X0_PX; a < X0_PX + WIDTHPX; a += TO_PIXEL(10))
 		{
-			MoveToEx(tmpHDC, a, 0, NULL);
-			LineTo(tmpHDC, a, HEIGHTPX);	
+			if (a % TO_PIXEL(50) == 0)
+			{
+				HFONT oldFont = (HFONT)SelectObject(tmpHDC, DRAW_KIT.Arial10b);
+				COLORREF oldColor = SetTextColor(tmpHDC, DRAW_KIT.GetRedColor());
+				SetBkMode(tmpHDC, TRANSPARENT);
+				TCHAR buf [10];
+				_stprintf_s(buf, _T("%d"), a);
+				i += TO_PIXEL(50);
+				int c = TO_PIXEL(20);
+				int cc = TO_PIXEL(5);
+				TextOut(tmpHDC, a, Y0_PX - TO_PIXEL(20), buf, (int)_tcslen(buf));
+				TextOut(tmpHDC, a, Y0_PX + HEIGHTPX + TO_PIXEL(5), buf, (int)_tcslen(buf));
+				SelectObject(tmpHDC, oldFont);
+				SetTextColor(tmpHDC, oldColor);
+				SetBkMode(tmpHDC, OPAQUE);
+			}
+			MoveToEx(tmpHDC, a, Y0_PX, NULL);
+			LineTo(tmpHDC, a, Y0_PX + HEIGHTPX);	
 		}
-		for (int a = 0; a < HEIGHTPX; a += TO_PIXEL(10))
+		for (int a = Y0_PX; a < Y0_PX + HEIGHTPX; a += TO_PIXEL(10))
 		{
-			MoveToEx(tmpHDC, 0, a, NULL);
-			LineTo(tmpHDC, WIDTHPX, a);	
+			MoveToEx(tmpHDC, X0_PX, a, NULL);
+			LineTo(tmpHDC, X0_PX + WIDTHPX, a);	
 		}
 		SelectObject(tmpHDC, oldPen);
-
+		SetTextAlign(tmpHDC, oldAlign);
 	}
+	CountFrames(tmpHDC);
 #endif
-
-	BitBlt(hdc, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), tmpHDC, 0, 0, SRCCOPY);
+	BitBlt(hdc, 0, 0, GetSystemMetrics(SM_CXVIRTUALSCREEN), GetSystemMetrics(SM_CYVIRTUALSCREEN), tmpHDC, 0, 0, SRCCOPY);
 	
 	SelectObject(tmpHDC, hOld);
 
@@ -129,6 +164,31 @@ std::vector<CDrawingObject*> CDrawEngine::getAllObjectsInPoint(POINT pt)
 {
 	return drawingObjects->getAllObjectsInPoint(pt);
 }
+
+#ifdef DEBUG
+void CDrawEngine::CountFrames(HDC& hdc)
+{
+	//Считаем кадры в секунду
+	QueryPerformanceCounter(&count1);
+	if ((count1.QuadPart-count.QuadPart) < counter.QuadPart)
+		fps++;
+	else
+	{
+		f = fps;
+		fps = 0;
+		count = count1;
+	}
+	//Отрисовываем счетчик кадров в секунду
+	TCHAR buf [32];
+	HFONT oldFont = (HFONT)SelectObject(hdc, DRAW_KIT.Arial12);
+	UINT oldTextAlign = SetTextAlign(hdc, TA_TOP|TA_LEFT);
+	_stprintf_s(buf, _T("FPS = %d"), f);
+	TextOut(hdc, TO_PIXEL(10), TO_PIXEL(10), buf, (int)_tcslen(buf));
+	SelectObject(hdc, oldFont);
+	SetTextAlign(hdc, oldTextAlign);
+}
+#endif
+
 
 CDrawEngine::PriorObjectList::PriorObjectList()
 {

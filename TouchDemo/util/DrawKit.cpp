@@ -17,8 +17,10 @@ HBRUSH		CDrawKit::GreenBrush		= NULL;
 HBRUSH		CDrawKit::BlueBrush			= NULL;
 HBRUSH		CDrawKit::GreyBrush			= NULL;
 HBRUSH		CDrawKit::LightGreyBrush	= NULL;
+HBRUSH		CDrawKit::ActiveButtonBrush = NULL;
 HBRUSH		CDrawKit::NullBrush			= NULL;
 
+HPEN		CDrawKit::ActiveButtonPen	= NULL;
 HPEN		CDrawKit::BluePen			= NULL;
 HPEN		CDrawKit::BluePen2			= NULL;
 HPEN		CDrawKit::YellowPen			= NULL;
@@ -44,10 +46,13 @@ HPEN		CDrawKit::GreyPen2			= NULL;
 HPEN		CDrawKit::GreyPen3			= NULL;
 
 
-HFONT		CDrawKit::BorderFont		= NULL;
+HFONT		CDrawKit::BorderFont		= NULL; 
+HFONT		CDrawKit::Arial23			= NULL;
 HFONT		CDrawKit::Arial16			= NULL;
 HFONT		CDrawKit::Arial13			= NULL;
-HFONT		CDrawKit::Arial12			= NULL;
+HFONT		CDrawKit::Arial12			= NULL; 
+HFONT		CDrawKit::Arial14			= NULL;
+HFONT		CDrawKit::Arial10b			= NULL;
 
 int			CDrawKit::ColorInd			= START_COLOR;
 
@@ -69,6 +74,8 @@ const COLORREF CDrawKit::ColorsBlack[MAX_COLOR]		=	{RGB(0,   0,     0), RGB(0,  
  COLORREF CDrawKit::ActualColorBlack				=	RGB(255, 255, 255);
 const COLORREF CDrawKit::ColorsRed[MAX_COLOR]		=	{RGB(255, 0,     0), RGB(255,   0,   0)};
  COLORREF CDrawKit::ActualColorRed					=	RGB(255, 255, 255);
+ const COLORREF CDrawKit::ColorsActiveButton[MAX_COLOR] = { RGB(63,  135, 135), RGB(0,   64,   64) };
+ COLORREF CDrawKit::ActualColorActiveButton = NULL;
 
 
  BOOL CDrawKit::Create()
@@ -82,6 +89,7 @@ const COLORREF CDrawKit::ColorsRed[MAX_COLOR]		=	{RGB(255, 0,     0), RGB(255,  
 	ActualColorLightGrey	= ColorsLightGrey[ColorInd];
 	ActualColorBlack		= ColorsBlack[ColorInd];
 	ActualColorRed			= ColorsRed[ColorInd];
+	ActualColorActiveButton = ColorsActiveButton[ColorInd];
 	BlackBrush		= ::CreateSolidBrush(ColorsBlack[ColorInd]);
 	RedBrush		= ::CreateSolidBrush(ColorsRed[ColorInd]);
 	OrangeBrush		= ::CreateSolidBrush(ColorsOrange[ColorInd]);
@@ -91,6 +99,7 @@ const COLORREF CDrawKit::ColorsRed[MAX_COLOR]		=	{RGB(255, 0,     0), RGB(255,  
 	BlueBrush		= ::CreateSolidBrush(ColorsBlue[ColorInd]);
 	GreyBrush		= ::CreateSolidBrush(ColorsGrey[ColorInd]);
 	LightGreyBrush	= ::CreateSolidBrush(ColorsLightGrey[ColorInd]);
+	ActiveButtonBrush = CreateSolidBrush(ColorsActiveButton[ColorInd]);
 	NullBrush		= ::CreateSolidBrush(NULL);
 	
 	LOGBRUSH redLog;
@@ -102,7 +111,8 @@ const COLORREF CDrawKit::ColorsRed[MAX_COLOR]		=	{RGB(255, 0,     0), RGB(255,  
 	greyLog.lbColor = ColorsGrey[ColorInd];
 	greyLog.lbHatch = DIB_RGB_COLORS;
 	greyLog.lbStyle = BS_SOLID;
-	
+
+	ActiveButtonPen = CreatePen(PS_SOLID, 1, ColorsActiveButton[ColorInd]);
 	BluePen			=	::CreatePen(PS_SOLID, 1, ColorsBlue[ColorInd]);
     BluePen2		=	::CreatePen(PS_SOLID, 2, ColorsBlue[ColorInd]);
 	YellowPen		=	::CreatePen(PS_SOLID, 1, ColorsYellow[ColorInd]);
@@ -131,22 +141,31 @@ const COLORREF CDrawKit::ColorsRed[MAX_COLOR]		=	{RGB(255, 0,     0), RGB(255,  
 
 	int size = (int)(HEIGHTPX/44.0*1.5);
 
-	BorderFont		=	::CreateFont(size, 0, 0, 0, FW_BOLD,
+	BorderFont		=	CreateFont(size, 0, 0, 0, FW_BOLD,
 								FALSE, FALSE, FALSE, RUSSIAN_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 								DEFAULT_QUALITY, DEFAULT_PITCH, (L"COURIER NEW"));
-	Arial16			=	::CreateFont(int(size*16.0/18.0), 0, 0, 0, FW_NORMAL,
+	Arial23 =			CreateFont(int(size * 23.0 / 18.0), 0, 0, 0, FW_NORMAL,
 								FALSE, FALSE, FALSE, RUSSIAN_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 								DEFAULT_QUALITY, DEFAULT_PITCH, (L"ARIAL"));
-	Arial13			=	::CreateFont(int(size*13.0/18.0), 0, 0, 0, FW_SEMIBOLD,
+	Arial16			=	CreateFont(int(size*16.0/18.0), 0, 0, 0, FW_NORMAL,
 								FALSE, FALSE, FALSE, RUSSIAN_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 								DEFAULT_QUALITY, DEFAULT_PITCH, (L"ARIAL"));
-	Arial12			=	::CreateFont(int(size*12.0/18.0), 0, 0, 0, FW_NORMAL,
+	Arial13			=	CreateFont(int(size*13.0/18.0), 0, 0, 0, FW_SEMIBOLD,
+								FALSE, FALSE, FALSE, RUSSIAN_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+								DEFAULT_QUALITY, DEFAULT_PITCH, (L"ARIAL"));
+	Arial12			=	CreateFont(int(size*12.0/18.0), 0, 0, 0, FW_NORMAL,
+								FALSE, FALSE, FALSE, RUSSIAN_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+								DEFAULT_QUALITY, DEFAULT_PITCH, (L"ARIAL"));
+	Arial14 = CreateFont(int(size * 14.0 / 18.0), 0, 0, 0, FW_NORMAL,
+								FALSE, FALSE, FALSE, RUSSIAN_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+								DEFAULT_QUALITY, DEFAULT_PITCH, (L"ARIAL"));
+	Arial10b		=	CreateFont(int(size * 10.0 / 18.0), 0, 0, 0, FW_SEMIBOLD,
 								FALSE, FALSE, FALSE, RUSSIAN_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 								DEFAULT_QUALITY, DEFAULT_PITCH, (L"ARIAL"));
 	return TRUE;
 }
 
-void CDrawKit::CleanUp()
+BOOL CDrawKit::CleanUp()
 {
 	DeleteDrawKitObject((void **)&BlackBrush);
 	DeleteDrawKitObject((void **)&RedBrush);
@@ -157,7 +176,9 @@ void CDrawKit::CleanUp()
 	DeleteDrawKitObject((void **)&BlueBrush);
 	DeleteDrawKitObject((void **)&GreyBrush);
 	DeleteDrawKitObject((void **)&LightGreyBrush);
+	DeleteDrawKitObject((void**)&ActiveButtonBrush);
 	DeleteDrawKitObject((void **)&NullBrush);
+	DeleteDrawKitObject((void**)&ActiveButtonPen);
 	DeleteDrawKitObject((void **)&BluePen);
     DeleteDrawKitObject((void **)&BluePen2);
 	DeleteDrawKitObject((void **)&YellowPen);
@@ -180,12 +201,15 @@ void CDrawKit::CleanUp()
 	DeleteDrawKitObject((void **)&GreyPen);
 	DeleteDrawKitObject((void **)&GreyPen2);
 	DeleteDrawKitObject((void **)&GreyPen3);
-
-
 	DeleteDrawKitObject((void **)&BorderFont);
+	DeleteDrawKitObject((void**)&Arial23);
 	DeleteDrawKitObject((void **)&Arial16);
+	DeleteDrawKitObject((void**)&Arial14);
 	DeleteDrawKitObject((void **)&Arial13);
 	DeleteDrawKitObject((void **)&Arial12);
+	DeleteDrawKitObject((void**)&Arial10b);
+
+	return TRUE;
 }
 
 void CDrawKit::DeleteDrawKitObject(IN HGDIOBJ *Obj)

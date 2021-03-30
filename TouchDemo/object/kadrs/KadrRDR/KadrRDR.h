@@ -14,7 +14,9 @@ public:
 	virtual CAbstractKadr* ChangePos(UINT newPos);
 	virtual void Move(const POINT firstTouchCoord, const POINT delta) {};
 	virtual void Zoom(const double dZoomFactor, const POINT zoomCenter) {};
-	virtual void Rotate(const double dAngle, const POINT rotateCenter) {};
+	virtual void DoRotate(const double dAngle, const POINT rotateCenter) {};
 	virtual void Reset() {};
 	virtual void LeftClickHandle(POINT pt) {};
+	virtual void ProcessKeyboard(UINT key) {};
+	virtual void ProcessCommand(KADR_COMMANDS cmd) {};
 };

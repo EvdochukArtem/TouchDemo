@@ -21,19 +21,26 @@ public:
 	std::vector<CDrawingObject*> getAllObjectsInPoint(POINT pt);
 
 private:
+	friend class CUtil;
+	class PriorObjectList;
+	PriorObjectList* drawingObjects;
+
 	CDrawEngine();
 	~CDrawEngine();
 	BOOL Create();
-
-	friend class CUtil;
-	class PriorObjectList;
-	
-	PriorObjectList* drawingObjects;
+	BOOL CleanUp();
 
 	HDC backgroundHDC;
 	HDC tmpHDC;
 	HBITMAP backgroundBITMAP;
 	HBITMAP tmpBITMAP;
+
+#ifdef DEBUG
+	short	f, fps;
+	LARGE_INTEGER	counter, count, count1;
+	void CountFrames(HDC& hdc);
+#endif
+
 };
 
 class CDrawEngine::PriorObjectList

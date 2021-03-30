@@ -25,7 +25,7 @@ public:
 
 private:
 
-	void Dispose();
+	void Place();
 
 	UINT _id;
 	UINT _activeButton;

@@ -1,22 +1,18 @@
 /*
-*	Родительский класс для всех кадров используемых в приложении. Содержит интерактивный объект
-*	для отработки жестов (в будущем необходимо заменить на меню выбора кадра) и методы взаимодействия
-*	с ним. Дочерние классы должны переопределить объект, заменяя их на объекты символизирующие
-*	индикацию приборов и другие объекты кадра.
+*	Класс-пример. Содержит интерактивный объект для отработки жестов и методы
+*	для взаимодействия с ним.
 */
 #pragma once
 
-#include "AbstractKadr.h"
-#include "../buttons/MenuButtonHandler.h"
+const int INTERACTIVE_OBJ_LENGTH = 4; //Кол-во точек интерактивного объекта
 
-const int INTERACTIVE_OBJ_LENGTH	= 4;
-
+class CAbstractKadr;
 
 class CBlankKadr : public CAbstractKadr
 {
 public:
 	CBlankKadr(UINT id, KADR_SIZE kadrSize);
-	~CBlankKadr();
+	~CBlankKadr() {};
 
 	virtual void Draw(HDC& hdc);
 	virtual void DrawBackground();
@@ -25,11 +21,12 @@ public:
 
 	virtual void Move(const POINT firstTouchCoord, const POINT delta);
 	virtual void Zoom(const double dZoomFactor, const POINT zoomCenter);
-	virtual void Rotate(const double dAngle, const POINT rotateCenter);
-	//virtual void Swipe(const POINT firstTouchCoord, const POINT secondTouchCoord);
+	virtual void DoRotate(const double dAngle, const POINT rotateCenter);
 	virtual void Reset();
 
-	virtual void LeftClickHandle(POINT pt);
+	virtual void LeftClickHandle(POINT pt) {};
+	virtual void ProcessKeyboard(UINT key) {};
+	void ProcessCommand(KADR_COMMANDS cmd) {};
 
 private:
 
@@ -38,14 +35,4 @@ private:
 	void InitInteractiveObj();
 	void DrawInteractiveObj(HDC& hdc);
 	void ResetInteractiveObject();
-
-	void Hide(bool hidden);
-
-	CMenuButton* btn [MAX_KADR_TYPE - 1];
-	void BtnInit();
-
-	POINT _ptCoords;
-	bool  _paintClickZone;
-	static CBlankKadr* pKadr;
-	static void TimerProc (HWND hwnd, UINT message, UINT idTimer, DWORD dwTime);
 };

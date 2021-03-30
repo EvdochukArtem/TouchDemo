@@ -1,6 +1,7 @@
 #pragma once
 #include "../AbstractKadr.h"
-#include "EngineSys.h"
+
+class CEngineSys;
 
 class CKadrSYS : public CAbstractKadr
 {
@@ -16,25 +17,21 @@ public:
 	
 	void Move(const POINT firstTouchCoord, const POINT delta) {};
 	void Zoom(const double dZoomFactor, const POINT zoomCenter) {};
-	void Rotate(const double dAngle, const POINT rotateCenter) {};
+	void DoRotate(const double dAngle, const POINT rotateCenter) {};
 	void Reset() {};
 	void LeftClickHandle(POINT pt) {};
+	virtual void ProcessKeyboard(UINT key) {};
+	virtual void ProcessCommand(KADR_COMMANDS cmd) {};
 
 private:
-
-	/*class CBrakes;
-	class Hydro;
-	class Klin;
-	class Oxygen;
-	class Pnevmo;
-	class PriborFuelSyst;
-	class Seat;
-	class Tanks;
-	class Trim;*/
+	void DrawPlane();
 
 	void CreatePribors();
 	void DeletePribors();
 
-	CEngineSys* engineSysL;
-	CEngineSys* engineSysR;
+	CEngineSys*		engineSysL;
+	CEngineSys*		engineSysR;
+
+	POINT kadrCenter;
+	POINT shift;
 };

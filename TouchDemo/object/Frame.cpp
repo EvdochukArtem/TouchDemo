@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include "Frame.h"
 #include "util/Util.h"
+#include "MechanicMenu.h"
 
-const int BUTTON_SHIFT = TO_PIXEL(3);
+#define BUTTON_SHIFT TO_PIXEL(3)
 
-CFrame::CFrame(UINT id, UINT activeButton, KADR_SIZE frameSize) : CDrawingObject(ACTIVE)
+CFrame::CFrame(UINT id, UINT activeButton, KADR_SIZE frameSize) : CDrawingObject(PRIOR_ACTIVE)
 {
 	_id = id;
 	_activeButton = activeButton;
@@ -12,25 +13,25 @@ CFrame::CFrame(UINT id, UINT activeButton, KADR_SIZE frameSize) : CDrawingObject
 	_blocked = false;
 	kadrSelection = false;
 	_frameSize = frameSize;
-	Dispose();
+	Place();
 }
 
-void CFrame::Dispose()
+void CFrame::Place()
 {
 	switch (_frameSize)
 	{
-	case HALF:
+	case KADR_SIZE_HALF:
 		_cx = WIDTHPX / 2;
 		_cy = HEIGHTPX;
-		_x = _id * _cx / 2;
-		_y = 0;
+		_x = X0_PX + _id * _cx / 2;
+		_y = Y0_PX;
 		break;
-	case QUARTER:
-	case EIGHTH:
+	case KADR_SIZE_QUARTER:
+	case KADR_SIZE_EIGHTH:
 		_cx = WIDTHPX / 4;
 		_cy = HEIGHTPX;
-		_x = (_id % 4) * _cx;
-		_y =0;
+		_x = X0_PX + (_id % 4) * _cx;
+		_y = Y0_PX;
 		break;
 	default:
 		break;
@@ -75,128 +76,128 @@ void CFrame::DrawBorders(HDC& hdc)
 	POINT border[13];
 	switch(_frameSize)
 	{
-	case QUARTER: case EIGHTH:
+	case KADR_SIZE_QUARTER: case KADR_SIZE_EIGHTH:
 		{
 			//0, верхн€€ часть
-			border[0].x = _id * WIDTHPX / 4;
-			border[0].y = MECHANIC_MENU_HEIGHTPX;
+			border[0].x = X0_PX + _id * WIDTHPX / 4;
+			border[0].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			//1
-			border[1].x = _id * WIDTHPX / 4 + (activeButton + shift) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) - neatIndent + BUTTON_SHIFT;
-			border[1].y = MECHANIC_MENU_HEIGHTPX;
+			border[1].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + shift) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) - neatIndent + BUTTON_SHIFT;
+			border[1].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			//2
-			border[2].x = _id * WIDTHPX / 4 + (activeButton + shift) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) + neatIndent + BUTTON_SHIFT;
+			border[2].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + shift) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) + neatIndent + BUTTON_SHIFT;
 			if (kadrSelection)
-				border[2].y = MECHANIC_MENU_HEIGHTPX;
+				border[2].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			else
-				border[2].y = 0 + neatIndent;
+				border[2].y = Y0_PX +  neatIndent;
 			//3
-			border[3].x = _id * WIDTHPX / 4 + (activeButton + shift + 1) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) - neatIndent - BUTTON_SHIFT;
+			border[3].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + shift + 1) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) - neatIndent - BUTTON_SHIFT;
 			if (kadrSelection)
-				border[3].y = MECHANIC_MENU_HEIGHTPX;
+				border[3].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			else
-				border[3].y = 0 + neatIndent;
+				border[3].y = Y0_PX +  neatIndent;
 			//4
-			border[4].x = _id * WIDTHPX / 4 + (activeButton + shift + 1) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) + neatIndent - BUTTON_SHIFT;
-			border[4].y = MECHANIC_MENU_HEIGHTPX;
+			border[4].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + shift + 1) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) + neatIndent - BUTTON_SHIFT;
+			border[4].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			//5
-			border[5].x = _id * WIDTHPX / 4 + WIDTHPX / 4;
-			border[5].y = MECHANIC_MENU_HEIGHTPX;
+			border[5].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4;
+			border[5].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			//0, нижн€€ часть
-			border[6].x = _id * WIDTHPX / 4 + WIDTHPX / 4;
-			border[6].y = HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
+			border[6].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4;
+			border[6].y = Y0_PX + HEIGHTPX - MECHANIC_MENU_LO_HEIGHTPX;
 			//1
-			if (_id % 2 == 0)	border[7].x = _id * WIDTHPX / 4 + WIDTHPX / 4;
-			else				border[7].x = _id * WIDTHPX / 4 + WIDTHPX / 4 - WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1);
-			border[7].y = HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
+			if (_id % 2 == 0)	border[7].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4;
+			else				border[7].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 - WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1);
+			border[7].y = Y0_PX + HEIGHTPX - MECHANIC_MENU_LO_HEIGHTPX;
 			//2
-			if (_id % 2 == 0)	border[8].x = _id * WIDTHPX / 4 + WIDTHPX / 4 - 2 * neatIndent;
-			else				border[8].x = _id * WIDTHPX / 4 + WIDTHPX / 4 - WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1) - 2 * neatIndent;
-			border[8].y = HEIGHTPX - neatIndent;
+			if (_id % 2 == 0)	border[8].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 - 2 * neatIndent;
+			else				border[8].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 - WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1) - 2 * neatIndent;
+			border[8].y = Y0_PX + HEIGHTPX - neatIndent;
 			//3
-			if (_id % 2 == 0)	border[9].x = _id * WIDTHPX / 4 + WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1) + 2 * neatIndent;
-			else				border[9].x = _id * WIDTHPX / 4 + 2 * neatIndent;
-			border[9].y = HEIGHTPX - neatIndent;
+			if (_id % 2 == 0)	border[9].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1) + 2 * neatIndent;
+			else				border[9].x = X0_PX + _id * WIDTHPX / 4 + 2 * neatIndent;
+			border[9].y = Y0_PX + HEIGHTPX - neatIndent;
 			//4
-			if (_id % 2 == 0)	border[10].x = _id * WIDTHPX / 4 + WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1);
-			else				border[10].x = _id * WIDTHPX / 4;
-			border[10].y = HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
+			if (_id % 2 == 0)	border[10].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1);
+			else				border[10].x = X0_PX + _id * WIDTHPX / 4;
+			border[10].y = Y0_PX + HEIGHTPX - MECHANIC_MENU_LO_HEIGHTPX;
 			//5
-			border[11].x = _id * WIDTHPX / 4;
-			border[11].y = HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
+			border[11].x = X0_PX + _id * WIDTHPX / 4;
+			border[11].y = Y0_PX + HEIGHTPX - MECHANIC_MENU_LO_HEIGHTPX;
 			//замыкание
 			border[12] = border[0];
 			Polyline(hdc, border, 13);
 
 			break;
 		}
-	case HALF:
+	case KADR_SIZE_HALF:
 		{
 			//0, верхн€€ часть
-			border[0].x = _id * WIDTHPX / 4;
-			border[0].y = MECHANIC_MENU_HEIGHTPX;
+			border[0].x = X0_PX + _id * WIDTHPX / 4;
+			border[0].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			//1
 			if (blockStatus)
-				border[1].x = _id * WIDTHPX / 4 + (activeButton + _id % 2) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) - neatIndent + BUTTON_SHIFT + WIDTHPX / 4;
+				border[1].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + _id % 2) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) - neatIndent + BUTTON_SHIFT + WIDTHPX / 4;
 			else
-				border[1].x = _id * WIDTHPX / 4 + (activeButton + shift) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) - neatIndent + BUTTON_SHIFT;
-			border[1].y = MECHANIC_MENU_HEIGHTPX;
+				border[1].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + shift) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) - neatIndent + BUTTON_SHIFT;
+			border[1].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			//2
 			if (blockStatus)
-				border[2].x = _id * WIDTHPX / 4 + (activeButton + _id % 2) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) + neatIndent + BUTTON_SHIFT + WIDTHPX / 4;
+				border[2].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + _id % 2) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) + neatIndent + BUTTON_SHIFT + WIDTHPX / 4;
 			else
-				border[2].x = _id * WIDTHPX / 4 + (activeButton + shift) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) + neatIndent + BUTTON_SHIFT;
+				border[2].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + shift) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) + neatIndent + BUTTON_SHIFT;
 			if (kadrSelection)
-				border[2].y = MECHANIC_MENU_HEIGHTPX;
+				border[2].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			else
-				border[2].y = 0 + neatIndent;
+				border[2].y = Y0_PX +  neatIndent;
 			//3
 			if (blockStatus)
-				border[3].x = _id * WIDTHPX / 4 + (activeButton + _id % 2 + 1) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) - neatIndent - BUTTON_SHIFT + WIDTHPX / 4;
+				border[3].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + _id % 2 + 1) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) - neatIndent - BUTTON_SHIFT + WIDTHPX / 4;
 			else
-				border[3].x = _id * WIDTHPX / 4 + (activeButton + shift + 1) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) - neatIndent - BUTTON_SHIFT;
+				border[3].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + shift + 1) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) - neatIndent - BUTTON_SHIFT;
 			if (kadrSelection)
-				border[3].y = MECHANIC_MENU_HEIGHTPX;
+				border[3].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			else
-				border[3].y = 0 + neatIndent;
+				border[3].y = Y0_PX +  neatIndent;
 			//4
 			if (blockStatus)
-				border[4].x = _id * WIDTHPX / 4 + (activeButton + _id % 2 + 1) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) + neatIndent - BUTTON_SHIFT + WIDTHPX / 4;
+				border[4].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + _id % 2 + 1) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) + neatIndent - BUTTON_SHIFT + WIDTHPX / 4;
 			else
-				border[4].x = _id * WIDTHPX / 4 + (activeButton + shift + 1) * (WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1)) + neatIndent - BUTTON_SHIFT;
-			border[4].y = MECHANIC_MENU_HEIGHTPX;
+				border[4].x = X0_PX + _id * WIDTHPX / 4 + (activeButton + shift + 1) * (WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1)) + neatIndent - BUTTON_SHIFT;
+			border[4].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			//5
-			border[5].x = _id * WIDTHPX / 4 + WIDTHPX / 2;
-			border[5].y = MECHANIC_MENU_HEIGHTPX;
+			border[5].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 2;
+			border[5].y = Y0_PX + MECHANIC_MENU_HI_HEIGHTPX;
 			//0, нижн€€ часть
-			border[6].x = _id * WIDTHPX / 4 + WIDTHPX / 2;
-			border[6].y = HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
+			border[6].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 2;
+			border[6].y = Y0_PX + HEIGHTPX - MECHANIC_MENU_LO_HEIGHTPX;
 			//1
-			if (_id % 2 == 0 && blockStatus == true)		border[7].x = _id * WIDTHPX / 4 + WIDTHPX / 2 - WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1);
-			else if (_id % 2 == 1 && blockStatus == true)	border[7].x = _id * WIDTHPX / 4	+ WIDTHPX / 2;
-			if (_id % 2 == 0 && blockStatus == false)		border[7].x = _id * WIDTHPX / 4 + WIDTHPX / 4;
-			else if (_id % 2 == 1 && blockStatus == false)	border[7].x = _id * WIDTHPX / 4	+ WIDTHPX / 4 - WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1);
-			border[7].y = HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
+			if (_id % 2 == 0 && blockStatus == true)		border[7].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 2 - WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1);
+			else if (_id % 2 == 1 && blockStatus == true)	border[7].x = X0_PX + _id * WIDTHPX / 4	+ WIDTHPX / 2;
+			if (_id % 2 == 0 && blockStatus == false)		border[7].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4;
+			else if (_id % 2 == 1 && blockStatus == false)	border[7].x = X0_PX + _id * WIDTHPX / 4	+ WIDTHPX / 4 - WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1);
+			border[7].y = Y0_PX + HEIGHTPX - MECHANIC_MENU_LO_HEIGHTPX;
 			//2
-			if (_id % 2 == 0 && blockStatus == true)		border[8].x = _id * WIDTHPX / 4 + WIDTHPX / 2 - 2 * neatIndent - WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1);
-			else if (_id % 2 == 1 && blockStatus == true)	border[8].x = _id * WIDTHPX / 4 + WIDTHPX / 2 - 2 * neatIndent;
-			if (_id % 2 == 0 && blockStatus == false)		border[8].x = _id * WIDTHPX / 4 + WIDTHPX / 4 - 2 * neatIndent;
-			else if (_id % 2 == 1 && blockStatus == false)	border[8].x = _id * WIDTHPX / 4 + WIDTHPX / 4 - 2 * neatIndent - WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1);
-			border[8].y = HEIGHTPX - neatIndent;
+			if (_id % 2 == 0 && blockStatus == true)		border[8].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 2 - 2 * neatIndent - WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1);
+			else if (_id % 2 == 1 && blockStatus == true)	border[8].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 2 - 2 * neatIndent;
+			if (_id % 2 == 0 && blockStatus == false)		border[8].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 - 2 * neatIndent;
+			else if (_id % 2 == 1 && blockStatus == false)	border[8].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 - 2 * neatIndent - WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1);
+			border[8].y = Y0_PX + HEIGHTPX - neatIndent;
 			//3
-			if (_id % 2 == 0 && blockStatus == true)		border[9].x = _id * WIDTHPX / 4 + WIDTHPX / 4 + 2 * neatIndent;
-			else if (_id % 2 == 1 && blockStatus == true)	border[9].x = _id * WIDTHPX / 4 + WIDTHPX / 4 + 2 * neatIndent + WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1);
-			if (_id % 2 == 0 && blockStatus == false)		border[9].x = _id * WIDTHPX / 4 + 2 * neatIndent + WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1);
-			else if (_id % 2 == 1 && blockStatus == false)	border[9].x = _id * WIDTHPX / 4 + 2 * neatIndent;
-			border[9].y = HEIGHTPX - neatIndent;
+			if (_id % 2 == 0 && blockStatus == true)		border[9].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 + 2 * neatIndent;
+			else if (_id % 2 == 1 && blockStatus == true)	border[9].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 + 2 * neatIndent + WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1);
+			if (_id % 2 == 0 && blockStatus == false)		border[9].x = X0_PX + _id * WIDTHPX / 4 + 2 * neatIndent + WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1);
+			else if (_id % 2 == 1 && blockStatus == false)	border[9].x = X0_PX + _id * WIDTHPX / 4 + 2 * neatIndent;
+			border[9].y = Y0_PX + HEIGHTPX - neatIndent;
 			//4
-			if (_id % 2 == 0 && blockStatus == true)		border[10].x = _id * WIDTHPX / 4 + WIDTHPX / 4;
-			else if (_id % 2 == 1 && blockStatus == true)	border[10].x = _id * WIDTHPX / 4 + WIDTHPX / 4 + WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1);
-			if (_id % 2 == 0 && blockStatus == false)		border[10].x = _id * WIDTHPX / 4 + WIDTHPX / 4 / (BUTTONS_MAX_NUM + 1);
-			else if (_id % 2 == 1 && blockStatus == false)	border[10].x = _id * WIDTHPX / 4;
-			border[10].y = HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
+			if (_id % 2 == 0 && blockStatus == true)		border[10].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4;
+			else if (_id % 2 == 1 && blockStatus == true)	border[10].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 + WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1);
+			if (_id % 2 == 0 && blockStatus == false)		border[10].x = X0_PX + _id * WIDTHPX / 4 + WIDTHPX / 4 / (MECH_MENU_BUTTONS_MAX_NUM + 1);
+			else if (_id % 2 == 1 && blockStatus == false)	border[10].x = X0_PX + _id * WIDTHPX / 4;
+			border[10].y = Y0_PX + HEIGHTPX - MECHANIC_MENU_LO_HEIGHTPX;
 			//5
-			border[11].x = _id * WIDTHPX / 4;
-			border[11].y = HEIGHTPX - MECHANIC_MENU_HEIGHTPX;
+			border[11].x = X0_PX + _id * WIDTHPX / 4;
+			border[11].y = Y0_PX + HEIGHTPX - MECHANIC_MENU_LO_HEIGHTPX;
 			//замыкание
 			border[12] = border[0];
 			Polyline(hdc, border, 13);
@@ -208,9 +209,9 @@ void CFrame::DrawBorders(HDC& hdc)
 void CFrame::SetSOIStatus(bool soiStatus)
 {
 	if (soiStatus)
-		_prior = SOI;
+		_prior = PRIOR_SOI;
 	else
-		_prior = ACTIVE;
+		_prior = PRIOR_ACTIVE;
 	_isSOI = soiStatus;
 	DRAW_ENGINE.ResetDrawingObject(this);
 }
@@ -218,13 +219,13 @@ void CFrame::SetSOIStatus(bool soiStatus)
 void CFrame::ChangeSize(KADR_SIZE newSize)
 {
 	_frameSize = newSize;
-	Dispose();
+	Place();
 }
 
 CFrame* CFrame::ChangePos(UINT newPos)
 {
 	_id = newPos;
-	Dispose();
+	Place();
 	return this;
 }
 

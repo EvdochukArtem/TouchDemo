@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "TouchDemo.h"
 #include "util/Util.h"
+#include <ctime>
 
 int APIENTRY wWinMain(HINSTANCE hInstance,
 	HINSTANCE /* hPrevInstance */,
@@ -20,6 +21,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			InvalidateRect(MFIWindow, NULL, FALSE);
 		}
 	}
 
@@ -37,12 +39,12 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	mainClassEx.cbClsExtra = 0;
 	mainClassEx.cbWndExtra = 0;
 	mainClassEx.hInstance = hInstance;
-	mainClassEx.hIcon = 0;
+	mainClassEx.hIcon = NULL;
 	mainClassEx.hCursor = LoadCursor(NULL, IDC_ARROW);
-	mainClassEx.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	mainClassEx.hbrBackground = NULL;
 	mainClassEx.lpszMenuName = nullptr;
 	mainClassEx.lpszClassName = szClassName;
-	mainClassEx.hIconSm = 0;
+	mainClassEx.hIconSm = NULL;
 
 	return RegisterClassEx(&mainClassEx);
 }
@@ -51,10 +53,33 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance;
 
-	//MFIWindow = CreateWindow(szClassName, szTitle, WS_SYSMENU, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, hInstance, NULL);
-	MFIWindow = CreateWindow(szClassName, szTitle, WS_POPUP | WS_CLIPSIBLINGS, 0, 0, WIDTHPX, HEIGHTPX, NULL, NULL, hInstance, NULL);
+	double cx = GetSystemMetrics(SM_CXSCREEN);
+	double cy = GetSystemMetrics(SM_CYSCREEN);
+	//MFIWindow = CreateWindow(szClassName, szTitle, WS_SYSMENU, 0, 0, cx, cy, NULL, NULL, hInstance, NULL);
+	MFIWindow = CreateWindow(szClassName, szTitle, WS_POPUP | WS_CLIPSIBLINGS, 0, 0, (int)cx, (int)cy, NULL, NULL, hInstance, NULL);
 
 	if (!MFIWindow)
+		return FALSE;
+
+	const double realWidthPx = 2300;  //ширина в пикселях оригинального устройства
+	const double realHeightPx = 1000; //высота в пикселях оригинального устройства
+
+	//Пропорционально в размерах монитора компьютера
+
+	double a = MIN(cy / realHeightPx, cx / realWidthPx);
+	double b = MIN(cy / realHeightPx, cx / realWidthPx);
+	Display::widthpx = int(realWidthPx * a);
+	Display::heightpx = int(realHeightPx * b);
+	Display::x0_px = (int)(cx / 2.0 - Display::widthpx / 2.0);
+	Display::y0_px = (int)(cy / 2.0 - Display::heightpx / 2.0);
+
+	//Пропорционально монитору компьютера
+	/*Display::widthpx = WIDTHPX;
+	Display::heightpx = HEIGHTPX;
+	Display::x0_px = 0;
+	Display::y0_px = 0;*/
+
+	if (CUtil::Instance().Create() == FALSE)
 		return FALSE;
 
 	SendMessage(MFIWindow, WM_UPDATE, 0, 0);
@@ -70,8 +95,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	PAINTSTRUCT ps;		// Нужна для рисования в клиентской области окна
 	switch (message)			// Переход по сообщению
 	{
-	case WM_CREATE:
-		hdc = GetDC(hWnd);
+	case WM_POINTERDOWN:
+	case WM_POINTERUPDATE:
+	case WM_POINTERUP:
+		GESTURE_EMULATOR.WndProc(hWnd, message, wParam, lParam);
 		break;
 	case WM_LBUTTONDOWN:
 	case WM_LBUTTONUP:
@@ -91,8 +118,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hWnd, &ps);
 		DRAW_ENGINE.Draw(hdc);
 		EndPaint(hWnd, &ps);
-		break;
-	case WM_CLOSE:
 		break;
 	case WM_GESTURENOTIFY:
 	{

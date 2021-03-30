@@ -22,32 +22,32 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{58C56484-484B-42B2-B016-FB86804F653A}</ProjectGuid>
     <RootNamespace>TouchDemo</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -100,6 +100,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>MSIMG32.LIB;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -133,24 +134,54 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>MSIMG32.LIB;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="object\auxilary\Arrow.cpp" />
+    <ClCompile Include="CommonFunctions.cpp" />
     <ClCompile Include="object\buttons\AbstractButton.cpp" />
-    <ClCompile Include="object\buttons\MenuButton.cpp" />
-    <ClCompile Include="object\buttons\MenuButtonHandler.cpp" />
-    <ClCompile Include="object\buttons\SimpleButton.cpp" />
-    <ClCompile Include="object\buttons\SimpleButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\MenuButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\ParamButton.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\ParamButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\RadioButton.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\RadioButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\RotaryButton.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\RotaryButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\SimpleButton.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\SimpleButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\SwitchButton.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\SwitchButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\TabButton.cpp" />
+    <ClCompile Include="object\buttons\mechButtons\TabButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\ChangePageTButton.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\MenuTButton.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\MenuTButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\RadioTButton.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\RadioTButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\SetTButton.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\SetTButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\SimpleTButton.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\SimpleTButtonHandler.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\SwitchTButton.cpp" />
+    <ClCompile Include="object\buttons\touchButtons\SwitchTButtonHandler.cpp" />
     <ClCompile Include="object\Frame.cpp" />
+    <ClCompile Include="object\InfoLine.cpp" />
     <ClCompile Include="object\kadrs\AbstractKadr.cpp" />
+    <ClCompile Include="object\kadrs\BlankAuxKadr.cpp" />
     <ClCompile Include="object\kadrs\BlankKadr.cpp" />
+    <ClCompile Include="object\kadrs\common objects\Arrow.cpp" />
     <ClCompile Include="object\kadrs\KadrCAM\KadrCAM.cpp" />
+    <ClCompile Include="object\kadrs\KadrCAM\KadrCAMButtons.cpp" />
+    <ClCompile Include="object\kadrs\KadrMAP\Database\DatabasePage.cpp" />
     <ClCompile Include="object\kadrs\KadrMAP\KadrMAP.cpp" />
+    <ClCompile Include="object\kadrs\KadrMAP\KadrMAPButtons.cpp" />
+    <ClCompile Include="object\kadrs\KadrMAP\Map\MapPage.cpp" />
+    <ClCompile Include="object\kadrs\KadrMAP\Map\ScaleCircle.cpp" />
     <ClCompile Include="object\kadrs\KadrPIL\KadrPIL.cpp" />
     <ClCompile Include="object\kadrs\KadrRDR\KadrRDR.cpp" />
     <ClCompile Include="object\kadrs\KadrSYS\EngineSys.cpp" />
     <ClCompile Include="object\kadrs\KadrSYS\KadrSYS.cpp" />
+    <ClCompile Include="object\TouchSymbol.cpp" />
     <ClCompile Include="util\GestureEngineEmulator.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="util\DrawEngine.cpp" />
@@ -163,21 +194,52 @@
     <ClCompile Include="util\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="object\auxilary\Arrow.h" />
+    <ClInclude Include="CommonConstants.h" />
+    <ClInclude Include="CommonFunctions.h" />
     <ClInclude Include="object\buttons\AbstractButton.h" />
-    <ClInclude Include="object\buttons\MenuButton.h" />
-    <ClInclude Include="object\buttons\MenuButtonHandler.h" />
-    <ClInclude Include="object\buttons\SimpleButton.h" />
-    <ClInclude Include="object\buttons\SimpleButtonHandler.h" />
+    <ClInclude Include="object\buttons\mechButtons\MenuButtonHandler.h" />
+    <ClInclude Include="object\buttons\mechButtons\ParamButton.h" />
+    <ClInclude Include="object\buttons\mechButtons\ParamButtonHandler.h" />
+    <ClInclude Include="object\buttons\mechButtons\RadioButton.h" />
+    <ClInclude Include="object\buttons\mechButtons\RadioButtonHandler.h" />
+    <ClInclude Include="object\buttons\mechButtons\RotaryButton.h" />
+    <ClInclude Include="object\buttons\mechButtons\RotaryButtonHandler.h" />
+    <ClInclude Include="object\buttons\mechButtons\SimpleButton.h" />
+    <ClInclude Include="object\buttons\mechButtons\SimpleButtonHandler.h" />
+    <ClInclude Include="object\buttons\mechButtons\SwitchButton.h" />
+    <ClInclude Include="object\buttons\mechButtons\SwitchButtonHandler.h" />
+    <ClInclude Include="object\buttons\mechButtons\TabButton.h" />
+    <ClInclude Include="object\buttons\mechButtons\TabButtonHandler.h" />
+    <ClInclude Include="object\buttons\touchButtons\ChangePageTButton.h" />
+    <ClInclude Include="object\buttons\touchButtons\MenuTButton.h" />
+    <ClInclude Include="object\buttons\touchButtons\MenuTButtonHandler.h" />
+    <ClInclude Include="object\buttons\touchButtons\RadioTButton.h" />
+    <ClInclude Include="object\buttons\touchButtons\RadioTButtonHandler.h" />
+    <ClInclude Include="object\buttons\touchButtons\SetTButton.h" />
+    <ClInclude Include="object\buttons\touchButtons\SetTButtonHandler.h" />
+    <ClInclude Include="object\buttons\touchButtons\SimpleTButton.h" />
+    <ClInclude Include="object\buttons\touchButtons\SimpleTButtonHandler.h" />
+    <ClInclude Include="object\buttons\touchButtons\SwitchTButton.h" />
+    <ClInclude Include="object\buttons\touchButtons\SwitchTButtonHandler.h" />
     <ClInclude Include="object\Frame.h" />
+    <ClInclude Include="object\InfoLine.h" />
     <ClInclude Include="object\kadrs\AbstractKadr.h" />
+    <ClInclude Include="object\kadrs\BlankAuxKadr.h" />
     <ClInclude Include="object\kadrs\BlankKadr.h" />
+    <ClInclude Include="object\kadrs\common objects\Arrow.h" />
     <ClInclude Include="object\kadrs\KadrCAM\KadrCAM.h" />
+    <ClInclude Include="object\kadrs\KadrCAM\KadrCAMButtons.h" />
+    <ClInclude Include="object\kadrs\KadrMAP\Database\DatabasePage.h" />
     <ClInclude Include="object\kadrs\KadrMAP\KadrMAP.h" />
+    <ClInclude Include="object\kadrs\KadrMAP\KadrMAPButtons.h" />
+    <ClInclude Include="object\kadrs\KadrMAP\Map\MapPage.h" />
+    <ClInclude Include="object\kadrs\KadrMAP\Map\ScaleCircle.h" />
     <ClInclude Include="object\kadrs\KadrPIL\KadrPIL.h" />
     <ClInclude Include="object\kadrs\KadrRDR\KadrRDR.h" />
     <ClInclude Include="object\kadrs\KadrSYS\EngineSys.h" />
     <ClInclude Include="object\kadrs\KadrSYS\KadrSYS.h" />
+    <ClInclude Include="object\kadrs\Page.h" />
+    <ClInclude Include="object\TouchSymbol.h" />
     <ClInclude Include="util\GestureEngineEmulator.h" />
     <ClInclude Include="util\DrawEngine.h" />
     <ClInclude Include="object\DrawingObject.h" />

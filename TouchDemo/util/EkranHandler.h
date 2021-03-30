@@ -3,66 +3,115 @@
 */
 #pragma once
 #include "object/kadrs/AbstractKadr.h"
-#include "object/MechanicMenu.h"
-#include "object/Frame.h"
 
-const int DISPLAY_ROWS = 2;
-const int DISPLAY_COLS = 4;
+class CMechanicMenu;
+class CFrame;
+class CInfoLine;
+class CTouchSymbol;
 
-enum EKRAN_HANDLER_COMMANDS;
+const int DISPLAY_ROWS = 2; //Кол-во строк в которых могут располагаться кадры
+const int DISPLAY_COLS = 4; //Кол-во столбцов в которых могут располагаться кадры
+const int KADRS_MAX_NUM = 5;
+
+enum MENU_COMMANDS
+{
+	MENU_COMM_ENABLE_KADR_TYPE_SELECTION,
+	MENU_COMM_DISABLE_KADR_TYPE_SELECTION,
+	MENU_COMM_SWITCH_PLD,
+	MENU_COMM_SWITCH_SYST,
+	MENU_COMM_SWITCH_CAM,
+	MENU_COMM_SWITCH_MAP,
+	MENU_COMM_SWITCH_RDR,
+};
 
 class CEkranHandler
 {
 public:
-	CAbstractKadr* GetKadr(UINT row, UINT col) { return kadrs[row][col]; };
-	CMechanicMenu* GetMechanicMenu(UINT col) { return mechanicMenu[col]; };
-	CFrame* GetFrames(UINT col) { return frames[col]; };
+	CAbstractKadr*	GetKadr(UINT row, UINT col) ;
+	CMechanicMenu*	GetMechanicMenu(UINT col);
+	CFrame*			GetFrames(UINT col) { return frames[col]; };
+	CTouchSymbol*	GetTouchSymbol() { return touchSymb; };
 	void DivideKadr(UINT kadrID, KADR_SIZE kadrSize, SWIPE_DIRECTION swipeDir);	//Для восьмушек направление не важно
 	void MergeKadr(UINT kadrID, KADR_SIZE kadrSize, SWIPE_DIRECTION swipeDir);	//Для восьмушек направление не важно
 	void SetSOI(POINT pt);
 	void SetSOI(UINT newSOI);
 	void LeftMerge(SWIPE_DIRECTION swipeDir, UINT col);
 	void RightMerge(SWIPE_DIRECTION swipeDir, UINT col);
-	void ProcessCommand(EKRAN_HANDLER_COMMANDS cmd, POINT pt);
+	void ProcessMenuCommand(MENU_COMMANDS cmd, POINT pt);
+	void ProcessKadrCommand(KADR_COMMANDS cmd, POINT pt);
+	void ProcessKeyboard(UINT key);
 
 private:
 	CEkranHandler();
-	~CEkranHandler();
+	~CEkranHandler() {};
 	BOOL Create();
+	BOOL CleanUp();
+
 	void SwapMenus(UINT leftOne);
 	void SwapFrames(UINT leftOne);
 	void SwapKadr(UINT leftOne);
 	friend class CUtil;
 
-	//TODO: СОИ должны быть сделаны по аналогии с существующими и разещены в commontypes. Тк существующие неподходят пока будет такой имитатор.
 	UINT curSOI;
 
+	class KadrsAssembly;
+	class MechMenuAssembly;
+	//TODO: ПЕРЕПИСАТЬ ПОЯСНЕНИЕ
 	// Этот массив содержит кадры. Максимум их может быть 8 (два ряда в каждом 4 восьмушки)
 	// У каждого кадра есть ID по которому можно понять его индекс в массиве.
 	// Логика присвоения индекса и ID такая:
 	// Смотрим какое положение кадр занимает на экране. Его левый верхний угол указывает
 	// на ячейку которую он будет занимать в массиве. Например 2 кадра каждый размером в полэкрана
 	// будут иметь ID 0 и 2 соотственно, а индексы будут [0][0] и [0][2].
-	CAbstractKadr* kadrs[DISPLAY_ROWS][DISPLAY_COLS];
+	KadrsAssembly* kadrs[DISPLAY_COLS];
 
-	CMechanicMenu* mechanicMenu[DISPLAY_COLS];
+	MechMenuAssembly* mechanicMenu[DISPLAY_COLS];
 
 	CFrame* frames[DISPLAY_COLS];
 
+	CInfoLine* infoLine;
 
-	UINT FindMechMenu(POINT pt);
-	UINT FindFrame(POINT pt);
-	std::pair<UINT, UINT> FindKadr(POINT pt);
+	CTouchSymbol* touchSymb;
+
+	int FindMechMenu(POINT pt);
+	int FindFrame(POINT pt);
+	std::pair<int, int> FindKadr(POINT pt);	//first : row, second : col
 	void SwitchKadr(KADR_TYPE type, POINT pt);
+
 };
 
-enum EKRAN_HANDLER_COMMANDS
+class CEkranHandler::KadrsAssembly
 {
-	ENABLE_KADR_TYPE_SELECTION,
-	DISABLE_KADR_TYPE_SELECTION,
-	SWITCH_PLD,
-	SWITCH_SYST,
-	SWITCH_CAM,
-	SWITCH_MAP,
-	SWITCH_RDR,
+public:
+	KadrsAssembly(UINT id, KADR_SIZE kadrSize, KADR_TYPE type);
+	~KadrsAssembly();
+	CAbstractKadr*	GetActiveKadr() { return kadrs[curActive]; };
+	void InvokeAuxKadr(UINT auxId);
+	void InvokeAuxKadr(UINT auxId, KADR_TYPE type);
+	void RemoveAuxKadr();
+	CAbstractKadr* GetAuxKadr() { return auxKadr; };
+	void SwitchKadr(KADR_TYPE type);
+	void ChangeSize(KADR_SIZE newSize);
+	KadrsAssembly* ChangePos(UINT newPos);
+
+private:
+	KADR_TYPE curActive;
+
+	CAbstractKadr* kadrs[KADRS_MAX_NUM];
+	CAbstractKadr* auxKadr;
+};
+
+class CEkranHandler::MechMenuAssembly
+{
+public:
+	MechMenuAssembly(UINT id, KADR_TYPE type);
+	~MechMenuAssembly();
+	CMechanicMenu*	GetActiveMenu() { return menus[curActive]; };
+	MechMenuAssembly* ChangePos(UINT newPos);
+	void SwitchMenu(KADR_TYPE type);
+
+private:
+	KADR_TYPE curActive;
+
+	CMechanicMenu* menus[KADRS_MAX_NUM];
 };

@@ -1,90 +1,111 @@
 #include "StdAfx.h"
 #include "EkranHandler.h"
+#include "object/Frame.h"
+#include "object/InfoLine.h"
+#include "object/TouchSymbol.h"
+#include "object/MechanicMenu.h"
 #include "object/kadrs/BlankKadr.h"
-#include "object/kadrs/KadrCAM/KadrCAM.h"
+#include "object/kadrs/auxilary/BlankAuxKadr.h"
+#include "object/kadrs/KadrSYS/KadrSYS.h"
 #include "object/kadrs/KadrMAP/KadrMAP.h"
 #include "object/kadrs/KadrPIL/KadrPIL.h"
 #include "object/kadrs/KadrRDR/KadrRDR.h"
-#include "object/kadrs/KadrSYS/KadrSYS.h"
+#include "object/kadrs/KadrCAM/KadrCAM.h"
+#include <cassert>
 
 CEkranHandler::CEkranHandler()
 {
 	curSOI = 1;
 }
 
-CEkranHandler::~CEkranHandler()
-{
-	for (int i = 0; i < DISPLAY_COLS; i++)
-	{
-		delete kadrs[0][i];
-		delete kadrs[1][i];
-		delete mechanicMenu[i];
-		delete frames[i];
-	}
-}
-
 BOOL CEkranHandler::Create()
 {
-	kadrs[0][0] = new CKadrPIL(0, QUARTER);
-	kadrs[0][1] = new CKadrCAM(1, QUARTER);
-	kadrs[0][2] = new CKadrMAP(2, QUARTER);
-	kadrs[0][3] = new CKadrSYS(3, QUARTER);
+	kadrs[0] = new KadrsAssembly(0, KADR_SIZE_QUARTER, KADR_TYPE_CAM);
+	kadrs[1] = new KadrsAssembly(1, KADR_SIZE_QUARTER, KADR_TYPE_MAP);
+	kadrs[2] = new KadrsAssembly(2, KADR_SIZE_QUARTER, KADR_TYPE_RDR);
+	kadrs[3] = new KadrsAssembly(3, KADR_SIZE_QUARTER, KADR_TYPE_SYST);
+	infoLine = new CInfoLine();
+	touchSymb = new CTouchSymbol();
 	for (int i = 0; i < DISPLAY_COLS; i++)
 	{
-		//kadrs[0][i] = new CBlankKadr(i, QUARTER);
-		kadrs[1][i] = nullptr;
-		mechanicMenu[i] = new CMechanicMenu(i, kadrs[0][i]->GetKadrType());
-		frames[i] = new CFrame(i, mechanicMenu[i]->GetActiveButtonPosition(), QUARTER);
+		mechanicMenu[i] = new MechMenuAssembly(i, kadrs[i]->GetActiveKadr()->GetKadrType());
+		frames[i] = new CFrame(i, mechanicMenu[i]->GetActiveMenu()->GetActiveButtonPosition(), KADR_SIZE_QUARTER);
 	}
-	kadrs[0][curSOI]->SetSOIStatus(true);
-	mechanicMenu[curSOI]->SetSOIStatus(true);
+	kadrs[curSOI]->GetActiveKadr()->SetSOIStatus(true);
+	mechanicMenu[curSOI]->GetActiveMenu()->SetSOIStatus(true);
 	frames[curSOI]->SetSOIStatus(true);
 	return TRUE;
 }
 
+BOOL CEkranHandler::CleanUp()
+{
+	delete infoLine;
+	delete touchSymb;
+	for (int i = 0; i < DISPLAY_COLS; i++)
+	{
+		delete kadrs[i];
+		delete mechanicMenu[i];
+		delete frames[i];
+	}
+	return TRUE;
+}
+
+CAbstractKadr*	CEkranHandler::GetKadr(UINT row, UINT col)
+{ 
+	if (row == 0)
+		return kadrs[col]->GetActiveKadr();
+	else
+		return kadrs[col]->GetAuxKadr();
+}
+
+CMechanicMenu*	CEkranHandler::GetMechanicMenu(UINT col)
+{
+	return mechanicMenu[col]->GetActiveMenu();
+}
+
 void CEkranHandler::SetSOI(POINT pt)
 {
-	if (kadrs[0][curSOI]->GetBlockStatus() == false)
-		kadrs[0][curSOI]->SetSOIStatus(false);
+	if (kadrs[curSOI]->GetActiveKadr()->GetBlockStatus() == false)
+		kadrs[curSOI]->GetActiveKadr()->SetSOIStatus(false);
 	else
-		kadrs[0][curSOI - 1]->SetSOIStatus(false);
+		kadrs[curSOI - 1]->GetActiveKadr()->SetSOIStatus(false);
 
 	if (frames[curSOI]->GetBlockStatus() == false)
 		frames[curSOI]->SetSOIStatus(false);
 	else
 		frames[curSOI - 1]->SetSOIStatus(false);
-	mechanicMenu[curSOI]->SetSOIStatus(false);
+	mechanicMenu[curSOI]->GetActiveMenu()->SetSOIStatus(false);
 
 	curSOI = FindMechMenu(pt);
 
-	if (kadrs[0][curSOI]->GetBlockStatus() == false)
-		kadrs[0][curSOI]->SetSOIStatus(true);
+	if (kadrs[curSOI]->GetActiveKadr()->GetBlockStatus() == false)
+		kadrs[curSOI]->GetActiveKadr()->SetSOIStatus(true);
 	else
-		kadrs[0][curSOI - 1]->SetSOIStatus(true);
+		kadrs[curSOI - 1]->GetActiveKadr()->SetSOIStatus(true);
 
 	if (frames[curSOI]->GetBlockStatus() == false)
 		frames[curSOI]->SetSOIStatus(true);
 	else
 		frames[curSOI - 1]->SetSOIStatus(true);
-	mechanicMenu[curSOI]->SetSOIStatus(true);
+	mechanicMenu[curSOI]->GetActiveMenu()->SetSOIStatus(true);
 }
 
 void CEkranHandler::SetSOI(UINT newSOI)
 {
-	kadrs[0][curSOI]->SetSOIStatus(false);
+	kadrs[curSOI]->GetActiveKadr()->SetSOIStatus(false);
 	frames[curSOI]->SetSOIStatus(false);
-	mechanicMenu[curSOI]->SetSOIStatus(false);
+	mechanicMenu[curSOI]->GetActiveMenu()->SetSOIStatus(false);
 	
 	curSOI = newSOI;
-			
-	kadrs[0][curSOI]->SetSOIStatus(true);
+	
+	kadrs[curSOI]->GetActiveKadr()->SetSOIStatus(true);
 	frames[curSOI]->SetSOIStatus(true);
-	mechanicMenu[curSOI]->SetSOIStatus(true);
+	mechanicMenu[curSOI]->GetActiveMenu()->SetSOIStatus(true);
 }
 
 void CEkranHandler::SwapMenus(UINT leftOne)
 {
-	CMechanicMenu* tmp = mechanicMenu[leftOne];
+	MechMenuAssembly* tmp = mechanicMenu[leftOne];
 	mechanicMenu[leftOne] = mechanicMenu[leftOne + 1]->ChangePos(leftOne);
 	mechanicMenu[leftOne + 1] = tmp->ChangePos(leftOne + 1);
 	if (curSOI == leftOne)
@@ -95,10 +116,10 @@ void CEkranHandler::SwapMenus(UINT leftOne)
 
 void CEkranHandler::SwapKadr(UINT leftOne)
 {
-	CAbstractKadr* tmp = nullptr;
-	tmp = kadrs[0][leftOne];
-	kadrs[0][leftOne] = kadrs[0][leftOne + 1]->ChangePos(leftOne);
-	kadrs[0][leftOne + 1] = tmp->ChangePos(leftOne + 1);
+	KadrsAssembly* tmp = nullptr;
+	tmp = kadrs[leftOne];
+	kadrs[leftOne] = kadrs[leftOne + 1]->ChangePos(leftOne);
+	kadrs[leftOne + 1] = tmp->ChangePos(leftOne + 1);
 	if (curSOI == leftOne)
 		curSOI = leftOne + 1;
 	else if (curSOI == leftOne + 1)
@@ -119,49 +140,51 @@ void CEkranHandler::SwapFrames(UINT leftOne)
 void CEkranHandler::DivideKadr(UINT kadrID, KADR_SIZE kadrSize, SWIPE_DIRECTION swipeDir)
 {
 	UINT col = kadrID % 4;
-	mechanicMenu[col]->DisableKadrTypeSelection();
+	mechanicMenu[col]->GetActiveMenu()->DisableKadrTypeSelection();
 	frames[col]->DisableKadrTypeSelection();
-	if (swipeDir == LEFT && col > 0 && kadrSize != QUARTER)
+	if (swipeDir == SWIPE_DIR_LEFT && col > 0 && kadrSize != KADR_SIZE_QUARTER)
 	{
-		mechanicMenu[col + 1]->DisableKadrTypeSelection();
+		assert(col < 3);
+		mechanicMenu[col + 1]->GetActiveMenu()->DisableKadrTypeSelection();
 		frames[col + 1]->DisableKadrTypeSelection();
 	}
-	if (swipeDir == RIGHT && col < 3 && kadrSize != QUARTER)
+	if (swipeDir == SWIPE_DIR_RIGHT && col < 3 && kadrSize != KADR_SIZE_QUARTER)
 	{
-		mechanicMenu[col + 1]->DisableKadrTypeSelection();
+		mechanicMenu[col + 1]->GetActiveMenu()->DisableKadrTypeSelection();
 		frames[col + 1]->DisableKadrTypeSelection();
 	}
 	switch (kadrSize)
 	{
-	case HALF:
+	case KADR_SIZE_HALF:
 	{
-		if (swipeDir == RIGHT)
+		if (swipeDir == SWIPE_DIR_RIGHT)
 		{
-			kadrs[0][col]->ChangeSize(QUARTER);
+			kadrs[col]->ChangeSize(KADR_SIZE_QUARTER);
 			SwapKadr(col);
-			frames[col]->ChangeSize(QUARTER);
+			frames[col]->ChangeSize(KADR_SIZE_QUARTER);
 			SwapFrames(col);
-			if (!mechanicMenu[col]->GetBlockStatus())
+			if (!mechanicMenu[col]->GetActiveMenu()->GetBlockStatus())
 				SwapMenus(col);
-			mechanicMenu[col]->SetBlock(false, swipeDir);
+			mechanicMenu[col]->GetActiveMenu()->SetBlock(false, swipeDir);
 			frames[col]->SetBlock(false);
-			kadrs[0][col]->SetBlock(false);
+			kadrs[col]->GetActiveKadr()->SetBlock(false);
 		} else {
-			kadrs[0][col]->ChangeSize(QUARTER);
-			frames[col]->ChangeSize(QUARTER);
-			if (mechanicMenu[col]->GetBlockStatus())
+			kadrs[col]->ChangeSize(KADR_SIZE_QUARTER);
+			frames[col]->ChangeSize(KADR_SIZE_QUARTER);
+			if (mechanicMenu[col]->GetActiveMenu()->GetBlockStatus())
 				SwapMenus(col);
-			mechanicMenu[col + 1]->SetBlock(false, swipeDir);
+			assert(col < 3);
+			mechanicMenu[col + 1]->GetActiveMenu()->SetBlock(false, swipeDir);
 			frames[col + 1]->SetBlock(false);
-			kadrs[0][col + 1]->SetBlock(false);
+			kadrs[col + 1]->GetActiveKadr()->SetBlock(false);
 		}
 	}
 	break;
-	case QUARTER:
+	case KADR_SIZE_QUARTER:
 	{
-		kadrs[0][col]->ChangeSize(EIGHTH);
-		frames[col]->ChangeSize(EIGHTH);
-		kadrs[1][col] = new CBlankKadr(4 + col, EIGHTH);
+		kadrs[col]->ChangeSize(KADR_SIZE_EIGHTH);
+		frames[col]->ChangeSize(KADR_SIZE_EIGHTH);
+		kadrs[col]->InvokeAuxKadr(col + 4);
 	}
 	break;
 	default:
@@ -174,37 +197,36 @@ void CEkranHandler::MergeKadr(UINT kadrID, KADR_SIZE kadrSize, SWIPE_DIRECTION s
 {
 	UINT row = kadrID / 4;
 	UINT col = kadrID % 4;
-	mechanicMenu[col]->DisableKadrTypeSelection();
-	if (swipeDir == LEFT && col > 0)
-		mechanicMenu[col - 1]->DisableKadrTypeSelection();
-	if (swipeDir == RIGHT && col < 3)
-		mechanicMenu[col + 1]->DisableKadrTypeSelection();
-	if (row == 0 && kadrSize != EIGHTH)
+	mechanicMenu[col]->GetActiveMenu()->DisableKadrTypeSelection();
+	if (swipeDir == SWIPE_DIR_LEFT && col > 0)
+		mechanicMenu[col - 1]->GetActiveMenu()->DisableKadrTypeSelection();
+	if (swipeDir == SWIPE_DIR_RIGHT && col < 3)
+		mechanicMenu[col + 1]->GetActiveMenu()->DisableKadrTypeSelection();
+	if (row == 0 && kadrSize != KADR_SIZE_EIGHTH)
 	{
 		frames[col]->DisableKadrTypeSelection();
-		if (swipeDir == LEFT && col > 0)
+		if (swipeDir == SWIPE_DIR_LEFT && col > 0)
 			frames[col - 1]->DisableKadrTypeSelection();
-		if (swipeDir == RIGHT && col < 3)
+		if (swipeDir == SWIPE_DIR_RIGHT && col < 3)
 			frames[col + 1]->DisableKadrTypeSelection();
 	}
 	switch (kadrSize)
 	{
-	case HALF:
+	case KADR_SIZE_HALF:
 		break;
-	case QUARTER:
+	case KADR_SIZE_QUARTER:
 	{
-		if (swipeDir == RIGHT)
+		if (swipeDir == SWIPE_DIR_RIGHT)
 			RightMerge(swipeDir, col);
 		else 
 			LeftMerge(swipeDir, col);
 	}
 		break;
-	case EIGHTH:
+	case KADR_SIZE_EIGHTH:
 	{
-		kadrs[0][col]->ChangeSize(QUARTER);
-		frames[col]->ChangeSize(QUARTER);
-		delete kadrs[1][col];
-		kadrs[1][col] = nullptr;
+		kadrs[col]->ChangeSize(KADR_SIZE_QUARTER);
+		frames[col]->ChangeSize(KADR_SIZE_QUARTER);
+		kadrs[col]->RemoveAuxKadr();
 	}
 		break;
 	default:
@@ -219,25 +241,25 @@ void CEkranHandler::RightMerge(SWIPE_DIRECTION swipeDir, UINT col)
 		return;
 	else
 	{
-		if (col < 2 && kadrs[0][col + 2]->GetBlockStatus())	//когда кадр, в который мы собираемся расшириться, 
-		{															//является половинкой (HALF) делаем его четвертинкой
-			kadrs[0][col + 1]->ChangeSize(QUARTER);
+		if (col < 2 && kadrs[col + 2]->GetActiveKadr()->GetBlockStatus())	//когда кадр, в который мы собираемся расшириться, 
+		{													//является половинкой (KADR_SIZE_HALF) делаем его четвертинкой
+			kadrs[col + 1]->ChangeSize(KADR_SIZE_QUARTER);
 			SwapKadr(col + 1);
-			frames[col + 1]->ChangeSize(QUARTER);
+			frames[col + 1]->ChangeSize(KADR_SIZE_QUARTER);
 			SwapFrames(col + 1);
-			if (!mechanicMenu[col + 1]->GetBlockStatus())	
+			if (!mechanicMenu[col + 1]->GetActiveMenu()->GetBlockStatus())	
 				SwapMenus(col + 1);
 		} else {
-			if (kadrs[1][col + 1] != nullptr)
-				MergeKadr(col + 1, EIGHTH, swipeDir);
-			kadrs[0][col + 1]->SetBlock(true);	//блокировка соседнего кадра
+			if (kadrs[col + 1]->GetAuxKadr() != nullptr)
+				MergeKadr(col + 1, KADR_SIZE_EIGHTH, swipeDir);
+			kadrs[col + 1]->GetActiveKadr()->SetBlock(true);	//блокировка соседнего кадра
 			frames[col + 1]->SetBlock(true);
-			mechanicMenu[col + 1]->SetBlock(true, swipeDir);
+			mechanicMenu[col + 1]->GetActiveMenu()->SetBlock(true, swipeDir);
 			if (col + 1 == curSOI)
 				SetSOI(col);
 		}
-		kadrs[0][col]->ChangeSize(HALF);
-		frames[col]->ChangeSize(HALF);
+		kadrs[col]->ChangeSize(KADR_SIZE_HALF);
+		frames[col]->ChangeSize(KADR_SIZE_HALF);
 	}
 }
 
@@ -247,29 +269,29 @@ void CEkranHandler::LeftMerge(SWIPE_DIRECTION swipeDir, UINT col)
 		return;
 	else
 	{
-		if (kadrs[0][col - 1]->GetBlockStatus())		//когда кадр, в который мы собираемся расшириться, 
-		{													//является половинкой (HALF) делаем его четвертинкой
-			kadrs[0][col - 2]->ChangeSize(QUARTER);
-			frames[col - 2]->ChangeSize(QUARTER);
-			if (mechanicMenu[col - 2]->GetBlockStatus())
+		if (kadrs[col - 1]->GetActiveKadr()->GetBlockStatus())		//когда кадр, в который мы собираемся расшириться, 
+		{											//является половинкой (KADR_SIZE_HALF) делаем его четвертинкой
+			kadrs[col - 2]->ChangeSize(KADR_SIZE_QUARTER);
+			frames[col - 2]->ChangeSize(KADR_SIZE_QUARTER);
+			if (mechanicMenu[col - 2]->GetActiveMenu()->GetBlockStatus())
 				SwapMenus(col - 2);
 		} else {
 			if (curSOI == col - 1)
 				SetSOI(col);
-			if (kadrs[1][col - 1] != nullptr)
-				MergeKadr(col - 1, EIGHTH, swipeDir);
+			if (kadrs[col - 1]->GetAuxKadr() != nullptr)
+				MergeKadr(col - 1, KADR_SIZE_EIGHTH, swipeDir);
 		}
 		SwapKadr(col - 1);
 		SwapFrames(col - 1);
-		kadrs[0][col - 1]->ChangeSize(HALF);
-		frames[col - 1]->ChangeSize(HALF);
-		kadrs[0][col]->SetBlock(true);
+		kadrs[col - 1]->ChangeSize(KADR_SIZE_HALF);
+		frames[col - 1]->ChangeSize(KADR_SIZE_HALF);
+		kadrs[col]->GetActiveKadr()->SetBlock(true);
 		frames[col]->SetBlock(true);
-		mechanicMenu[col - 1]->SetBlock(true, swipeDir);
+		mechanicMenu[col - 1]->GetActiveMenu()->SetBlock(true, swipeDir);
 	}
 }
 
-UINT CEkranHandler::FindFrame(POINT pt)
+int CEkranHandler::FindFrame(POINT pt)
 {
 	for (int i = 0; i < DISPLAY_COLS; i++)
 		if (frames[i]->PointIsMine(pt))
@@ -277,61 +299,89 @@ UINT CEkranHandler::FindFrame(POINT pt)
 	return -1;
 }
 
-UINT CEkranHandler::FindMechMenu(POINT pt)
+int CEkranHandler::FindMechMenu(POINT pt)
 {
 	for (int i = 0; i < DISPLAY_COLS; i++)
-		if (mechanicMenu[i]->PointIsMine(pt))
+		if (mechanicMenu[i]->GetActiveMenu()->PointIsMine(pt))
 			return i;
 	return -1;
 }
 
-std::pair<UINT, UINT> CEkranHandler::FindKadr(POINT pt)
+std::pair<int, int> CEkranHandler::FindKadr(POINT pt)
 {
-	for (int i = 0; i < DISPLAY_ROWS; i++)
-		for (int j = 0; j < DISPLAY_COLS; j++)
-			if (kadrs[i][j] != nullptr && kadrs[i][j]->PointIsMine(pt))
-				return std::make_pair(i, j);
+	for (int j = 0; j < DISPLAY_COLS; j++)
+		if (kadrs[j]->GetActiveKadr()->PointIsMine(pt))
+			return std::make_pair(0, j);
+		else if (kadrs[j]->GetAuxKadr() != nullptr && kadrs[j]->GetAuxKadr()->PointIsMine(pt))
+			return std::make_pair(1, j);
 	return std::make_pair(-1, -1);
 }
 
-void CEkranHandler::ProcessCommand(EKRAN_HANDLER_COMMANDS cmd, POINT pt)
+void CEkranHandler::ProcessKadrCommand(KADR_COMMANDS cmd, POINT pt)
+{
+	std::pair<int, int> curKadr = FindKadr(pt);
+	if (curKadr.first == -1 && curKadr.second == -1)
+	{
+		curKadr.first = 0;
+		curKadr.second = FindMechMenu(pt);
+	}
+	if (curKadr.first == 1)
+		kadrs[curKadr.second]->GetAuxKadr()->ProcessCommand(cmd);
+	else
+		kadrs[curKadr.second]->GetActiveKadr()->ProcessCommand(cmd);
+}
+
+void CEkranHandler::ProcessKeyboard(UINT key)
+{
+	kadrs[curSOI]->GetActiveKadr()->ProcessKeyboard(key);
+}
+
+void CEkranHandler::ProcessMenuCommand(MENU_COMMANDS cmd, POINT pt)
 {
 	switch (cmd)
 	{
-	case ENABLE_KADR_TYPE_SELECTION:
+	case MENU_COMM_ENABLE_KADR_TYPE_SELECTION:
 		{
 			int curCol = FindMechMenu(pt);
-			mechanicMenu[curCol]->EnableKadrTypeSelection();
+			assert(curCol >= 0);
+			mechanicMenu[curCol]->GetActiveMenu()->EnableKadrTypeSelection();
 			if (frames[curCol]->GetBlockStatus())
+			{
+				assert(curCol > 0);
 				frames[curCol - 1]->EnableKadrTypeSelection();
+			}
 			else
 				frames[curCol]->EnableKadrTypeSelection();
 		}
 		break;
-	case DISABLE_KADR_TYPE_SELECTION:
+	case MENU_COMM_DISABLE_KADR_TYPE_SELECTION:
 		{
 			int curCol = FindMechMenu(pt);
-			mechanicMenu[curCol]->DisableKadrTypeSelection();
+			assert(curCol >= 0);
+			mechanicMenu[curCol]->GetActiveMenu()->DisableKadrTypeSelection();
 			if (frames[curCol]->GetBlockStatus())
-				frames[curCol - 1]->DisableKadrTypeSelection();
+			{
+				assert(curCol > 0);
+				frames[curCol - 1]->EnableKadrTypeSelection();
+			}
 			else
 				frames[curCol]->DisableKadrTypeSelection();
 		}
 		break;
-	case SWITCH_PLD:
-		SwitchKadr(PLD, pt);
+	case MENU_COMM_SWITCH_PLD:
+		SwitchKadr(KADR_TYPE_PLD, pt);
 		break;
-	case SWITCH_SYST:
-		SwitchKadr(SYST, pt);
+	case MENU_COMM_SWITCH_SYST:
+		SwitchKadr(KADR_TYPE_SYST, pt);
 		break;
-	case SWITCH_CAM:
-		SwitchKadr(CAM, pt);
+	case MENU_COMM_SWITCH_CAM:
+		SwitchKadr(KADR_TYPE_CAM, pt);
 		break;
-	case SWITCH_MAP:
-		SwitchKadr(MAP, pt);
+	case MENU_COMM_SWITCH_MAP:
+		SwitchKadr(KADR_TYPE_MAP, pt);
 		break;
-	case SWITCH_RDR:
-		SwitchKadr(RDR, pt);
+	case MENU_COMM_SWITCH_RDR:
+		SwitchKadr(KADR_TYPE_RDR, pt);
 		break;
 	default:
 		break;
@@ -350,51 +400,133 @@ void CEkranHandler::SwitchKadr(KADR_TYPE type, POINT pt)
 		menuCol = rowAndCol.second;
 	}
 	else
-		if (kadrs[0][menuCol]->GetBlockStatus())
+		if (kadrs[menuCol]->GetActiveKadr()->GetBlockStatus())
 			rowAndCol.second = menuCol - 1;
 		else
 			rowAndCol.second = menuCol;
 
-	size = kadrs[rowAndCol.first][rowAndCol.second]->GetKadrSize();
-
+	size = kadrs[rowAndCol.second]->GetActiveKadr()->GetKadrSize();
+	
+	if (rowAndCol.first == 1)
+	{
+		kadrs[rowAndCol.second]->RemoveAuxKadr();
+		kadrs[rowAndCol.second]->InvokeAuxKadr(rowAndCol.second + 4, type);
+	}
 	if (rowAndCol.first == 0)
 	{
-		delete mechanicMenu[menuCol];
-		delete kadrs[0][rowAndCol.second];
+		kadrs[rowAndCol.second]->SwitchKadr(type);
+		mechanicMenu[rowAndCol.second]->SwitchMenu(type);
+		frames[rowAndCol.second]->DisableKadrTypeSelection();
 	}
-	else
-		delete kadrs[1][rowAndCol.second];
-	
+}
+
+CEkranHandler::KadrsAssembly::KadrsAssembly(UINT id, KADR_SIZE kadrSize, KADR_TYPE type)
+{
+	kadrs[KADR_TYPE_PLD] = new CKadrPIL(id, kadrSize);
+	kadrs[KADR_TYPE_SYST] = new CKadrSYS(id, kadrSize);
+	kadrs[KADR_TYPE_CAM] = new CKadrCAM(id, kadrSize);
+	kadrs[KADR_TYPE_MAP] = new CKadrMAP(id, kadrSize);
+	kadrs[KADR_TYPE_RDR] = new CKadrRDR(id, kadrSize);
+	curActive = type;
+	for (int i = 0; i < KADRS_MAX_NUM; i++)
+		if (i != curActive)
+			kadrs[i]->SetBlock(true);
+	auxKadr = nullptr;
+}
+
+CEkranHandler::KadrsAssembly::~KadrsAssembly()
+{
+	for (int i = 0; i < KADRS_MAX_NUM; i++)
+		if (kadrs[i] != nullptr)
+			delete kadrs[i];
+	if (auxKadr != nullptr)
+		delete auxKadr;
+}
+
+void CEkranHandler::KadrsAssembly::InvokeAuxKadr(UINT auxId)
+{
+	assert(auxKadr == nullptr);
+	auxKadr = new CBlankAuxKadr(auxId, KADR_SIZE_EIGHTH);
+}
+
+void CEkranHandler::KadrsAssembly::InvokeAuxKadr(UINT auxId, KADR_TYPE type)
+{
+	assert(auxKadr == nullptr);
 	switch (type)
 	{
-	case PLD:
-		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrPIL(4*rowAndCol.first + rowAndCol.second, size);
+	case KADR_TYPE_CAM:
+		auxKadr = new CKadrCAM(auxId, KADR_SIZE_EIGHTH);
 		break;
-	case SYST:
-		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrSYS(4*rowAndCol.first + rowAndCol.second, size);
-		break;
-	case CAM:
-		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrCAM(4 * rowAndCol.first + rowAndCol.second, size);
-		break;
-	case MAP:
-		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrMAP(4 * rowAndCol.first + rowAndCol.second, size);
-		break;
-	case RDR:
-		kadrs[rowAndCol.first][rowAndCol.second] = new CKadrRDR(4 * rowAndCol.first + rowAndCol.second, size);
+	case KADR_TYPE_RDR:
+		auxKadr = new CKadrRDR(auxId, KADR_SIZE_EIGHTH);
 		break;
 	default:
 		break;
 	}
-	
-	if (rowAndCol.first == 0)
-	{
-		mechanicMenu[menuCol] = new CMechanicMenu(menuCol, kadrs[0][rowAndCol.second]->GetKadrType());
-		frames[rowAndCol.second]->DisableKadrTypeSelection();
-	}
+}
 
-	if (rowAndCol.first == 0 && rowAndCol.second == curSOI)
-	{
-		kadrs[0][curSOI]->SetSOIStatus(true);
-		mechanicMenu[curSOI]->SetSOIStatus(true);
-	}
+void CEkranHandler::KadrsAssembly::RemoveAuxKadr()
+{
+	assert(auxKadr != nullptr);
+	delete auxKadr;
+	auxKadr = nullptr;
+}
+
+void CEkranHandler::KadrsAssembly::SwitchKadr(KADR_TYPE type)
+{
+	bool SOI = kadrs[curActive]->GetSOIStatus();
+	kadrs[curActive]->SetBlock(true);
+	kadrs[curActive]->SetSOIStatus(false);
+	curActive = type;
+	kadrs[curActive]->SetBlock(false);
+	kadrs[curActive]->SetSOIStatus(SOI);
+}
+
+void CEkranHandler::KadrsAssembly::ChangeSize(KADR_SIZE newSize)
+{
+	for (int i = 0; i < KADRS_MAX_NUM; i++)
+		kadrs[i]->ChangeSize(newSize);
+}
+
+CEkranHandler::KadrsAssembly* CEkranHandler::KadrsAssembly::ChangePos(UINT newPos)
+{
+	for (int i = 0; i < KADRS_MAX_NUM; i++)
+		kadrs[i]->ChangePos(newPos);
+	return this;
+}
+
+CEkranHandler::MechMenuAssembly::MechMenuAssembly(UINT id, KADR_TYPE type)
+{
+	menus[KADR_TYPE_PLD] = new CMechanicMenu(id, KADR_TYPE_PLD);
+	menus[KADR_TYPE_SYST] = new CMechanicMenu(id, KADR_TYPE_SYST);
+	menus[KADR_TYPE_CAM] = new CMechanicMenu(id, KADR_TYPE_CAM);
+	menus[KADR_TYPE_MAP] = new CMechanicMenu(id, KADR_TYPE_MAP);
+	menus[KADR_TYPE_RDR] = new CMechanicMenu(id, KADR_TYPE_RDR);
+	curActive = type;
+	for (int i = 0; i < KADRS_MAX_NUM; i++)
+		if (i != curActive)
+			menus[i]->Hide(true);
+}
+CEkranHandler::MechMenuAssembly::~MechMenuAssembly()
+{
+	for (int i = 0; i < KADRS_MAX_NUM; i++)
+		if (menus[i] != nullptr)
+			delete menus[i];
+}
+
+CEkranHandler::MechMenuAssembly* CEkranHandler::MechMenuAssembly::ChangePos(UINT newPos)
+{
+	for (int i = 0; i < KADRS_MAX_NUM; i++)
+		menus[i]->ChangePos(newPos);
+	return this;
+}
+
+void CEkranHandler::MechMenuAssembly::SwitchMenu(KADR_TYPE type)
+{
+	bool SOI = menus[curActive]->GetSOIStatus();
+	menus[curActive]->Hide(true);
+	menus[curActive]->SetSOIStatus(false);
+	curActive = type;
+	menus[curActive]->Hide(false);
+	menus[curActive]->SetSOIStatus(SOI);
 }

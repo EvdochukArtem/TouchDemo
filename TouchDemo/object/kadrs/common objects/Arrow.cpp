@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "object/auxilary/Arrow.h"
+#include "Arrow.h"
 #include "util/Util.h"
 
 CArrow::CArrow(POINT X0Y0, POINT* XY, int numOfPts)
@@ -16,6 +16,6 @@ void CArrow::Draw(HDC& hdc, double angle)
 {	
 	std::vector<POINT> tmp(arrowPts.size());
 	for (int i = 0; i < (int)arrowPts.size(); i++)
-		tmp[i] = CUtil::Rotate(arrowPts[i], angle, center.x, center.y);
-	::Polygon(hdc, &tmp[0], tmp.size());
+		tmp[i] = Rotate(arrowPts[i], angle, center.x, center.y);
+	::Polygon(hdc, &tmp[0], (int)tmp.size());
 }
