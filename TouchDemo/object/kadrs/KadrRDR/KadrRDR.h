@@ -1,12 +1,13 @@
 #pragma once
-#include "../AbstractKadr.h"
+#include "../BlankKadr.h"
 
-class CKadrRDR : public CAbstractKadr
+class CKadrRDR : public CBlankKadr
 {
 public:
 	CKadrRDR(UINT id, KADR_SIZE kadrSize);
 	~CKadrRDR() {};
-	
+	//Пока для демонстрации работы с интерактивным объектом кадр отыгрывает роль BlankKadr
+	/*
 	virtual void Draw(HDC& hdc);
 	virtual void DrawBackground();
 
@@ -18,5 +19,5 @@ public:
 	virtual void Reset() {};
 	virtual void LeftClickHandle(POINT pt) {};
 	virtual void ProcessKeyboard(UINT key) {};
-	virtual void ProcessCommand(KADR_COMMANDS cmd) {};
+	virtual void ProcessCommand(KADR_COMMANDS cmd) {};*/
 };

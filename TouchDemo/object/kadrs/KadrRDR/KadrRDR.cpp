@@ -2,11 +2,11 @@
 #include "KadrRDR.h"
 #include "util/Util.h"
 
-CKadrRDR::CKadrRDR(UINT id, KADR_SIZE kadrSize) : CAbstractKadr(id, kadrSize)
+CKadrRDR::CKadrRDR(UINT id, KADR_SIZE kadrSize) : CBlankKadr(id, kadrSize)
 {
 	_kadrType = KADR_TYPE_RDR;
 }
-
+/*
 void CKadrRDR::Draw(HDC& hdc)
 {
 	if (_blocked)
@@ -42,4 +42,4 @@ CAbstractKadr* CKadrRDR::ChangePos(UINT newPos)
 	_id = newPos;
 	Place();
 	return this;
-}
+}*/

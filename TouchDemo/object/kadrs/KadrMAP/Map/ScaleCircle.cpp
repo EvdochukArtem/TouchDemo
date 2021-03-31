@@ -30,13 +30,13 @@ void CScaleCircle::Draw(HDC& hdc)
 		return;
 	SelectClipRgn(hdc, kadrMAP->GetKadrRgn());
 
-	POINT center = kadrMAP->GetPlanePoint();
+	POINT center {_x + _cx / 2, _y + _cy * 2 / 3};
 
-	oldPen = (HPEN)SelectObject(hdc, DRAW_KIT.BlackPen);
-	oldBrush = (HBRUSH)SelectObject(hdc, DRAW_KIT.BlackBrush);
+	oldPen = (HPEN)SelectObject(hdc, DRAW_KIT.WhitePen);
+	oldBrush = (HBRUSH)SelectObject(hdc, DRAW_KIT.WhiteBrush);
 	oldFont = (HFONT)SelectObject(hdc, DRAW_KIT.Arial12);
 	oldTextAlign = SetTextAlign(hdc, TA_BOTTOM|TA_CENTER);
-	oldColor = SetTextColor(hdc, DRAW_KIT.GetBlackColor());
+	oldColor = SetTextColor(hdc, DRAW_KIT.GetWhiteColor());
 	oldBkColor = SetBkColor(hdc, DRAW_KIT.GetBlackColor());
 
 	MoveToEx(hdc, center.x, _y, NULL);
@@ -45,6 +45,7 @@ void CScaleCircle::Draw(HDC& hdc)
 	LineTo(hdc, _x + _cx, center.y);
 
 	int i = 1;
+	int a = CIRCLE_STEP;
 	//TODO: ѕеределать условие. ѕри большом удалении от центра нужно рисовать больше кругов
 	while (center.y - i * CIRCLE_STEP >= _y ||
 		   center.x - i * CIRCLE_STEP >= _x ||

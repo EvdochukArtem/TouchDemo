@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include "AbstractKadr.h"
 #include "BlankKadr.h"
 #include "util/Util.h"
 

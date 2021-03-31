@@ -111,7 +111,7 @@ void CKadrCAM::Draw(HDC& hdc)
 {
 	if (_blocked)
 		return;
-	//TextOut(hdc, _x+_cx/2, _y+_cy/2, L"CAM KADR", 10);
+	TextOut(hdc, _x+_cx/2, _y+_cy/2, L"CAM KADR", 10);
 }
 
 void CKadrCAM::DrawBackground()

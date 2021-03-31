@@ -229,8 +229,10 @@ void CKadrMAP::MyPlane::Draw(HDC &hdc)
 
 	oldBrush = (HBRUSH)SelectObject(hdc, DRAW_KIT.GreyBrush);
 	oldPen = (HPEN)SelectObject(hdc, DRAW_KIT.GreyPen);
+	RECT r;
+	GetRgnBox(kadrMAP->GetKadrRgn(), &r);
 
-	DrawPlane(hdc, kadrMAP, kadrMAP->GetPlanePoint().x, kadrMAP->GetPlanePoint().y, Angle, DRAW_KIT.GreenPen, DRAW_KIT.GreenBrush);
+	DrawPlane(hdc, kadrMAP, r.left + (r.right - r.left) / 2, r.top + (r.bottom - r.top) * 2 / 3, Angle, DRAW_KIT.GreenPen, DRAW_KIT.GreenBrush);
 	
 	
 	SelectObject(hdc, oldPen);
@@ -299,6 +301,8 @@ void CKadrMAP::Reset()
 	mapMove.x = 0;
 	mapMove.y = 0;
 	buttons->GetCoordSysButton().SetFirstStatus();
+	settings.scaleIndex = 3;
+	settings.scale = (float)MapScale[settings.scaleIndex] * 1000 / float(CIRCLE_STEP * TACT_SCALE_CIRCLES);
 }
 
 void CKadrMAP::ProcessKeyboard(UINT key)

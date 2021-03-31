@@ -3,10 +3,9 @@
 *	для взаимодействия с ним.
 */
 #pragma once
+#include "AbstractKadr.h"
 
 const int INTERACTIVE_OBJ_LENGTH = 4; //Кол-во точек интерактивного объекта
-
-class CAbstractKadr;
 
 class CBlankKadr : public CAbstractKadr
 {
@@ -28,7 +27,7 @@ public:
 	virtual void ProcessKeyboard(UINT key) {};
 	void ProcessCommand(KADR_COMMANDS cmd) {};
 
-private:
+protected:
 
 	UINT ID; //Удалить потом вместе с интерактивным объектом
 	POINT interactiveObj[INTERACTIVE_OBJ_LENGTH];
